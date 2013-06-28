@@ -18,12 +18,6 @@ var a = this.serializeArray();
   return o;
 };
 
-// Set the base URL for all XHR calls
-$.ajaxPrefilter( function( options, originalOptions, jqXHR ) {
-  //options.url = 'http://demo.fluff.io' + options.url;
-  options.url = 'http://localhost:3000' + options.url;
-});
-
 // on page load
 function init () {
   
