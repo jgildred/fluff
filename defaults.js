@@ -2,7 +2,7 @@
 // DEFAULT CONFIGURATION
 
 exports.Config = {
-  status        : 'Initialize',  // set to 'Initialize' to initialize DB with seed data
+  status        : 'Working',  // set to 'Initialize' to initialize DB with seed data
   site_name     : 'Web Site',
   smtp_service  : 'Gmail',
   smtp_username : 'user@domain.com',
