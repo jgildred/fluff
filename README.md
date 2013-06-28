@@ -1,7 +1,7 @@
 fluff
 =====
 
-A CMS that stays out of your way.
+The CMS that stays out of your way.
 
 Installation:
 
