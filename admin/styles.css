@@ -1,0 +1,43 @@
+
+body {
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+ 
+  height: 100% !important;
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+}
+.darkbg {
+  background: #434343; /* for non-css3 browsers */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#434343', endColorstr='#797979'); /* for IE */
+  background: -webkit-gradient(linear, left top, left bottom, from(#434343), to(#797979)); /* for webkit browsers */
+  background: -moz-linear-gradient(top,  #434343,  #797979); /* for firefox 3.6+ */
+}
+.device-info-image{
+  height: 60px;
+}
+.device-info-detail{
+  height: 60px;
+}
+.device-activity {
+  margin-left: auto !important;
+  margin-right: auto !important;
+  width: 480px !important;
+  height: 360px !important;
+}
+.device-streams {
+  margin-left: auto !important;
+  margin-right: auto !important;
+  width: 480px !important;
+  height: 420px !important;
+}
+.authbar {
+  margin-top: -26px !important;
+  margin-right: 6px !important;
+}
+.btn-navbar {
+  margin-right: 150px !important;
+}
+.html-textarea {
+  width: 100%;
+}

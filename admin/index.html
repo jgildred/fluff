@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="en">
+
+<script>
+  var reg = new RegExp("/$");
+  var apibase = window.location.pathname;
+  if (!reg.test(window.location.pathname)) {
+    apibase = apibase + '/api';
+    window.location.href = window.location.href + '/';
+  }
+  else {
+    apibase = apibase + 'api';
+  }
+</script>
+
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Site Admin</title>
+  <link rel="shortcut icon" href="images/favicon.ico"/>
+  <link rel="stylesheet" href="bootstrap/css/bootstrap.css"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+
+<body>
+  <header class="flolink-header">
+    <br/>
+    <div class="navbar">
+      <div class="navbar-inner">
+      </div>
+    </div>
+    <div class="authbar">
+    </div>
+    <br/>
+  </header>
+  <div class="container">
+    <br/>
+    <div class="page"></div>
+    <div class="popup"></div>
+  </div>
+  <footer role="contentinfo">
+    <div id="inner-footer" class="clearfix">
+      <br/>
+      <hr />
+      <p class="attribution">powered by <a href="http://fluff.io">Fluff</a></p>
+    </div>
+  </footer>
+
+  <script type="text/template" id="authbar-template">
+    <div class="btn-toolbar pull-right authbar">
+      <div class="btn-group">
+        <% if(session.get('auth')) { %>
+        <a href="#/users/<%= session.get('user_id') %>" class="btn btn-mini"><i class="icon-user"></i>  <%= htmlEncode(session.get('name'))%></a>
+        <a href="#/logout" class="btn btn-mini">Logout</a>
+        <% } %>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/template" id="navbar-template">
+
+          <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+
+          <a class="brand" href="#/">Admin</a>
+
+          <!-- Everything you want hidden at 480px or less, place within here -->
+
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <% if(auth && admin) { %>
+                <li id="pages-tab"><a href="#/pages">Pages</a></li>
+                <li id="views-tab"><a href="#/views">Views</a></li>
+                <li id="vars-tab"><a href="#/vars">Vars</a></li>
+                <li id="users-tab"><a href="#/users">Users</a></li>
+                <li id="site-tab"><a href="#/site">Site</a></li>
+              <% } %>
+            </ul>
+            <!-- .nav, .navbar-search, .navbar-form, etc -->
+          </div>
+
+  </script>
+
+  <script type="text/template" id="signup-template">
+    <div id="signup-modal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="singupModalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="signupModalLabel">Welcome to the Fluff admin.</h3>
+      </div>
+      <div class="modal-body">
+        <div class="signup-step1">
+          <form class="form-horizontal signup-form">
+            <div class="control-group">
+              <label class="control-label" for="inputEmail">Email</label>
+              <div class="controls">
+                <input type="text" id="inputEmail" name="email" placeholder="Email">
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label" for="inputPassword">Password</label>
+              <div class="controls">
+                <input type="password" id="inputPassword" name="password" placeholder="Password">
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label" for="inputPassword">Confirm</label>
+              <div class="controls">
+                <input type="password" id="inputPassword" placeholder="Password">
+              </div>
+            </div>
+            <div class="control-group">
+              <div class="controls">
+                <button type="submit" class="btn btn-primary signup">Sign Up</button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="hide signup-step2">
+          <p class="text-center lead">Check your email for instructions to complete signup.</p>
+        </div>
+        <div class="hide signup-step3">
+          <p class="text-center lead">Your email is verified. Welcome to Fluff admin.</p>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/template" id="login-template">
+    <div id="login-modal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="loginModalLabel">Welcome back.</h3>
+      </div>
+      <div class="modal-body">
+        <div class="alert hide login-fail">
+          <span class="alert-msg"></span>
+        </div>
+        <form class="form-horizontal login-form">
+          <div class="control-group">
+            <label class="control-label" for="inputEmail">Email</label>
+            <div class="controls">
+              <input type="text" id="inputEmail" name="email" placeholder="Email">
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="inputPassword">Password</label>
+            <div class="controls">
+              <input type="password" id="inputPassword" name="password" placeholder="Password">
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="controls">
+              <button type="submit" class="btn btn-primary login">Login</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/template" id="alert-template">
+    <div id="alert-modal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="alertModalLabel"><%= label ? label : 'Alert' %></h3>
+      </div>
+      <div class="modal-body">
+        <p class="text-center lead"><%= msg ? msg : 'Something went wrong.' %></p>
+      </div>
+    </div>
+  </script>
+  
+  <script type="text/template" id="user-list-template">
+    <a href="#/users/new" class="btn btn-primary"><i class="icon-plus-sign icon-white"></i> Add a User</a>
+    <br/><br/>
+    <table class="table striped">
+      <thead>
+        <tr>
+          <th>First Name</th><th>Last Name</th><th>Email</th><th>Role</th><th>Status</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% _.each(users, function(user) { %>
+          <tr>
+            <td><%= htmlEncode(user.get('firstname')) %></td>
+            <td><%= htmlEncode(user.get('lastname')) %></td>
+            <td><%= htmlEncode(user.get('email')) %></td>
+            <td><%= htmlEncode(user.get('role')) %></td>
+            <td><%= htmlEncode(user.get('status')) %></td>
+            <td><a class="btn" href="#/users/<%= user.id %>">Edit</a></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </script>
+
+  <script type="text/template" id="page-list-template">
+    <a href="#/pages/new" class="btn btn-primary"><i class="icon-plus-sign icon-white"></i> Add a Page</a>
+    <br/><br/>
+    <table class="table striped">
+      <thead>
+        <tr>
+          <th>Page</th><th>Path</th><th>View</th><th>Access</th><th>Status</th><th>Last Updated</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% _.each(pages, function(page) { %>
+          <tr>
+            <td><%= htmlEncode(page.get('name')) %></td>
+            <td><%= htmlEncode(page.get('path')) %></td>
+            <td><%= htmlEncode(views.get(page.get('view_id')).get('name')) %></td>
+            <td><%= htmlEncode(page.get('access')) %></td>
+            <td><%= htmlEncode(page.get('status')) %></td>
+            <td><%= htmlEncode(page.get('lastupdate')) %></td>
+            <td><a class="btn" href="#/pages/<%= page.id %>">Edit</a></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </script>
+
+  <script type="text/template" id="view-list-template">
+    <a href="#/views/new" class="btn btn-primary"><i class="icon-plus-sign icon-white"></i> Add a View</a>
+    <br/><br/>
+    <table class="table striped">
+      <thead>
+        <tr>
+          <th>View</th><th>Last Updated</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% _.each(views, function(view) { %>
+          <tr>
+            <td><%= htmlEncode(view.get('name')) %></td>
+            <td><%= htmlEncode(view.get('lastupdate')) %></td>
+            <td><a class="btn" href="#/views/<%= view.id %>">Edit</a></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </script>
+
+  <script type="text/template" id="var-list-template">
+    <a href="#/vars/new" class="btn btn-primary"><i class="icon-plus-sign icon-white"></i> Add a Var</a>
+    <br/><br/>
+    <table class="table striped">
+      <thead>
+        <tr>
+          <th>Var</th><th>Value</th><th>Last Updated</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% _.each(vars, function(vari) { %>
+          <tr>
+            <td><%= htmlEncode(vari.get('name')) %></td>
+            <td><%= htmlEncode(vari.get('value')) %></td>
+            <td><%= htmlEncode(vari.get('lastupdate')) %></td>
+            <td><a class="btn" href="#/vars/<%= vari.id %>">Edit</a></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </script>
+
+  <script type="text/template" id="edit-user-template">
+    <form class="edit-user-form">
+      <legend><%= user ? 'Edit' : 'New' %> User</legend>
+      <label>First Name</label>
+      <input name="firstname" type="text" value="<%= user ? user.get('firstname') : '' %>" placeholder="" />
+      <label>Last Name</label>
+      <input name="lastname" type="text" value="<%= user ? user.get('lastname') : '' %>" placeholder=""/>
+      <label>Email</label>
+      <input name="email" type="text" value="<%= user ? user.get('email') : '' %>" placeholder="required" />
+      <label>Organization</label>
+      <input name="orgname" type="text" value="<%= user ? user.get('orgname') : '' %>" placeholder="" />
+      <label>Phone</label>
+      <input name="phone" type="text" value="<%= user ? user.get('phone') : '' %>" placeholder="" />
+      <label>Role</label>
+      <select name="role">
+        <% _(role_options).each(function(option) { %>
+        <option value="<%= option %>"<%= (user && (option == user.get('role'))) ? ' selected' : ''%>><%= option %></option>
+        <% }); %>
+      </select>
+      <label>Status</label>
+      <select name="status">
+        <% _(status_options).each(function(option) { %>
+        <option value="<%= option %>"<%= (user && (option == user.get('status'))) ? ' selected' : ''%>><%= option %></option>
+        <% }); %>
+      </select>
+      <label>API Key</label>
+      <input name="apikey" type="text" value="<%= user ? user.get('apikey') : '' %>" placeholder="make something up" />
+      <% if (user) { %>
+      <p>ID <%= user.id %></p>
+      <p>Created <%= user.get('creation') %></p>
+      <p>Last updated <%= user.get('lastupdate') %></p>
+      <% } %>
+      <hr />
+      <button type="submit" class="btn btn-primary">Save</button>
+      <button type="button" class="btn cancel">Cancel</button>
+      <% if (user) { %>
+      <input type="hidden" name="id" value="<%= user.id %>" />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <button type="button" data-user-id="<%= user.id %>" class="btn btn-danger delete-user">Delete User</button>
+      <% } %>
+    </form>
+  </script>
+
+  <script type="text/template" id="edit-page-template">
+    <form class="edit-page-form">
+      <legend><%= page ? 'Edit' : 'New' %> Page</legend>
+      <label>Name</label>
+      <input name="name" type="text" value="<%= page ? page.get('name') : '' %>" placeholder="name" />
+      <label>Path</label>
+      <input name="path" type="text" value="<%= page ? page.get('path') : '' %>" placeholder="put/something/here"/>&nbsp;&nbsp;&nbsp;<a href="<%= page ? page.get('path') : '' %>">Go</a>
+      <label>View</label>
+      <select name="view_id">
+        <% views.each(function(view) { %>
+        <option value="<%= view.id %>"<%= (page && (view.id == page.get('view_id'))) ? ' selected' : ''%>><%= view.get('name') %></option>
+        <% }); %>
+      </select>
+      <label>Content</label>
+      <textarea name="content" class="html-textarea" rows="10"><%= page ? page.get('content') : '' %></textarea>
+      <label>Access</label>
+      <select name="access">
+        <% _(access_options).each(function(option) { %>
+        <option value="<%= option %>"<%= (page && (option == page.get('access'))) ? ' selected' : ''%>><%= option %></option>
+        <% }); %>
+      </select>
+      <label>Status</label>
+      <select name="status">
+        <% _(status_options).each(function(option) { %>
+        <option value="<%= option %>"<%= (page && (option == page.get('status'))) ? ' selected' : ''%>><%= option %></option>
+        <% }); %>
+      </select>
+      <% if (page) { %>
+      <p>ID <%= page.id %></p>
+      <p>Created <%= page.get('creation') %></p>
+      <p>Published <%= page.get('publication') %></p>
+      <p>Last updated <%= page.get('lastupdate') %></p>
+      <% } %>
+      <hr />
+      <button type="submit" class="btn btn-primary">Save</button>
+      <button type="button" class="btn cancel">Cancel</button>
+      <% if (page) { %>
+      <input type="hidden" name="id" value="<%= page.id %>" />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <button type="button" data-page-id="<%= page.id %>" class="btn btn-danger delete-page">Delete Page</button>
+      <% } %>
+    </form>
+  </script>
+
+  <script type="text/template" id="edit-view-template">
+    <form class="edit-view-form">
+      <legend><%= view ? 'Edit' : 'New' %> View</legend>
+      <label>Name</label>
+      <input name="name" type="text" value="<%= view ? view.get('name') : '' %>" placeholder="unique name" />
+      <label>Template</label>
+      <textarea name="template" class="html-textarea" rows="10"><%= view ? view.get('template') : '{{content}}' %></textarea>
+      <% if (view) { %>
+      <p>ID <%= view.id %></p>
+      <p>Created <%= view.get('creation') %></p>
+      <p>Last updated <%= view.get('lastupdate') %></p>
+      <% } %>
+      <hr />
+      <button type="submit" class="btn btn-primary">Save</button>
+      <button type="button" class="btn cancel">Cancel</button>
+      <% if (view) { %>
+      <input type="hidden" name="id" value="<%= view.id %>" />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <button type="button" data-view-id="<%= view.id %>" class="btn btn-danger delete-view">Delete View</button>
+      <% } %>
+    </form>
+  </script>
+
+  <script type="text/template" id="edit-var-template">
+    <form class="edit-var-form">
+      <legend><%= vari ? 'Edit' : 'New' %> Var</legend>
+      <label>Var Name</label>
+      <input name="name" type="text" value="<%= vari ? vari.get('name') : '' %>" placeholder="name" />
+      <label>Value</label>
+      <input name="value" type="text" value="<%= vari ? vari.get('value') : '' %>" placeholder="empty"/>
+      <% if (vari) { %>
+      <p>ID <%= vari.id %></p>
+      <p>Created <%= vari.get('creation') %></p>
+      <p>Last updated <%= vari.get('lastupdate') %></p>
+      <% } %>
+      <hr />
+      <button type="submit" class="btn btn-primary">Save</button>
+      <button type="button" class="btn cancel">Cancel</button>
+      <% if (vari) { %>
+      <input type="hidden" name="id" value="<%= vari.id %>" />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <button type="button" data-var-id="<%= vari.id %>" class="btn btn-danger delete-var">Delete Var</button>
+      <% } %>
+    </form>
+  </script>
+
+  <script type="text/template" id="edit-site-template">
+    <form class="form-horizontal">
+      <legend>Site Configuration</legend>
+      <div class="control-group">
+        <label class="control-label" for="inputSiteName">Site Name</label>
+        <div class="controls">
+          <input type="text" id="inputSiteName" name="site_name" value="<%= site ? site.get('site_name') : '' %>" placeholder="unnamed" />
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="inputSiteUrl">Site URL</label>
+        <div class="controls">
+          <input type="text" id="inputSiteUrl" name="site_url" value="<%= site ? site.get('site_url') : '' %>" placeholder="http://yourdomain.com" />
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="inputServerPort">Server Port</label>
+        <div class="controls">
+          <input type="text" id="inputServerPort" name="server_port" value="<%= site ? site.get('server_port') : '' %>" placeholder="80" />
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="inputCorsMode">CORS Mode</label>
+        <div class="controls">
+          <select name="cors_mode" id="inputCorsMode">
+            <% _(cors_mode_options).each(function(option) { %>
+            <option value="<%= option %>"<%= (site && (option == site.get('cors_mode'))) ? ' selected' : ''%>><%= option %></option>
+            <% }); %>
+          </select>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="inputCorsWhitelist">CORS White List</label>
+        <div class="controls">
+          <input type="text" id="inputCorsWhitelist" name="cors_whitelist" value="<%= site ? site.get('cors_whitelist') : '' %>" placeholder="" />
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="inputEmailFrom">Email Address</label>
+        <div class="controls">
+          <input type="text" id="inputEmailFrom" name="email_from" value="<%= site ? site.get('email_from') : '' %>" placeholder="notifications sent from address" />
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="inputSmtpService">SMTP Service</label>
+        <div class="controls">
+          <select name="cors_mode" id="inputSmtpService">
+            <% _(smtp_service_options).each(function(option) { %>
+            <option value="<%= option %>"<%= (site && (option == site.get('smtp_service'))) ? ' selected' : ''%>><%= option %></option>
+            <% }); %>
+          </select>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="inputSmtpUsername">SMTP Username</label>
+        <div class="controls">
+          <input type="text" id="inputSmtpUsername" name="smtp_username" value="<%= site ? site.get('smtp_username') : '' %>" placeholder="" />
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="inputSmtpPassword">SMTP Password</label>
+        <div class="controls">
+          <input type="password" id="inputSmtpPassword" name="smtp_password" value="<%= site ? site.get('smtp_password') : '' %>" placeholder="" />
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="inputAdminPath">Admin Path</label>
+        <div class="controls">
+          <input type="text" id="inputAdminPath" name="admin_path" value="<%= site ? site.get('admin_path') : '' %>" placeholder="/admin" />
+          <p>(The api path will be <%= site ? site.get('admin_path') : '' %>/api)</p>
+        </div>
+      </div>
+      
+      <hr />
+      <button type="submit" class="btn btn-primary">Save</button>
+      <button type="button" class="btn cancel">Cancel</button>
+      <% if (site) { %>
+      <input type="hidden" name="id" value="<%= site.id %>" />
+      <% } %>
+    </form>
+  </script>
+
+<!--
+  <script type="text/javascript" src="jslibs/jquery-1.9.1.js"></script>
+-->
+  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<!--
+  <script type="text/javascript" src="jslibs/underscore.js"></script>
+-->
+  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+
+<!--
+  <script type="text/javascript" src="jslibs/backbone.js"></script>
+-->
+  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.10/backbone-min.js"></script>
+
+  <script type="text/javascript" src="bootstrap/js/bootstrap.js"></script>
+<!--
+  <script type="text/javascript" src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+-->
+
+  <script type="text/javascript" src="admin.js"></script>
+
+
+</body>
+
+</html>
+
