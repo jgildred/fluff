@@ -284,9 +284,9 @@ var applyConfig = function(req, res, next) {
 
   app.get (base + '/sites',     function(req, res) {resource.find   (req, res, Site);} );
   app.get (base + '/sites/:id', function(req, res) {resource.findone(req, res, Site);} );
-  app.post(base + '/sites',     function(req, res) {resource.create (req, res, Site, reloadConfig);} );
+  //app.post(base + '/sites',     function(req, res) {resource.create (req, res, Site, reloadConfig);} );
   app.put (base + '/sites/:id', function(req, res) {resource.update (req, res, Site, null, reloadConfig);} );
-  app.del (base + '/sites/:id', function(req, res) {resource.remove (req, res, Site);} );
+  //app.del (base + '/sites/:id', function(req, res) {resource.remove (req, res, Site);} );
 
   app.get (base + '/pages',     function(req, res) {resource.find   (req, res, Page);} );
   app.get (base + '/pages/:id', function(req, res) {resource.findone(req, res, Page);} );
