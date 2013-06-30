@@ -2,6 +2,7 @@
 <html lang="en">
 
 <script>
+  var version = '0.2';
   var reg = new RegExp("/$");
   var apibase = window.location.pathname;
   if (!reg.test(window.location.pathname)) {
@@ -42,7 +43,7 @@
     <div id="inner-footer" class="clearfix">
       <br/>
       <hr />
-      <p class="attribution">powered by <a href="http://fluff.io">Fluff</a></p>
+      <p class="attribution muted">powered by <a href="http://fluff.io">Fluff</a></p>
     </div>
   </footer>
 
@@ -180,12 +181,13 @@
     <table class="table striped">
       <thead>
         <tr>
-          <th>First Name</th><th>Last Name</th><th>Email</th><th>Role</th><th>Status</th><th></th>
+          <th></th><th>First Name</th><th>Last Name</th><th>Email</th><th>Role</th><th>Status</th><th></th>
         </tr>
       </thead>
       <tbody>
         <% _.each(users, function(user) { %>
           <tr>
+            <td><i class="icon-user"></i></td>
             <td><%= htmlEncode(user.get('firstname')) %></td>
             <td><%= htmlEncode(user.get('lastname')) %></td>
             <td><%= htmlEncode(user.get('email')) %></td>
@@ -204,12 +206,13 @@
     <table class="table striped">
       <thead>
         <tr>
-          <th>Page</th><th>Path</th><th>View</th><th>Access</th><th>Status</th><th>Last Updated</th><th></th>
+          <th></th><th>Page</th><th>Path</th><th>View</th><th>Access</th><th>Status</th><th>Last Updated</th><th></th>
         </tr>
       </thead>
       <tbody>
         <% _.each(pages, function(page) { %>
           <tr>
+            <td><i class="icon-file"></i></td>
             <td><%= htmlEncode(page.get('name')) %></td>
             <td><%= htmlEncode(page.get('path')) %></td>
             <td><%= htmlEncode(views.get(page.get('view_id')).get('name')) %></td>
@@ -229,12 +232,13 @@
     <table class="table striped">
       <thead>
         <tr>
-          <th>View</th><th>Last Updated</th><th></th>
+          <th></th><th>View</th><th>Last Updated</th><th></th>
         </tr>
       </thead>
       <tbody>
         <% _.each(views, function(view) { %>
           <tr>
+            <td><i class="icon-list-alt"></i></td>
             <td><%= htmlEncode(view.get('name')) %></td>
             <td><%= htmlEncode(view.get('lastupdate')) %></td>
             <td><a class="btn" href="#/views/<%= view.id %>">Edit</a></td>
@@ -246,132 +250,190 @@
 
   <script type="text/template" id="var-list-template">
     <a href="#/vars/new" class="btn btn-primary"><i class="icon-plus-sign icon-white"></i> Add a Var</a>
-    <br/><br/>
-    <table class="table striped">
-      <thead>
-        <tr>
-          <th>Var</th><th>Value</th><th>Last Updated</th><th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% _.each(vars, function(vari) { %>
-          <tr>
-            <td><%= htmlEncode(vari.get('name')) %></td>
-            <td><%= htmlEncode(vari.get('value')) %></td>
-            <td><%= htmlEncode(vari.get('lastupdate')) %></td>
-            <td><a class="btn" href="#/vars/<%= vari.id %>">Edit</a></td>
-          </tr>
-        <% }); %>
-      </tbody>
-    </table>
+      <br/><br/><br/>
+      <% _.each(vars, function(vari) { %>
+        <form class="edit-var-quickform">
+          <div class="input-prepend input-append">
+          <input name="name" class="span2 add-on edit-var-name" type="text" value="<%= vari ? vari.get('name') : '' %>" placeholder="name" />
+          <input name="value" class="span7 edit-var-value" type="text" value="<%= vari ? vari.get('value') : '' %>" placeholder="value" />
+          <% if (vari) { %>
+            <span class="add-on delete-var-quickform pointer" data-var-id="<%= vari.id %>"><i class="icon-remove-sign"></i></span>
+          </div>
+            &nbsp;&nbsp;&nbsp;
+            <span nowrap class="muted"><%= htmlEncode(vari.get('lastupdate')) %></span>
+            <input name="id" type="hidden" value="<%= vari.id %>" />
+          <% } else { %>
+          </div> 
+          <% } %>
+        </form>
+      <% }); %>
   </script>
 
   <script type="text/template" id="edit-user-template">
-    <form class="edit-user-form">
+    <form class="edit-user-form form-horizontal">
       <legend><%= user ? 'Edit' : 'New' %> User</legend>
-      <label>First Name</label>
-      <input name="firstname" type="text" value="<%= user ? user.get('firstname') : '' %>" placeholder="" />
-      <label>Last Name</label>
-      <input name="lastname" type="text" value="<%= user ? user.get('lastname') : '' %>" placeholder=""/>
-      <label>Email</label>
-      <input name="email" type="text" value="<%= user ? user.get('email') : '' %>" placeholder="required" />
-      <label>Organization</label>
-      <input name="orgname" type="text" value="<%= user ? user.get('orgname') : '' %>" placeholder="" />
-      <label>Phone</label>
-      <input name="phone" type="text" value="<%= user ? user.get('phone') : '' %>" placeholder="" />
-      <label>Role</label>
-      <select name="role">
-        <% _(role_options).each(function(option) { %>
-        <option value="<%= option %>"<%= (user && (option == user.get('role'))) ? ' selected' : ''%>><%= option %></option>
-        <% }); %>
-      </select>
-      <label>Status</label>
-      <select name="status">
-        <% _(status_options).each(function(option) { %>
-        <option value="<%= option %>"<%= (user && (option == user.get('status'))) ? ' selected' : ''%>><%= option %></option>
-        <% }); %>
-      </select>
-      <label>API Key</label>
-      <input name="apikey" type="text" value="<%= user ? user.get('apikey') : '' %>" placeholder="make something up" />
-      <% if (user) { %>
-      <p>ID <%= user.id %></p>
-      <p>Created <%= user.get('creation') %></p>
-      <p>Last updated <%= user.get('lastupdate') %></p>
-      <% } %>
+
+      <div class="control-group">
+        <label class="control-label" for="inputFirstname">Name</label>
+        <div class="controls">
+          <input type="text" id="inputFirstname" class="span2" name="firstname" value="<%= user ? user.get('firstname') : '' %>" placeholder="first" />
+          <input type="text" id="inputLastname" class="span2" name="lastname" value="<%= user ? user.get('lastname') : '' %>" placeholder="last" />
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="inputEmail">Email</label>
+        <div class="controls">
+          <input type="text" id="inputEmail" class="span4" name="email" value="<%= user ? user.get('email') : '' %>" placeholder="required" />
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="inputOrgname">Organization</label>
+        <div class="controls">
+          <input type="text" id="inputOrgname" class="span4" name="orgname" value="<%= user ? user.get('orgname') : '' %>" placeholder="" />
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="inputPhone">Phone</label>
+        <div class="controls">
+          <input type="text" id="inputPhone" name="phone" value="<%= user ? user.get('phone') : '' %>" placeholder="" />
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="inputRole">Role</label>
+        <div class="controls">
+          <select name="role" id="inputRole">
+            <% _(role_options).each(function(option) { %>
+            <option value="<%= option %>"<%= (user && (option == user.get('role'))) ? ' selected' : ''%>><%= option %></option>
+            <% }); %>
+          </select>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="inputStatus">Status</label>
+        <div class="controls">
+          <select name="status" id="inputStatus">
+            <% _(status_options).each(function(option) { %>
+            <option value="<%= option %>"<%= (user && (option == user.get('status'))) ? ' selected' : ''%>><%= option %></option>
+            <% }); %>
+          </select>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="inputApikey">API Key</label>
+        <div class="controls">
+          <input type="text" id="inputApikey" name="apikey" value="<%= user ? user.get('apikey') : '' %>" placeholder="make something up" />
+        </div>
+      </div>
       <hr />
       <button type="submit" class="btn btn-primary">Save</button>
       <button type="button" class="btn cancel">Cancel</button>
       <% if (user) { %>
       <input type="hidden" name="id" value="<%= user.id %>" />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button type="button" data-user-id="<%= user.id %>" class="btn btn-danger delete-user">Delete User</button>
+      <button type="button" data-user-id="<%= user.id %>" class="btn btn-danger delete-user">Delete User</button><br/><br/>
+      <table class="pull-right muted">
+        <tr><td>user id </td><td><%= user.id %></td></tr>
+        <tr><td>created </td><td><%= user.get('creation') %></td></tr>
+        <tr><td>last updated </td><td><%= user.get('lastupdate') %></td></tr>
+      </table>
       <% } %>
     </form>
   </script>
 
   <script type="text/template" id="edit-page-template">
-    <form class="edit-page-form">
+    <form class="edit-page-form form-horizontal">
       <legend><%= page ? 'Edit' : 'New' %> Page</legend>
-      <label>Name</label>
-      <input name="name" type="text" value="<%= page ? page.get('name') : '' %>" placeholder="name" />
-      <label>Path</label>
-      <input name="path" type="text" value="<%= page ? page.get('path') : '' %>" placeholder="put/something/here"/>&nbsp;&nbsp;&nbsp;<a href="<%= page ? page.get('path') : '' %>">Go</a>
-      <label>View</label>
-      <select name="view_id">
-        <% views.each(function(view) { %>
-        <option value="<%= view.id %>"<%= (page && (view.id == page.get('view_id'))) ? ' selected' : ''%>><%= view.get('name') %></option>
-        <% }); %>
-      </select>
-      <label>Content</label>
-      <textarea name="content" class="html-textarea" rows="10"><%= page ? page.get('content') : '' %></textarea>
-      <label>Access</label>
-      <select name="access">
-        <% _(access_options).each(function(option) { %>
-        <option value="<%= option %>"<%= (page && (option == page.get('access'))) ? ' selected' : ''%>><%= option %></option>
-        <% }); %>
-      </select>
-      <label>Status</label>
-      <select name="status">
-        <% _(status_options).each(function(option) { %>
-        <option value="<%= option %>"<%= (page && (option == page.get('status'))) ? ' selected' : ''%>><%= option %></option>
-        <% }); %>
-      </select>
-      <% if (page) { %>
-      <p>ID <%= page.id %></p>
-      <p>Created <%= page.get('creation') %></p>
-      <p>Published <%= page.get('publication') %></p>
-      <p>Last updated <%= page.get('lastupdate') %></p>
-      <% } %>
-      <hr />
+      <div class="span6">
+        <fieldset>
+          <div class="control-group">
+            <label class="control-label" for="inputName">Name</label>
+            <div class="controls">
+              <input type="text" id="inputName" class="span4" name="name" value="<%= page ? page.get('name') : '' %>" placeholder="" />
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="inputPath">Path</label>
+            <div class="controls">
+              <div class="input-append">
+              <input type="text" id="inputPath" class="span4" name="path" value="<%= page ? page.get('path') : '' %>" placeholder="/put/something/here" />
+              <a class="add-on" href="<%= page ? page.get('path') : '' %>">Go</a>
+              </div>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="inputView">View</label>
+            <div class="controls">
+              <select name="view_id" id="inputView">
+                <% views.each(function(option) { %>
+                <option value="<%= option.id %>"<%= (page && (option.id == page.get('view_id'))) ? ' selected' : ''%>><%= option.get('name') %></option>
+                <% }); %>
+              </select>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+      <div class="span4">
+        <fieldset>
+          <div class="control-group">
+            <label class="control-label" for="inputAccess">Access</label>
+            <div class="controls">
+              <select name="status" id="inputAccess">
+                <% _(access_options).each(function(option) { %>
+                <option value="<%= option %>"<%= (page && (option == page.get('access'))) ? ' selected' : ''%>><%= option %></option>
+                <% }); %>
+              </select>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="inputStatus">Status</label>
+            <div class="controls">
+              <select name="status" id="inputStatus">
+                <% _(status_options).each(function(option) { %>
+                <option value="<%= option %>"<%= (page && (option == page.get('status'))) ? ' selected' : ''%>><%= option %></option>
+                <% }); %>
+              </select>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+      <textarea name="content" id="inputContent" class="html-textarea" rows="10"><%= page ? page.get('content') : '' %></textarea><br/><br/>
       <button type="submit" class="btn btn-primary">Save</button>
       <button type="button" class="btn cancel">Cancel</button>
       <% if (page) { %>
       <input type="hidden" name="id" value="<%= page.id %>" />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button type="button" data-page-id="<%= page.id %>" class="btn btn-danger delete-page">Delete Page</button>
+      <button type="button" data-page-id="<%= page.id %>" class="btn btn-danger delete-page">Delete Page</button><br/><br/>
+      <table class="pull-right muted">
+        <tr><td>page id </td><td><%= page.id %></td></tr>
+        <tr><td>created </td><td><%= page.get('creation') %></td></tr>
+        <tr><td>published </td><td><%= page.get('publication') %></td></tr>
+        <tr><td>last updated </td><td><%= page.get('lastupdate') %></td></tr>
+      </table>
       <% } %>
     </form>
   </script>
 
   <script type="text/template" id="edit-view-template">
-    <form class="edit-view-form">
+    <form class="edit-view-form form-horizontal">
       <legend><%= view ? 'Edit' : 'New' %> View</legend>
-      <label>Name</label>
-      <input name="name" type="text" value="<%= view ? view.get('name') : '' %>" placeholder="unique name" />
-      <label>Template</label>
-      <textarea name="template" class="html-textarea" rows="10"><%= view ? view.get('template') : '{{content}}' %></textarea>
-      <% if (view) { %>
-      <p>ID <%= view.id %></p>
-      <p>Created <%= view.get('creation') %></p>
-      <p>Last updated <%= view.get('lastupdate') %></p>
-      <% } %>
-      <hr />
+      <div class="control-group">
+        <label class="control-label" for="inputName">Name</label>
+        <div class="controls">
+          <input type="text" id="inputName" class="span4" name="name" value="<%= view ? view.get('name') : '' %>" placeholder="must be unique" />
+        </div>
+      </div>
+      <textarea name="template" class="html-textarea" rows="10"><%= view ? view.get('template') : '{{content}}' %></textarea><br/><br/>
       <button type="submit" class="btn btn-primary">Save</button>
       <button type="button" class="btn cancel">Cancel</button>
       <% if (view) { %>
       <input type="hidden" name="id" value="<%= view.id %>" />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button type="button" data-view-id="<%= view.id %>" class="btn btn-danger delete-view">Delete View</button>
+      <button type="button" data-view-id="<%= view.id %>" class="btn btn-danger delete-view">Delete View</button><br/><br/>
+      <table class="pull-right muted">
+        <tr><td>view id </td><td><%= view.id %></td></tr>
+        <tr><td>created </td><td><%= view.get('creation') %></td></tr>
+        <tr><td>last updated </td><td><%= view.get('lastupdate') %></td></tr>
+      </table>
       <% } %>
     </form>
   </script>
@@ -379,22 +441,23 @@
   <script type="text/template" id="edit-var-template">
     <form class="edit-var-form">
       <legend><%= vari ? 'Edit' : 'New' %> Var</legend>
-      <label>Var Name</label>
-      <input name="name" type="text" value="<%= vari ? vari.get('name') : '' %>" placeholder="name" />
-      <label>Value</label>
-      <input name="value" type="text" value="<%= vari ? vari.get('value') : '' %>" placeholder="empty"/>
-      <% if (vari) { %>
-      <p>ID <%= vari.id %></p>
-      <p>Created <%= vari.get('creation') %></p>
-      <p>Last updated <%= vari.get('lastupdate') %></p>
-      <% } %>
-      <hr />
+      <br/>
+      <div class="input-prepend">
+        <input name="name" class="span2 add-on" type="text" value="<%= vari ? vari.get('name') : '' %>" placeholder="name" />
+        <input name="value" class="span8" type="text" value="<%= vari ? vari.get('value') : '' %>" placeholder="value"/>
+      </div>
+      <br/><br/>
       <button type="submit" class="btn btn-primary">Save</button>
       <button type="button" class="btn cancel">Cancel</button>
       <% if (vari) { %>
       <input type="hidden" name="id" value="<%= vari.id %>" />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button type="button" data-var-id="<%= vari.id %>" class="btn btn-danger delete-var">Delete Var</button>
+      <button type="button" data-var-id="<%= vari.id %>" class="btn btn-danger delete-var">Delete Var</button><br/><br/>
+      <table class="pull-right muted">
+        <tr><td>var id </td><td><%= vari.id %></td></tr>
+        <tr><td>created </td><td><%= vari.get('creation') %></td></tr>
+        <tr><td>last updated </td><td><%= vari.get('lastupdate') %></td></tr>
+      </table>
       <% } %>
     </form>
   </script>
@@ -402,84 +465,97 @@
   <script type="text/template" id="edit-site-template">
     <form class="edit-site-form form-horizontal">
       <legend>Site Configuration</legend>
-      <div class="control-group">
-        <label class="control-label" for="inputSiteName">Site Name</label>
-        <div class="controls">
-          <input type="text" id="inputSiteName" name="site_name" value="<%= site ? site.get('site_name') : '' %>" placeholder="unnamed" />
+      <br/>
+      <div class="span6">
+      <fieldset>
+        <div class="control-group">
+          <label class="control-label" for="inputSiteName">Site Name</label>
+          <div class="controls">
+            <input type="text" id="inputSiteName" class="span4" name="site_name" value="<%= site ? site.get('site_name') : '' %>" placeholder="unnamed" />
+          </div>
         </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="inputSiteUrl">Site URL</label>
-        <div class="controls">
-          <input type="text" id="inputSiteUrl" name="site_url" value="<%= site ? site.get('site_url') : '' %>" placeholder="http://yourdomain.com" />
+        <div class="control-group">
+          <label class="control-label" for="inputSiteUrl">Site URL</label>
+          <div class="controls">
+            <input type="text" id="inputSiteUrl" class="span4" name="site_url" value="<%= site ? site.get('site_url') : '' %>" placeholder="http://yourdomain.com" />
+          </div>
         </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="inputServerPort">Server Port</label>
-        <div class="controls">
-          <input type="text" id="inputServerPort" name="server_port" value="<%= site ? site.get('server_port') : '' %>" placeholder="80" />
+        <div class="control-group">
+          <label class="control-label" for="inputServerPort">Server Port</label>
+          <div class="controls">
+            <input type="text" id="inputServerPort" class="span2" name="server_port" value="<%= site ? site.get('server_port') : '' %>" placeholder="80" />
+          </div>
         </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="inputCorsMode">CORS Mode</label>
-        <div class="controls">
-          <select name="cors_mode" id="inputCorsMode">
-            <% _(cors_mode_options).each(function(option) { %>
-            <option value="<%= option %>"<%= (site && (option == site.get('cors_mode'))) ? ' selected' : ''%>><%= option %></option>
-            <% }); %>
-          </select>
+        <div class="control-group">
+          <label class="control-label" for="inputCorsMode">CORS Mode</label>
+          <div class="controls">
+            <select name="cors_mode" id="inputCorsMode">
+              <% _(cors_mode_options).each(function(option) { %>
+              <option value="<%= option %>"<%= (site && (option == site.get('cors_mode'))) ? ' selected' : ''%>><%= option %></option>
+              <% }); %>
+            </select>
+          </div>
         </div>
-      </div>
-      <!--
-      <div class="control-group">
-        <label class="control-label" for="inputCorsWhitelist">CORS White List</label>
-        <div class="controls">
-          <input type="text" id="inputCorsWhitelist" name="cors_whitelist" value="<%= site ? site.get('cors_whitelist') : '' %>" placeholder="" />
+        <!--
+        <div class="control-group">
+          <label class="control-label" for="inputCorsWhitelist">CORS White List</label>
+          <div class="controls">
+            <input type="text" id="inputCorsWhitelist" name="cors_whitelist" value="<%= site ? site.get('cors_whitelist') : '' %>" placeholder="" />
+          </div>
         </div>
+        -->
+      </fieldset>
       </div>
-      -->
-      <div class="control-group">
-        <label class="control-label" for="inputEmailFrom">Email Address</label>
-        <div class="controls">
-          <input type="text" id="inputEmailFrom" name="email_from" value="<%= site ? site.get('email_from') : '' %>" placeholder="notifications sent from address" />
+
+      <div class="span4">
+      <fieldset>
+        <div class="control-group">
+          <label class="control-label" for="inputEmailFrom">Email Address</label>
+          <div class="controls">
+            <input type="text" id="inputEmailFrom" name="email_from" value="<%= site ? site.get('email_from') : '' %>" placeholder="notifications sent from address" />
+          </div>
         </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="inputSmtpService">SMTP Service</label>
-        <div class="controls">
-          <select name="cors_mode" id="inputSmtpService">
-            <% _(smtp_service_options).each(function(option) { %>
-            <option value="<%= option %>"<%= (site && (option == site.get('smtp_service'))) ? ' selected' : ''%>><%= option %></option>
-            <% }); %>
-          </select>
+        <div class="control-group">
+          <label class="control-label" for="inputSmtpService">SMTP Service</label>
+          <div class="controls">
+            <select name="cors_mode" id="inputSmtpService">
+              <% _(smtp_service_options).each(function(option) { %>
+              <option value="<%= option %>"<%= (site && (option == site.get('smtp_service'))) ? ' selected' : ''%>><%= option %></option>
+              <% }); %>
+            </select>
+          </div>
         </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="inputSmtpUsername">SMTP Username</label>
-        <div class="controls">
-          <input type="text" id="inputSmtpUsername" name="smtp_username" value="<%= site ? site.get('smtp_username') : '' %>" placeholder="" />
+        <div class="control-group">
+          <label class="control-label" for="inputSmtpUsername">SMTP Username</label>
+          <div class="controls">
+            <input type="text" id="inputSmtpUsername" name="smtp_username" value="<%= site ? site.get('smtp_username') : '' %>" placeholder="" />
+          </div>
         </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="inputSmtpPassword">SMTP Password</label>
-        <div class="controls">
-          <input type="password" id="inputSmtpPassword" name="smtp_password" value="<%= site ? site.get('smtp_password') : '' %>" placeholder="" />
+        <div class="control-group">
+          <label class="control-label" for="inputSmtpPassword">SMTP Password</label>
+          <div class="controls">
+            <input type="password" id="inputSmtpPassword" name="smtp_password" value="<%= site ? site.get('smtp_password') : '' %>" placeholder="" />
+          </div>
         </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="inputAdminPath">Admin Path</label>
-        <div class="controls">
-          <input type="text" id="inputAdminPath" name="admin_path" value="<%= site ? site.get('admin_path') : '' %>" placeholder="/admin" />
-          <p>(The api path will be <%= site ? site.get('admin_path') : '' %>/api)</p>
+        <div class="control-group">
+          <label class="control-label" for="inputAdminPath">Admin Path</label>
+          <div class="controls">
+            <input type="text" id="inputAdminPath" name="admin_path" value="<%= site ? site.get('admin_path') : '' %>" placeholder="/admin" />
+            <p>(The api path will be <%= site ? site.get('admin_path') : '' %>/api)</p>
+          </div>
         </div>
+        </fieldset>
       </div>
-      
-      <hr />
-      <button type="submit" class="btn btn-primary">Save</button>
-      <button type="button" class="btn cancel">Cancel</button>
-      <% if (site) { %>
-      <input type="hidden" name="id" value="<%= site.id %>" />
-      <% } %>
+      <div class="span12">
+        <fieldset>
+          <hr />
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn cancel">Cancel</button>
+          <% if (site) { %>
+          <input type="hidden" name="id" value="<%= site.id %>" />
+          <% } %>
+        </fieldset>
+      </div>
     </form>
   </script>
 
@@ -505,6 +581,7 @@
 
   <script type="text/javascript" src="admin.js"></script>
 
+  <script>$(".attribution").html($(".attribution").html() + " " + version);</script>
 
 </body>
 

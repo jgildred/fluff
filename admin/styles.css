@@ -7,6 +7,10 @@ body {
   padding-bottom: 0px;
   margin-bottom: 0px;
 }
+
+.pointer {
+  cursor: pointer;
+}
 .darkbg {
   background: #434343; /* for non-css3 browsers */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#434343', endColorstr='#797979'); /* for IE */

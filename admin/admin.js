@@ -213,10 +213,45 @@ var ViewListView = Backbone.View.extend({
 // Setup the var list view
 var VarListView = Backbone.View.extend({
   el: '.page',
-  render: function () {
+  events: {
+    'submit .edit-var-quickform'   : 'noSubmit',
+    'change .edit-var-name'        : 'saveVar',
+    'change .edit-var-value'       : 'saveVar',
+    'click  .delete-var-quickform' : 'deleteVar'
+  },
+  noSubmit: function () {
+    return false;
+  },
+  saveVar: function (ev) {
+    var varDetails = $(ev.currentTarget).parents("form:first").serializeObject();
+    this.var = this.vars.get(varDetails.id);
+    if (!this.var) {
+      this.var = new Var();
+    }
     var that = this;
-    var vars = new Vars();
-    vars.fetch({
+    this.var.save(varDetails, {
+      success: function (vari) {
+        console.log('var saved');
+        that.render();
+      }
+    });
+    //return false;
+  },
+  deleteVar: function (ev) {
+    var that = this;
+    alert(JSON.stringify(this.vars.get($(ev.currentTarget).attr('data-var-id'))));
+    this.var = this.vars.get($(ev.currentTarget).attr('data-var-id'));
+    this.var.destroy({
+      success: function () {
+        console.log('var destroyed');
+        that.render();
+      }
+    })
+  },
+  render: function () {
+    this.vars = new Vars();
+    var that = this;
+    this.vars.fetch({
       success: function (vars) {
         var template = _.template($('#var-list-template').html(), {vars: vars.models});
         that.$el.html(template);
@@ -646,6 +681,7 @@ router.on('route:list-users', function() {
   userListView.render();
 })
 router.on('route:edit-user', function(id) {
+  navselect("users");
   // Render user detail view
   userDetailView.render({id: id});
 })

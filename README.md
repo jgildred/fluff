@@ -13,8 +13,10 @@ Installation:
 6. open http://localhost:3000/admin
 
 To do:
-- use horizontal layout forms for detail views
+- fix cors whitelist in site edit view
+- user password change in admin
 - check for data before init db
+- add alert API and basic alert cases
 - enforce page status
 - enforce page access
 - enforce account status
