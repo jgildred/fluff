@@ -27,44 +27,44 @@ To do:
 Would be nice:
 
 - record which user created each page, view, var
-- possibly add page versioning
-- possibly add a model manager like django
-- possibly add ability to edit error pages
+- page versioning
+- add a model manager like django
+- add ability to edit error pages
 
 REST API:
+All API urls must be preceded by '[admin path]/api'.
 
-  GET [admin path]/api/auth     
-  GET [admin path]/api/auth/:id 
-  POST[admin path]/api/auth 
-  PUT [admin path]/api/auth/:id
-  DELETE [admin path]/api/auth/:id
+  GET /auth     
+  GET /auth/:id 
+  POST/auth 
+  PUT /auth/:id
+  DELETE /auth/:id
 
-  GET [admin path]/api/users  
-  GET [admin path]/api/users/:id
-  POST[admin path]/api/users
-  PUT [admin path]/api/users/:id
-  PUT [admin path]/api/verify/:token
-  DELETE [admin path]/api/users/:id
+  GET /users  
+  GET /users/:id
+  POST/users
+  PUT /users/:id
+  PUT /verify/:token
+  DELETE /users/:id
 
-  GET [admin path]/api/sites 
-  GET [admin path]/api/sites/:id 
-  PUT [admin path]/api/sites/:id ;} );
+  GET /sites 
+  GET /sites/:id 
+  PUT /sites/:id ;} );
 
-  GET [admin path]/api/pages 
-  GET [admin path]/api/pages/:id 
-  POST[admin path]/api/pages
-  PUT [admin path]/api/pages/:id 
-  DELETE [admin path]/api/pages/:id
+  GET /pages 
+  GET /pages/:id 
+  POST/pages
+  PUT /pages/:id 
+  DELETE /pages/:id
 
-  GET [admin path]/api/views 
-  GET [admin path]/api/views/:id
-  POST[admin path]/api/views  
-  PUT [admin path]/api/views/:id 
-  DELETE [admin path]/api/views/:id 
+  GET /views 
+  GET /views/:id
+  POST/views  
+  PUT /views/:id 
+  DELETE /views/:id 
 
-  GET [admin path]/api/vars 
-  GET [admin path]/api/vars/:id 
-  POST[admin path]/api/vars  
-  PUT [admin path]/api/vars/:id
-  DELETE [admin path]/api/vars/:id 
-  
+  GET /vars 
+  GET /vars/:id 
+  POST/vars  
+  PUT /vars/:id
+  DELETE /vars/:id 
