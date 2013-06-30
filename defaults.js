@@ -8,8 +8,8 @@ exports.Config = {
   smtp_username : 'user@domain.com',
   smtp_password : 'password',           
   email_from    : 'noreply@domain.com', // used in for email notifications
-  app_service   : 'Custom Install',      // 'Heroku' or 'Custom Install'
-  db_service    : 'Other MongoDB',    // 'MongoLab' or 'Other MongoDB'
+  app_service   : 'Heroku',      // 'Heroku' or 'Custom Install'
+  db_service    : 'MongoLab',    // 'MongoLab' or 'Other MongoDB'
   db_uri        : 'mongodb://localhost:27017/fluff', // db_uri required for 'Other MongoDB'
   site_url      : 'http://localhost', // used in email verification message body
   server_port   : '3000',             // ignored when using Heroku
