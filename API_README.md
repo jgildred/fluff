@@ -5,13 +5,13 @@ All API urls must be preceded by '[admin path]/api'.
 
 - GET /auth     
 - GET /auth/:id 
-- POST/auth 
+- POST /auth 
 - PUT /auth/:id
 - DELETE /auth/:id
 
 - GET /users  
 - GET /users/:id
-- POST/users
+- POST /users
 - PUT /users/:id
 - PUT /verify/:token
 - DELETE /users/:id
@@ -22,18 +22,18 @@ All API urls must be preceded by '[admin path]/api'.
 
 - GET /pages 
 - GET /pages/:id 
-- POST/pages
+- POST /pages
 - PUT /pages/:id 
 - DELETE /pages/:id
 
 - GET /views 
 - GET /views/:id
-- POST/views  
+- POST /views  
 - PUT /views/:id 
 - DELETE /views/:id 
 
 - GET /vars 
 - GET /vars/:id 
-- POST/vars  
+- POST /vars  
 - PUT /vars/:id
 - DELETE /vars/:id 
