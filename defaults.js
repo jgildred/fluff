@@ -2,15 +2,15 @@
 // DEFAULT CONFIGURATION
 
 exports.Config = {
-  initialize     : false,                 // set to true to initialize DB with seed data
+  initialize     : true,                 // set to true to initialize DB with seed data
   name           : 'Web Site',
   domain         : 'localhost',           // used in email verification message body
   port           : 3000,                  // ignored unless app_service is 'Custom Install'   
   ssl            : false,                 // used in constructing site url
   email_from     : 'noreply@domain.com',  // used for email notifications
-  app_service    : 'Custom Install',      // 'Heroku' or 'Custom Install'
+  app_service    : 'Heroku',      // 'Heroku' or 'Custom Install'
   db : {
-    service      : 'Other MongoDB',       // 'MongoLab' or 'Other MongoDB'
+    service      : 'MongoLab',       // 'MongoLab' or 'Other MongoDB'
     uri          : 'mongodb://localhost:27017/fluff2' // uri required for 'Other MongoDB'
   },
   admin_path     : '/admin',              // change it to avoid conflict with your pages
