@@ -307,7 +307,7 @@ var initDb = function (req, res, callback) {
         console.log(count + " site(s) in the DB already.");
       }
       else {
-        console.log("DB init error.");
+        console.log("DB init error: " + err);
       }
       console.log("Wipe DB and restart app, or set 'initialize' to false in defaults.js.");
     }
@@ -349,7 +349,13 @@ var loadConfig = function (req, res, callback) {
       console.log("loaded config: " + JSON.stringify(active_config));
     }
     else {
-      console.log("config load errer: " + err);
+      if (!data) {
+        console.log("No site found in the DB.");
+      }
+      else {
+        console.log("DB load error: " + err);
+      }
+      console.log("Point to another DB and restart app, or set 'initialize' to true in defaults.js.");
     }
     if (callback) {
       callback(req, res);
