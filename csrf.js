@@ -14,6 +14,7 @@ function defaultValue(req) {
     || (req.headers['x-csrf-token']);
 }
 var checkToken = function(req, res, next){
+    var apikey = req.session.apikey;
     var token = req.session._csrf || (req.session._csrf = generateToken(24));
     if ('GET' == req.method || 'HEAD' == req.method || 'OPTIONS' == req.method) { return next(); }
     var val = defaultValue(req);
@@ -22,7 +23,7 @@ var checkToken = function(req, res, next){
     console.log("REQ BODY: " + JSON.stringify(req.body));
     console.log("CSRF on server:   " + token);
     console.log("CSRF from client: " + val);
-    // allow signup, verify and login without csrf
+    // allow signup, verify, pwreset, pwchange, and login without csrf
     var bypass = false;
     if (
       (req.method == 'GET')
@@ -36,6 +37,14 @@ var checkToken = function(req, res, next){
       || (
         (req.method == 'PUT')
         && (/\/api\/verify/i.test(req.path))
+      ) 
+      || (
+        (req.method == 'PUT')
+        && (/\/api\/pwreset/i.test(req.path))
+      ) 
+      || (
+        (req.method == 'PUT')
+        && (/\/api\/pwchange/i.test(req.path))
       ) 
     ) {
       bypass = true;

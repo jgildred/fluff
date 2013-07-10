@@ -32,6 +32,7 @@ exports.check = function(req, res){
 
 // Response for POST with email and password
 exports.attach = function(req, res){
+  console.log("trying to auth");
   if (req.body.email && req.body.password) {
     app.User.findOne({"email": req.body.email}).select("firstname lastname email role pwhash salt status").exec(function (err, user) {
       if (err || !user) {
@@ -43,31 +44,35 @@ exports.attach = function(req, res){
       }
       else {
         console.log("LOGIN FOUND USER: " + JSON.stringify(user));
-        if (user.pwMatch(req.body.password)) {
-          console.log("LOGIN USER: " + JSON.stringify(user));
-          req.session.auth    = true;
-          req.session.user_id = user._id;
-          req.session.email   = user.email;
-          req.session.role    = user.role;
-          req.session.name    = user.displayname;
-          req.session.status  = user.status;
-          var body = {
-            auth:    req.session.auth,
-            _id:     req.session.id,
-            user_id: req.session.user_id,
-            email:   req.session.email,
-            role:    req.session.role,
-            name:    req.session.name,
-            status:  req.session.status,
-            _csrf:   req.session._csrf
-          };
-          console.log("LOGIN: " + user.displayname);
+        if (user.status == "Active") {
+          if (user.pwMatch(req.body.password)) {
+            console.log("LOGIN USER: " + JSON.stringify(user));
+            req.session.auth    = true;
+            req.session.user_id = user._id;
+            req.session.email   = user.email;
+            req.session.role    = user.role;
+            req.session.name    = user.displayname;
+            req.session.status  = user.status;
+            var body = {
+              auth:    req.session.auth,
+              _id:     req.session.id,
+              user_id: req.session.user_id,
+              email:   req.session.email,
+              role:    req.session.role,
+              name:    req.session.name,
+              status:  req.session.status,
+              _csrf:   req.session._csrf
+            };
+            console.log("LOGIN: " + user.displayname);
+          }
+          else {
+            req.session.auth = false;
+            app.msgResponse(req, res, 401, "Password is incorrect.");
+          }
         }
         else {
           req.session.auth = false;
-          console.log("BAD PASSWORD");
-          var body = {msg: 'Password is incorrect.'};
-          res.status(401);
+          app.msgResponse(req, res, 401, "Your account is disabled. Please contact an administrator.");
         }
       }
       res.send(body);

@@ -1,14 +1,21 @@
 
 // GENERIC RESOURCE HANDLER
 
+var app = require('../app');
+
 // Handler for GET
-exports.find = function(req, res, resource, filter){
-  resource.find(filter).exec(function (err, data) {
-    if (err) { var body = err; }
-    else { var body = data; }
-    //console.log("FIND MANY:\n" + body);
-    res.json(body);
-  });
+exports.find = function(req, res, resource, filter, callback){
+  if (app.HasAccess(req, res, 'Admins', resource)) {
+    resource.find(filter).exec(function (err, data) {
+      if (err) { var body = err; }
+      else { var body = data; }
+      //console.log("FIND MANY:\n" + body);
+      res.json(body);
+      if (!err && callback) {
+        callback(req, res, data);
+      }
+    });
+  }
 };
 
 exports.where = function(req, res, resource, name, array) {
@@ -21,12 +28,16 @@ exports.where = function(req, res, resource, name, array) {
 }
 
 // Handler for GET with id
-exports.findone = function(req, res, resource){
-  resource.findById(req.params.id).exec(function (err, data) {
+exports.findone = function(req, res, resource, filter, callback){
+  filter = filter ? filter : {_id: req.params.id};
+  resource.findOne(filter).exec(function (err, data) {
     if (err) { var body = err; }
     else { var body = data; }
     //console.log("FIND ONE:\n" + body);
     res.json(body);
+    if (!err && callback) {
+      callback(req, res, data);
+    }
   });
 };
 
@@ -51,20 +62,21 @@ exports.update = function(req, res, resource, filter, callback){
   if (req.body.id)  { delete req.body.id; }
   if (req.body._id) { delete req.body._id; }
   req.body.lastupdate = new Date;
-  if (filter) console.log("FILTER: " + JSON.stringify(filter));
-  resource.findOneAndUpdate(filter ? filter : {"_id": req.params.id}, req.body, function (err, data) {
-    if (err) { var body = err; }
+  filter = filter ? filter : {"_id": req.params.id}
+  console.log("FILTER: " + JSON.stringify(filter));
+  resource.findOneAndUpdate(filter, req.body, function (err, data) {
+    if (err) { 
+      app.msgResponse(req, res, 500, JSON.stringify(err));
+    }
     else { 
       if (filter && !data) {
-        res.status(404);
-        var body = {msg: 'Nothing to update.'};
+        app.msgResponse(req, res, 404, "Nothing to update.");
       }
       else {
-        var body = data;
+        console.log("UPDATE ITEM:\n" + JSON.stringify(data));
+        res.json(data);
       }
     }
-    console.log("UPDATE ITEM:\n" + JSON.stringify(data));
-    res.json(body);
     if (!err && callback) {
       callback(req, res, data);
     }

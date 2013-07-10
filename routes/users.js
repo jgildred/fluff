@@ -6,37 +6,55 @@ var resource = require('./default');
 
 // Preprocessor for GET /users
 exports.find = function(req, res){
-  if (HasAccess(req, res, 'Admin')) {
+  if (app.HasAccess(req, res, 'Admins')) {
     resource.find(req, res, app.User);
   }
 };
 
 // Preprocessor for GET /users/:id
 exports.findone = function(req, res){
-  if (HasAccess(req, res, 'User')) {
+  if (app.HasAccess(req, res, 'Users')) {
     resource.findone(req, res, app.User);
   }
 };
 
 // Preprocessor for POST /users
 exports.create = function(req, res){
-  CleanParams(req, res);
-  var crypto = require('crypto');
-  req.body.salt = crypto.randomBytes(Math.ceil(10 * 3 / 4)).toString('base64').slice(0, 10);
-  req.body.pwhash = crypto.createHash('md5').update(req.body.password + req.body.salt).digest("hex");
-  req.body.verifytoken = encodeURIComponent(crypto.randomBytes(Math.ceil(10 * 3 / 4)).toString('base64').slice(0, 10));
-  resource.create(req, res, app.User, SendVerifyEmail);
+  if (req.body.role || req.body.status) {
+    if (app.HasAccess(req, res, 'Admins')) {
+      if (req.body.password) {
+        var callback = SendVerifyEmail;
+      }
+      else {
+        // if password not supplied, then make one up and force reset
+        req.body.password = randomString();
+        var callback = SendNewResetEmail;
+      }
+      doCreate(req, res, callback);
+    }
+  }
+  else {
+    doCreate(req, res, SendVerifyEmail);
+  }
 };
 
 // Preprocessor for PUT /users/:id
 exports.update = function(req, res){
-  if (HasAccess(req, res, 'User')) {
-    CleanParams(req, res);
-    if (req.session.user_id == req.params.id) {
-      resource.update(req, res, app.User, null, updateSession);
+  if (req.body.role || req.body.status) {
+    if (app.HasAccess(req, res, 'Admins')) {
+      if ((req.body.role == 'User') || (req.body.status == 'Inactive')) {
+        if (isNotLastAdmin(req, res)) {
+          doUpdate(req, res);
+        }
+      }
+      else {
+        doUpdate(req, res);
+      }
     }
-    else {
-      resource.update(req, res, app.User);
+  }
+  else {
+    if (app.HasAccess(req, res, 'Users')) {
+      doUpdate(req, res);
     }
   }
 };
@@ -49,46 +67,36 @@ exports.verify = function(req, res){
   resource.update(req, res, app.User, filter);
 };
 
-// Preprocessor for DELETE /users/:id
-exports.remove = function(req, res){
-  if (HasAccess(req, res, 'Admin')) {
-    resource.remove(req, res, app.User);
+// Preprocessor for POST /pwreset/:email
+exports.pwreset = function(req, res){
+  if (req.params.email) {
+    var filter = {email: req.params.email, status: "Active" };
+    resource.findone(req, res, app.User, filter, SendResetEmail);
+  }
+  else {
+    app.msgResponse(req, res, 400, "Email address is missing from your request.");
   }
 };
 
-var HasAccess = function(req, res, level){
-  if (req.session.auth && (req.session.status == 'Active')) {
-    switch (level) {
-    case 'User':
-      if ((req.session.user_id == req.params.id)
-        || ((req.session.role) && (req.session.role == 'Admin')))
-      {        
-        return true;
-      }
-      else {
-        console.log("MUST BE CORRECT USER OR ADMIN");
-        res.json({msg:'Must be correct user or admin.'});
-        return false;
-      }
-      break;
-    case 'Admin':
-      if ((req.session.role) && (req.session.role == 'Admin')) {
-        return true;
-      }
-      else {
-        console.log("MUST BE ADMIN");
-        res.json({msg:'Must be admin.'});
-        return false;
-      }
-      break;
-    default:
-      return false;
-    }
+// Preprocessor for PUT /pwchange/:token
+exports.pwchange = function(req, res){
+  if (req.body && req.body.password) {
+    var password = req.body.password;
+    req.body = {};
+    req.body.salt = randomString();
+    req.body.pwhash = saltyHash(password, req.body.salt);
   }
-  else {
-    return false;
+  // as the token is stored urlencoded, make sure it's not urldecoded
+  var filter = { "verifytoken": encodeURIComponent(req.params.token) };
+  resource.update(req, res, app.User, filter);
+};
+
+// Preprocessor for DELETE /users/:id
+exports.remove = function(req, res){
+  if (app.HasAccess(req, res, 'Admins') && isNotLastAdmin(req, res)) {
+    resource.remove(req, res, app.User);
   }
-}
+};
 
 // Remove unwanted fields in the request object
 var CleanParams = function(req, res) {
@@ -107,6 +115,23 @@ var CleanParams = function(req, res) {
   }
 }
 
+var doCreate = function(req, res, callback) {
+  CleanParams(req, res);
+  req.body.salt = randomString();
+  req.body.pwhash = saltyHash(req.body.password, req.body.salt);
+  req.body.verifytoken = makeToken();
+  resource.create(req, res, app.User, callback);
+}
+
+var doUpdate = function(req, res) {
+  CleanParams(req, res);
+  var callback = null;
+  if (req.session.user_id == req.params.id) {
+    callback = updateSession;
+  }
+  resource.update(req, res, app.User, null, callback);
+};
+
 var updateSession = function(req, res, user) {
   req.session.email   = user.email;
   req.session.role    = user.role;
@@ -114,16 +139,77 @@ var updateSession = function(req, res, user) {
   console.log("SESSION UPDATED: " + JSON.stringify(req.session));
 }
 
-var SendVerifyEmail = function(req, res, user) {
-  console.log("MAIL TO USER: " + JSON.stringify(user));
-  var link = app.get('config').site_url + "#/verify/" + user.verifytoken;
+var emailToUser = function(mailinfo) {
+  console.log("MAIL TO USER: " + JSON.stringify(mailinfo.user));
   app.mailer.sendMail({
-    from:    app.get('config').email_from,
-    to:      user.email,
-    subject: "Verify Your Email Address",
-    text:    "Hi " + user.displayname + "\n\n" 
-           + "In order to complete the signup process, please go to:\n\n" 
-           + link + "\n"
+    from:    app.App.get('config').email_from,
+    to:      mailinfo.user.email,
+    subject: mailinfo.subject,
+    text:    mailinfo.body
   });
   app.mailer.close();
 }
+
+var SendVerifyEmail = function(req, res, user) {
+  var link  = app.siteUrl + app.App.get('config').admin_path + "/#/verify/" + user.verifytoken;
+  emailToUser({
+    user: user,
+    subject: "Verify Your Email Address",
+    body:    "Hi " + user.shortname + "\n\n" 
+           + "In order to complete the signup process, please go to:\n\n" 
+           + link + "\n"
+  });
+}
+
+var SendResetEmail = function(req, res, user) {
+  var link  = app.siteUrl + app.App.get('config').admin_path + "/#/pwchange/" + user.verifytoken;
+  emailToUser({
+    user: user,
+    subject: "Request to Reset Your Password",
+    body:    "Hi " + user.shortname + "\n\n" 
+           + "We just received a request to reset your password. In order to do so, please go to:\n\n" 
+           + link + "\n"
+  });
+}
+
+var SendNewResetEmail = function(req, res, user) {
+  var link  = app.siteUrl + app.App.get('config').admin_path + "/#/pwchange/" + user.verifytoken;
+  emailToUser({
+    user: user,
+    subject: "Your Account is Ready",
+    body:    "Hi " + user.shortname + "\n\n" 
+           + "We just setup a new user account for you. In order to complete the setup process, please go to:\n\n" 
+           + link + "\n"
+  });
+}
+
+// make sure it's not the last admin
+var isNotLastAdmin = function (req, res) {
+  app.User.count({role: "Admin"}).exec(function (err, count) {
+    if (!err && (count > 1)) { 
+      console.log("more than one admin left");
+      return true;
+    }
+    else {
+      app.msgResponse(req, res, 403, "Sorry, you can't remove or disable the last admin.");
+      return false;
+    }
+  });
+} 
+
+var randomString = function () {
+  var crypto = require('crypto');
+  return crypto.randomBytes(Math.ceil(10 * 3 / 4)).toString('base64').slice(0, 10);
+}
+exports.randomString = randomString;
+
+var saltyHash = function (text, salt) {
+  var crypto = require('crypto');
+  return crypto.createHash('md5').update(text + salt).digest("hex");
+}
+exports.saltyHash = saltyHash;
+
+var makeToken = function () {
+  return encodeURIComponent(randomString());
+}
+exports.makeToken = makeToken;

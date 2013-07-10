@@ -18,15 +18,28 @@ var a = this.serializeArray();
   return o;
 };
 
+// prefilter for all ajax calls
+$.ajaxPrefilter( function( options, originalOptions, jqXHR ) {
+  // Modify options, control originalOptions, store jqXHR, etc
+  options.url = options.url + "?apikey=" + encodeURIComponent(apikey);
+});
+
 // on page load
 function init () {
-  
   switch (true) {
     case /#\/signup/i.test(window.location.href):
       loadnavbar();
       Backbone.history.start();
       break;
     case /#\/verify/i.test(window.location.href):
+      loadnavbar();
+      Backbone.history.start();
+      break;
+    case /#\/pwreset/i.test(window.location.href):
+      loadnavbar();
+      Backbone.history.start();
+      break;
+    case /#\/pwchange/i.test(window.location.href):
       loadnavbar();
       Backbone.history.start();
       break;
@@ -101,7 +114,6 @@ var Session = Backbone.Model.extend({
       if(typeof that.get('_csrf') !== 'undefined') {
         jqXHR.setRequestHeader('X-CSRF-Token',
         that.get('_csrf'));
-        // alert(that.get('_csrf'));
       }
     });
   },
@@ -155,6 +167,164 @@ var Vars = Backbone.Collection.extend({
 });
 var Sites = Backbone.Collection.extend({
   url: apibase + '/sites'
+});
+
+// Setup the signup view
+var SignUpView = Backbone.View.extend({
+  el: '.popup',
+  events: {
+    'submit .signup-form': 'saveUser',
+    'click .close'       : 'close'
+  },
+  saveUser: function (ev) {
+    var userDetails = $(ev.currentTarget).serializeObject();
+    var user = new User();
+    user.save(userDetails, {
+      success: function (user) {
+        $('.modal-body').html($('.signup-step2').html());
+      },
+      error: function (model, xhr) {
+        console.log(xhr);
+        if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
+          alertView.render({label:"Save User", msg: $.parseJSON(xhr.responseText).msg});
+        }
+      }
+    });
+    return false;
+  },
+  close: function () {
+    window.history.back();
+  },
+  render: function (options) {
+    var template = _.template($('#signup-template').html(), {user: null});
+    this.$el.html(template);
+    $('#signup-modal').modal('show');
+  }
+});
+
+// Setup the login view
+var LoginView = Backbone.View.extend({
+  el: '.popup',
+  events: {
+    'submit .login-form'  : 'login',
+    'click  .close'       : 'close'
+  },
+  login: function (ev) {
+    var loginDetails = $(ev.currentTarget).serializeObject();
+    session.login(loginDetails, function () {
+      if (session.get("auth")) {
+        switch (session.get("status")) {
+          case 'inactive':
+            $('.alert-msg').html('This account has been deactivated.');
+            $('.login-fail').show();
+            break;
+          case 'unverified':
+            $('.alert-msg').html('Please check your email to verify.');
+            $('.login-fail').show();
+            break;
+          default:
+            $('#login-modal').modal('hide');
+            if (session.get("role") == "Admin") {
+              router.navigate('pages', {trigger:true});
+              loadnavbar();
+            }
+            else {
+              window.location.href = "/";
+            }
+            break;
+        } 
+      }
+      else {
+        $('.alert-msg').html('Login failed. Please try again.');
+        $('.login-fail').show();
+      }
+    });
+    return false;
+  },
+  close: function () {
+    window.history.back();
+  },
+  render: function (options) {
+    var template = $('#login-template').html();
+    this.$el.html(template);
+    $('#login-modal').modal('show');
+  }
+});
+
+// Setup the password reset view
+var PwresetView = Backbone.View.extend({
+  el: '.popup',
+  events: {
+    'click .pwreset' : 'requestReset',
+    'click .close' : 'close'
+  },
+  requestReset: function (ev) {
+    this.formData = $(ev.currentTarget).parents("form:first").serializeObject();
+    if (this.formData.email) {
+      var that = this;
+      $.ajax({
+        type: "PUT",
+        url: apibase + "/pwreset/" + this.formData.email,
+        data: null,
+        success: function () {
+          $('#pwreset-modal').modal('hide');
+          alertView.render({label:"Check your email", msg: "In a few moments you should receive an email telling you what to do next."});
+        },
+        error: function (xhr) {
+          $('.alert-msg').html($.parseJSON(xhr.responseText).msg);
+          $('.pwreset-fail').show();
+        }
+      });
+    }
+  },
+  close: function () {
+    //
+  },
+  render: function (options) {
+    var msg = "Enter the email address of the user account. We will send a password reset confirmation to that address.";
+    var template = _.template($('#pwreset-template').html(), {email: (options && options.email) ? options.email : null, msg: msg}); 
+    this.$el.html(template);
+    $('#pwreset-modal').modal('show');
+  }
+});
+
+// Setup the password change view
+var PwchangeView = Backbone.View.extend({
+  el: '.popup',
+  events: {
+    'click .pwchange' : 'changePassword',
+    'click .close'    : 'close'
+  },
+  changePassword: function (ev) {
+    this.formData = $(ev.currentTarget).parents("form:first").serializeObject();
+    if (this.formData.token 
+    && this.formData.password 
+    && this.formData.confirmpassword 
+    && (this.formData.password == this.formData.confirmpassword)) {
+      var that = this;
+      $.ajax({
+        type: "PUT",
+        url: apibase + "/pwchange/" + this.formData.token,
+        data: {password: this.formData.password},
+        success: function () {
+          $('#pwchange-modal').modal('hide');
+          alertView.render({label:"Success", msg: "Your password has been changed,<br/>and you are now logged in."});
+        },
+        error: function (data) {
+          $('.alert-msg').html($.parseJSON(data.responseText).msg);
+          $('.pwchange-fail').show();
+        }
+      });
+    }
+  },
+  close: function () {
+    //
+  },
+  render: function (options) {
+    var template = _.template($('#pwchange-template').html(), {token: (options && options.token) ? options.token : null}); 
+    this.$el.html(template);
+    $('#pwchange-modal').modal('show');
+  }
 });
 
 // Setup the user list view
@@ -239,7 +409,6 @@ var VarListView = Backbone.View.extend({
   },
   deleteVar: function (ev) {
     var that = this;
-    alert(JSON.stringify(this.vars.get($(ev.currentTarget).attr('data-var-id'))));
     this.var = this.vars.get($(ev.currentTarget).attr('data-var-id'));
     this.var.destroy({
       success: function () {
@@ -260,102 +429,39 @@ var VarListView = Backbone.View.extend({
   }
 });
 
-// Setup the signup view
-var SignUpView = Backbone.View.extend({
-  el: '.popup',
-  events: {
-    'submit .signup-form': 'saveUser',
-    'click .close'       : 'close'
-  },
-  saveUser: function (ev) {
-    var userDetails = $(ev.currentTarget).serializeObject();
-    var user = new User();
-    user.save(userDetails, {
-      success: function (user) {
-        $('.modal-body').html($('.signup-step2').html());
-      }
-    });
-    return false;
-  },
-  close: function () {
-    window.history.back();
-  },
-  render: function (options) {
-    var template = _.template($('#signup-template').html(), {user: null});
-    this.$el.html(template);
-    $('#signup-modal').modal('show');
-  }
-});
-
-// Setup the login view
-var LoginView = Backbone.View.extend({
-  el: '.popup',
-  events: {
-    'submit .login-form'  : 'login',
-    'click  .close'       : 'close'
-  },
-  login: function (ev) {
-    var loginDetails = $(ev.currentTarget).serializeObject();
-    session.login(loginDetails, function () {
-      if (session.get("auth")) {
-        switch (session.get("status")) {
-          case 'inactive':
-            $('.alert-msg').html('This account has been deactivated.');
-            $('.login-fail').show();
-            break;
-          case 'unverified':
-            $('.alert-msg').html('Please check your email to verify.');
-            $('.login-fail').show();
-            break;
-          default:
-            $('#login-modal').modal('hide');
-            router.navigate('pages', {trigger:true});
-            loadnavbar();
-            break;
-        } 
-      }
-      else {
-        $('.alert-msg').html('Login failed. Please try again.');
-        $('.login-fail').show();
-      }
-    });
-    return false;
-  },
-  close: function () {
-    window.history.back();
-  },
-  render: function (options) {
-    var template = $('#login-template').html();
-    this.$el.html(template);
-    $('#login-modal').modal('show');
-  }
-});
-
 // Setup the user detail view
 var UserDetailView = Backbone.View.extend({
   el: '.page',
   events: {
     'submit .edit-user-form': 'saveUser',
     'click .delete-user'    : 'deleteUser',
-    'click .cancel'         : 'cancel'
+    'click .cancel'         : 'cancel',
+    'click .user-pwreset'   : 'requestReset'
   },
   saveUser: function (ev) {
     var userDetails = $(ev.currentTarget).serializeObject();
-    if (this.user) {
-      this.user.save(userDetails, {
-        success: function (user) {
-          session.fetch({
-            success: function () {
-              loadnavbar();
-              window.history.back();
-            },
-            error: function () {
-              loginView.render();
-            }
-          });
-        }
-      });
+    if (!this.user) {
+      this.user = new User();
     }
+    this.user.save(userDetails, {
+      success: function (user) {
+        session.fetch({
+          success: function () {
+            loadnavbar();
+            window.history.back();
+          },
+          error: function () {
+            loginView.render();
+          }
+        });
+      },
+      error: function (model, xhr) {
+        console.log(xhr);
+        if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
+          alertView.render({label:"Save User", msg: $.parseJSON(xhr.responseText).msg});
+        }
+      }
+    });
     return false;
   },
   deleteUser: function (ev) {
@@ -363,11 +469,34 @@ var UserDetailView = Backbone.View.extend({
       success: function () {
         console.log('user destroyed');
         window.history.back();
+      },
+      error: function (model, xhr) {
+        console.log(xhr);
+        if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
+          alertView.render({label:"Delete User", msg: $.parseJSON(xhr.responseText).msg});
+        }
       }
     })
   },
   cancel: function() {
     window.history.back();
+  },
+  requestReset: function (ev) {
+    this.email = $(ev.currentTarget).attr('data-user-email');
+    if (this.email) {
+      var that = this;
+      $.ajax({
+        type: "PUT",
+        url: apibase + "/pwreset/" + this.email,
+        data: null,
+        success: function () {
+          alertView.render({label:"Check your email", msg: "In a few moments you should receive an email telling you what to do next."});
+        },
+        error: function (xhr) {
+          alertView.render({label:"Sorry", msg: $.parseJSON(xhr.responseText).msg});
+        }
+      });
+    }
   },
   render: function (options) {
     // build the list of role options
@@ -408,6 +537,12 @@ var PageDetailView = Backbone.View.extend({
       success: function (page) {
         console.log('page saved');
         window.history.back();
+      },
+      error: function (model, xhr) {
+        console.log(xhr);
+        if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
+          alertView.render({label:"Save Page", msg: $.parseJSON(xhr.responseText).msg});
+        }
       }
     });
     return false;
@@ -417,6 +552,12 @@ var PageDetailView = Backbone.View.extend({
       success: function () {
         console.log('page destroyed');
         window.history.back();
+      },
+      error: function (model, xhr) {
+        console.log(xhr);
+        if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
+          alertView.render({label:"Delete Page", msg: $.parseJSON(xhr.responseText).msg});
+        }
       }
     })
   },
@@ -470,6 +611,12 @@ var ViewDetailView = Backbone.View.extend({
       success: function (view) {
         console.log('view saved');
         window.history.back();
+      },
+      error: function (model, xhr) {
+        console.log(xhr);
+        if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
+          alertView.render({label:"Save View", msg: $.parseJSON(xhr.responseText).msg});
+        }
       }
     });
     return false;
@@ -479,6 +626,12 @@ var ViewDetailView = Backbone.View.extend({
       success: function () {
         console.log('view destroyed');
         window.history.back();
+      },
+      error: function (model, xhr) {
+        console.log(xhr);
+        if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
+          alertView.render({label:"Delete View", msg: $.parseJSON(xhr.responseText).msg});
+        }
       }
     })
   },
@@ -509,7 +662,7 @@ var VarDetailView = Backbone.View.extend({
   events: {
     'submit .edit-var-form' : 'saveVar',
     'click  .delete-var'    : 'deleteVar',
-    'click  .cancel'         : 'cancel'
+    'click  .cancel'        : 'cancel'
   },
   saveVar: function (ev) {
     var varDetails = $(ev.currentTarget).serializeObject();
@@ -520,6 +673,12 @@ var VarDetailView = Backbone.View.extend({
       success: function (vari) {
         console.log('var saved');
         window.history.back();
+      },
+      error: function (model, xhr) {
+        console.log(xhr);
+        if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
+          alertView.render({label:"Save Var", msg: $.parseJSON(xhr.responseText).msg});
+        }
       }
     });
     return false;
@@ -529,6 +688,12 @@ var VarDetailView = Backbone.View.extend({
       success: function () {
         console.log('var destroyed');
         window.history.back();
+      },
+      error: function (model, xhr) {
+        console.log(xhr);
+        if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
+          alertView.render({label:"Delete Var", msg: $.parseJSON(xhr.responseText).msg});
+        }
       }
     })
   },
@@ -553,6 +718,46 @@ var VarDetailView = Backbone.View.extend({
   }
 });
 
+var addArrayOrString = function(object, name, text) {
+  if (name.match(/\[\]/)) {
+    name = name.replace('[]','');
+    object[name] = text.replace(' ','').split(',');
+    return object;
+  }
+  else {
+    object[name] = text;
+    return object;
+  }
+}
+
+// grabs all form data, puts into an object
+// form elements with a name like 'item.subitem' will be put into an 'item' subobject
+// form elements with a name like 'items[]' will be parsed into an 'items' array of text
+var getFormData = function(form) {
+  if (form) {
+    var formObject = {};
+    var formData = $(form).serializeObject();
+    for (item in formData) {
+      if (item.split('.').length>1) {
+        var item_name    = item.split('.')[0];
+        var subitem_name = item.split('.')[1];
+        // make sure the formObject has the subobject
+        if (!formObject.hasOwnProperty(item_name)) {
+          formObject[item_name] = {};
+        }
+        formObject[item_name] = addArrayOrString(formObject[item_name], subitem_name, formData[item]);
+      }
+      else {
+        formObject = addArrayOrString(formObject, item, formData[item]);
+      }
+    }
+    return formObject;
+  }
+  else {
+    return null;
+  }
+}
+
 // Setup the site detail view
 var SiteDetailView = Backbone.View.extend({
   el: '.page',
@@ -561,16 +766,29 @@ var SiteDetailView = Backbone.View.extend({
     'click  .cancel'         : 'cancel'
   },
   saveSite: function (ev) {
-    var siteDetails = $(ev.currentTarget).serializeObject();
+    var siteDetails = getFormData(ev.currentTarget);
     if (!this.site) {
       this.site = new Site();
     }
-    this.site.save(siteDetails, {
-      success: function (site) {
-        console.log('site saved');
-        alertView.render({label:"Config changed", msg: "Changes are effective immediately."});
-      }
-    });
+    if (siteDetails) {
+
+      this.site.save(siteDetails, {
+        success: function (site) {
+          console.log('site saved');
+          alertView.render({label:"Config changed", msg: "Changes are effective immediately."});
+        },
+        error: function (model, xhr) {
+          console.log(xhr);
+          if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
+            alertView.render({label:"Update Site", msg: $.parseJSON(xhr.responseText).msg});
+          }
+        }
+      });
+
+    }
+    else {
+      alertView.render({label:"Update Site", msg: "Nothing to update."});
+    }
     return false;
   },
   cancel: function() {
@@ -580,7 +798,7 @@ var SiteDetailView = Backbone.View.extend({
     // build the list of cors mode options
     this.cors_mode_options = ['Allow All', 'White List'];
     // build the list of smtp service options
-    this.smtp_service_options = ['Gmail'];
+    this.smtp_service_options = ['Gmail', 'Other SMTP'];
     var that = this;
     if (!this.site) {
       var sites = new Sites();
@@ -606,7 +824,7 @@ var AlertView = Backbone.View.extend({
   },
   close: function () {
     if (/\/api\/verify/i.test(window.location.pathname)) {
-      window.history.back();
+      loginView.render();
     }
   },
   render: function (options) {
@@ -620,6 +838,8 @@ var AlertView = Backbone.View.extend({
 var session           = new Session();
 var signUpView        = new SignUpView();
 var loginView         = new LoginView();
+var pwresetView       = new PwresetView();
+var pwchangeView      = new PwchangeView();
 var alertView         = new AlertView();
 var userListView      = new UserListView();
 var pageListView      = new PageListView();
@@ -638,6 +858,10 @@ var Router = Backbone.Router.extend({
       "signup":                    "signup",
       "login":                     "login",
       "logout":                    "logout",
+      "pwreset":                   "pw-reset",
+      "pwreset/:email":            "pw-reset",
+      "pwchange":                  "pw-change",
+      "pwchange/:token":           "pw-change",
       "users":                     "list-users",
       "users/new":                 "edit-user",
       "users/:id":                 "edit-user",
@@ -675,6 +899,14 @@ router.on('route:login', function() {
 router.on('route:logout', function() {
   session.logout();
 })
+router.on('route:pw-reset', function(email) {
+  // Render pwreset view
+  pwresetView.render({email: email});
+})
+router.on('route:pw-change', function(token) {
+  // Render pwchange view
+  pwchangeView.render({token: token});
+})
 router.on('route:list-users', function() {
   navselect("users");
   // Render user list view
@@ -692,7 +924,7 @@ router.on('route:verify-email', function(token) {
     var that = this;
     $.ajax({
       type: "PUT",
-      url: "/verify/" + that.token,
+      url: apibase + "/verify/" + that.token,
       data: null,
       success: function () {
         alertView.render({label:"Verified", msg: "Your email has been verified.<br/>Your account is ready to use."});

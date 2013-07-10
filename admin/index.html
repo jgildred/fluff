@@ -2,8 +2,9 @@
 <html lang="en">
 
 <script>
+  var apikey  = '1234567890';
   var version = '0.2';
-  var reg = new RegExp("/$");
+  var reg     = new RegExp("/$");
   var apibase = window.location.pathname;
   if (!reg.test(window.location.pathname)) {
     apibase = apibase + '/api';
@@ -11,6 +12,11 @@
   }
   else {
     apibase = apibase + 'api';
+  }
+  function setCheckVal(element, checked) {
+    if (element) {
+      element.value = checked;
+    }
   }
 </script>
 
@@ -155,7 +161,77 @@
           </div>
           <div class="control-group">
             <div class="controls">
-              <button type="submit" class="btn btn-primary login">Login</button>
+              <button type="submit" class="btn btn-primary login">Login</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#/pwreset">I forgot</a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/template" id="pwreset-template">
+    <div id="pwreset-modal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="pwresetModalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="pwresetModalLabel">Password Reset</h3>
+      </div>
+      <div class="modal-body">
+        <div class="alert hide pwreset-fail">
+          <span class="alert-msg"></span>
+        </div>
+        <form class="login-form form-horizontal">
+          <div class="control-group">
+            <label class="control-label" for="inputEmail">Email</label>
+            <div class="controls">
+              <input type="text" id="inputEmail" name="email" value="<%= email ? htmlEncode(email) : '' %>" placeholder="">
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="controls">
+              <button type="button" class="btn btn-primary pwreset">Request reset</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/template" id="pwchange-template">
+    <div id="pwchange-modal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="pwchangeModalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="pwchangeModalLabel">Change your password.</h3>
+      </div>
+      <div class="modal-body">
+        <div class="alert hide pwchange-fail">
+          <span class="alert-msg"></span>
+        </div>
+        <form class="pwchange-form form-horizontal">
+          <div class="control-group">
+            <label class="control-label" for="inputPassword">New Password</label>
+            <div class="controls">
+              <input type="password" id="inputPassword" name="password" placeholder="" />
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="inputConfirmPassword">Confirm</label>
+            <div class="controls">
+              <input type="password" id="inputConfirmPassword" name="confirmpassword" placeholder="" />
+            </div>
+          </div>
+          <% if (token) { %>
+            <input type="hidden" name="token" value="<%= htmlEncode(token) %>" />
+          <% } else { %>
+          <div class="control-group">
+            <label class="control-label" for="inputToken">Token</label>
+            <div class="controls">
+              <input type="text" id="inputToken" name="token" placeholder="" />
+            </div>
+          </div>
+          <% } %>
+          <div class="control-group">
+            <div class="controls">
+              <button type="button" class="btn btn-primary pwchange">Save and login</button>
             </div>
           </div>
         </form>
@@ -181,19 +257,18 @@
     <table class="table striped">
       <thead>
         <tr>
-          <th></th><th>First Name</th><th>Last Name</th><th>Email</th><th>Role</th><th>Status</th><th></th>
+          <th></th><th>First Name</th><th>Last Name</th><th>Email</th><th>Role</th><th>Status</th>
         </tr>
       </thead>
       <tbody>
         <% _.each(users, function(user) { %>
           <tr>
-            <td><i class="icon-user"></i></td>
+            <td><i class="icon-user"></i></a>&nbsp;&nbsp;&nbsp;<a title="Edit" href="#/users/<%= user.id %>"><i class="icon-edit"></i></a></td>
             <td><%= htmlEncode(user.get('firstname')) %></td>
             <td><%= htmlEncode(user.get('lastname')) %></td>
             <td><%= htmlEncode(user.get('email')) %></td>
             <td><%= htmlEncode(user.get('role')) %></td>
             <td><%= htmlEncode(user.get('status')) %></td>
-            <td><a class="btn" href="#/users/<%= user.id %>">Edit</a></td>
           </tr>
         <% }); %>
       </tbody>
@@ -212,14 +287,14 @@
       <tbody>
         <% _.each(pages, function(page) { %>
           <tr>
-            <td><i class="icon-file"></i></td>
+            <td><a title="View" href="<%= htmlEncode(page.get('path')) %>" target="_blank"><i class="icon-file"></i></a>&nbsp;&nbsp;&nbsp;<a title="Edit" href="#/pages/<%= htmlEncode(page.id) %>"><i class="icon-edit"></i></a></td>
             <td><%= htmlEncode(page.get('name')) %></td>
             <td><%= htmlEncode(page.get('path')) %></td>
             <td><%= htmlEncode(views.get(page.get('view_id')).get('name')) %></td>
             <td><%= htmlEncode(page.get('access')) %></td>
             <td><%= htmlEncode(page.get('status')) %></td>
             <td><%= htmlEncode(page.get('lastupdate')) %></td>
-            <td><a class="btn" href="#/pages/<%= page.id %>">Edit</a></td>
+            <td></td>
           </tr>
         <% }); %>
       </tbody>
@@ -232,16 +307,15 @@
     <table class="table striped">
       <thead>
         <tr>
-          <th></th><th>View</th><th>Last Updated</th><th></th>
+          <th></th><th>View</th><th>Last Updated</th>
         </tr>
       </thead>
       <tbody>
         <% _.each(views, function(view) { %>
           <tr>
-            <td><i class="icon-list-alt"></i></td>
+            <td><i class="icon-list-alt"></i></a>&nbsp;&nbsp;&nbsp;<a title="Edit" href="#/views/<%= view.id %>"><i class="icon-edit"></i></a></td>
             <td><%= htmlEncode(view.get('name')) %></td>
             <td><%= htmlEncode(view.get('lastupdate')) %></td>
-            <td><a class="btn" href="#/views/<%= view.id %>">Edit</a></td>
           </tr>
         <% }); %>
       </tbody>
@@ -318,17 +392,18 @@
           </select>
         </div>
       </div>
-      <div class="control-group">
-        <label class="control-label" for="inputApikey">API Key</label>
-        <div class="controls">
-          <input type="text" id="inputApikey" name="apikey" value="<%= user ? user.get('apikey') : '' %>" placeholder="make something up" />
+        <div class="control-group">
+          <label class="control-label" for="inputNotes">Notes</label>
+          <div class="controls">
+            <textarea id="inputNotes" name="notes" placeholder=""><%= user ? user.get('notes') : '' %></textarea>
+          </div>
         </div>
-      </div>
       <hr />
-      <button type="submit" class="btn btn-primary">Save</button>
+      <button type="submit" class="btn btn-primary"><%= user ? 'Update' : 'Add' %></button>
       <button type="button" class="btn cancel">Cancel</button>
       <% if (user) { %>
       <input type="hidden" name="id" value="<%= user.id %>" />
+      <button type="button" data-user-email="<%= user.get('email') %>" class="btn user-pwreset">Reset Password</button>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <button type="button" data-user-id="<%= user.id %>" class="btn btn-danger delete-user">Delete User</button><br/><br/>
       <table class="pull-right muted">
@@ -377,7 +452,7 @@
           <div class="control-group">
             <label class="control-label" for="inputAccess">Access</label>
             <div class="controls">
-              <select name="status" id="inputAccess">
+              <select name="access" id="inputAccess">
                 <% _(access_options).each(function(option) { %>
                 <option value="<%= option %>"<%= (page && (option == page.get('access'))) ? ' selected' : ''%>><%= option %></option>
                 <% }); %>
@@ -397,7 +472,7 @@
         </fieldset>
       </div>
       <textarea name="content" id="inputContent" class="html-textarea" rows="10"><%= page ? page.get('content') : '' %></textarea><br/><br/>
-      <button type="submit" class="btn btn-primary">Save</button>
+      <button type="submit" class="btn btn-primary"><%= page ? 'Update' : 'Add' %></button>
       <button type="button" class="btn cancel">Cancel</button>
       <% if (page) { %>
       <input type="hidden" name="id" value="<%= page.id %>" />
@@ -423,7 +498,7 @@
         </div>
       </div>
       <textarea name="template" class="html-textarea" rows="10"><%= view ? view.get('template') : '{{content}}' %></textarea><br/><br/>
-      <button type="submit" class="btn btn-primary">Save</button>
+      <button type="submit" class="btn btn-primary"><%= view ? 'Update' : 'Add' %></button>
       <button type="button" class="btn cancel">Cancel</button>
       <% if (view) { %>
       <input type="hidden" name="id" value="<%= view.id %>" />
@@ -447,7 +522,7 @@
         <input name="value" class="span8" type="text" value="<%= vari ? vari.get('value') : '' %>" placeholder="value"/>
       </div>
       <br/><br/>
-      <button type="submit" class="btn btn-primary">Save</button>
+      <button type="submit" class="btn btn-primary"><%= vari ? 'Update' : 'Add' %></button>
       <button type="button" class="btn cancel">Cancel</button>
       <% if (vari) { %>
       <input type="hidden" name="id" value="<%= vari.id %>" />
@@ -469,41 +544,62 @@
       <div class="span6">
       <fieldset>
         <div class="control-group">
-          <label class="control-label" for="inputSiteName">Site Name</label>
+          <label class="control-label" for="inputName">Site Name</label>
           <div class="controls">
-            <input type="text" id="inputSiteName" class="span4" name="site_name" value="<%= site ? site.get('site_name') : '' %>" placeholder="unnamed" />
+            <input type="text" id="inputName" class="span4" name="name" value="<%= site ? site.get('name') : '' %>" placeholder="unnamed" />
           </div>
         </div>
         <div class="control-group">
-          <label class="control-label" for="inputSiteUrl">Site URL</label>
+          <label class="control-label" for="inputDomain">Domain</label>
           <div class="controls">
-            <input type="text" id="inputSiteUrl" class="span4" name="site_url" value="<%= site ? site.get('site_url') : '' %>" placeholder="http://yourdomain.com" />
+            <input type="text" id="inputDomain" class="span4" name="domain" value="<%= site ? site.get('domain') : '' %>" placeholder="www.yourdomain.com" />
           </div>
         </div>
         <div class="control-group">
-          <label class="control-label" for="inputServerPort">Server Port</label>
           <div class="controls">
-            <input type="text" id="inputServerPort" class="span2" name="server_port" value="<%= site ? site.get('server_port') : '' %>" placeholder="80" />
+            <label class="checkbox">
+              <input type="checkbox" value="" <%= (site && site.get('ssl')) ? 'checked' : '' %> onchange="setCheckVal(document.getElementsByName('ssl')[0],this.checked);" />
+                Secure HTTP (SSL)
+              <input type="hidden" name="ssl" value="<%= site ? site.get('ssl') : 'false' %>" />
+            </label>
           </div>
         </div>
         <div class="control-group">
-          <label class="control-label" for="inputCorsMode">CORS Mode</label>
+          <label class="control-label" for="inputPort">Port</label>
           <div class="controls">
-            <select name="cors_mode" id="inputCorsMode">
-              <% _(cors_mode_options).each(function(option) { %>
-              <option value="<%= option %>"<%= (site && (option == site.get('cors_mode'))) ? ' selected' : ''%>><%= option %></option>
-              <% }); %>
-            </select>
+            <input type="text" id="inputPort" class="span2" name="port" value="<%= site ? site.get('port') : '' %>" placeholder="80" />
           </div>
         </div>
-        <!--
+        <div class="control-group">
+          <div class="controls">
+            <label class="checkbox">
+              <input type="checkbox" value="" <%= (site && site.get('cors').restricted) ? 'checked' : '' %> onchange="setCheckVal(document.getElementsByName('cors.restricted')[0],this.checked);" />
+                Restrict CORS
+              <input type="hidden" name="cors.restricted" value="<%= site ? site.get('cors').restricted : 'false' %>" />
+            </label>
+          </div>
+        </div>
         <div class="control-group">
           <label class="control-label" for="inputCorsWhitelist">CORS White List</label>
           <div class="controls">
-            <input type="text" id="inputCorsWhitelist" name="cors_whitelist" value="<%= site ? site.get('cors_whitelist') : '' %>" placeholder="" />
+            <textarea id="inputCorsWhitelist" class="span4" name="cors.whitelist[]" placeholder="comma separated list"><%= site ? site.get('cors').whitelist : '' %></textarea>
           </div>
         </div>
-        -->
+        <div class="control-group">
+          <div class="controls">
+            <label class="checkbox">
+              <input type="checkbox" value="" <%= (site && site.get('apikey').required) ? 'checked' : '' %> onchange="setCheckVal(document.getElementsByName('apikey.required')[0],this.checked);" />
+                Require API Key
+              <input type="hidden" name="apikey.required" value="<%= site ? site.get('apikey').required : 'false' %>" />
+            </label>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="inputApikeys">API Keys</label>
+          <div class="controls">
+            <textarea id="inputApikeys" class="span4" name="apikey.keychain[]" placeholder="comma separated list"><%= site ? site.get('apikey').keychain : '' %></textarea>
+          </div>
+        </div>
       </fieldset>
       </div>
 
@@ -518,23 +614,44 @@
         <div class="control-group">
           <label class="control-label" for="inputSmtpService">SMTP Service</label>
           <div class="controls">
-            <select name="smtp_service" id="inputSmtpService">
+            <select name="smtp.service" id="inputSmtpService">
               <% _(smtp_service_options).each(function(option) { %>
-              <option value="<%= option %>"<%= (site && (option == site.get('smtp_service'))) ? ' selected' : ''%>><%= option %></option>
+              <option value="<%= option %>"<%= (site && (option == site.get('smtp').service)) ? ' selected' : ''%>><%= option %></option>
               <% }); %>
             </select>
           </div>
         </div>
         <div class="control-group">
+          <label class="control-label" for="inputSmtpHost">SMTP Host</label>
+          <div class="controls">
+            <input type="text" id="inputSmtpHost" name="smtp.host" value="<%= site ? site.get('smtp').host : '' %>" placeholder="" />
+          </div>
+        </div>
+        <div class="control-group">
+          <div class="controls">
+            <label class="checkbox">
+              <input type="checkbox" value="" <%= (site && site.get('smtp').ssl) ? 'checked' : '' %> onchange="setCheckVal(document.getElementsByName('smtp.ssl')[0],this.checked);" />
+                Secure SMTP (SSL)
+              <input type="hidden" name="smtp.ssl" value="<%= site ? site.get('smtp').ssl : 'false' %>" />
+            </label>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="inputSmtpPort">SMTP Port</label>
+          <div class="controls">
+            <input type="text" id="inputSmtpPort" name="smtp.port" value="<%= site ? site.get('smtp').port : '' %>" placeholder="" />
+          </div>
+        </div>
+        <div class="control-group">
           <label class="control-label" for="inputSmtpUsername">SMTP Username</label>
           <div class="controls">
-            <input type="text" id="inputSmtpUsername" name="smtp_username" value="<%= site ? site.get('smtp_username') : '' %>" placeholder="" />
+            <input type="text" id="inputSmtpUsername" name="smtp.username" value="<%= site ? site.get('smtp').username : '' %>" placeholder="" />
           </div>
         </div>
         <div class="control-group">
           <label class="control-label" for="inputSmtpPassword">SMTP Password</label>
           <div class="controls">
-            <input type="password" id="inputSmtpPassword" name="smtp_password" value="<%= site ? site.get('smtp_password') : '' %>" placeholder="" />
+            <input type="password" id="inputSmtpPassword" name="smtp.password" value="<%= site ? site.get('smtp').password : '' %>" placeholder="" />
           </div>
         </div>
         <div class="control-group">
@@ -549,7 +666,7 @@
       <div class="span12">
         <fieldset>
           <hr />
-          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="submit" class="btn btn-primary">Update</button>
           <button type="button" class="btn cancel">Cancel</button>
           <% if (site) { %>
           <input type="hidden" name="id" value="<%= site.id %>" />
