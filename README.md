@@ -35,6 +35,5 @@ Would be nice:
 
 - record which user created each page, view, var
 - page versioning
-- add ability to edit error pages
-- add a model manager like django
-- multiple sites per admin
+- add a model manager like django to replace vars
+- multiple sites per admin (will require rethink of config loader)
