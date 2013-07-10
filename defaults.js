@@ -4,7 +4,7 @@
 exports.Config = {
   initialize     : true,                 // set to true to initialize DB with seed data
   name           : 'Fluff',
-  domain         : 'localhost',           // used in email verification message body
+  domain         : 'www.fluff.io',           // used in email verification message body
   port           : 3000,                  // ignored unless app_service is 'Custom Install'   
   ssl            : false,                 // used in constructing site url
   email_from     : 'noreply@domain.com',  // used for email notifications
