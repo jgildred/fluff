@@ -384,7 +384,7 @@ var setupMailer = function (req, res, next) {
 var requireApiKey = function(req, res, next) {
   if (/\/api\//i.test(req.path) && app.get('config').apikey.required) {
     var apikeys = app.get('config').apikey.keychain;
-    console.log("API keys are " + apikey.keychain);
+    console.log("API keys are " + app.get('config').apikey.keychain);
     console.log("client API key is " + (req.query ? req.query.apikey : 'missing'));
     if (Object.prototype.toString.call(apikeys) === '[object Array]') {
       var ok = false;
