@@ -4,7 +4,6 @@
 var mongoose = require('mongoose');
 
 var enums = {
-  site_status  : [ "Initialize", "Working" ],
   smtp_service : [ "Other SMTP", "Gmail", "DynectEmail", "Gmail", "hot.ee", "Hotmail", "iCloud", "mail.ee", "Mail.Ru", "Mailgun", "Mailjet", "Mandrill", "Postmark", "QQ", "SendGrid", "SES", "Yahoo", "yandex", "Zoho" ],
   app_service  : [ "Custom Install", "Heroku" ],
   db_service   : [ "Other MongoDB", "MongoLab" ],

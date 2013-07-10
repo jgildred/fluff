@@ -28,6 +28,8 @@ To do:
 
 - move session timeout to be user specific
 - add alert API and basic alert cases like initializing
+- manage email templates
+- manage error pages
 
 Would be nice:
 
