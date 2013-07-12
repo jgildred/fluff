@@ -63,6 +63,10 @@ exports.user = {
 exports.view = {
   name         : { type: String, unique: true },
   template     : { type: String, default: "{{content}}" },
+  cursor : { 
+    row        : { type: Number, default: 0 },
+    column     : { type: Number, default: 0 }
+  },
   creator_id   : mongoose.Schema.Types.ObjectId,
   creation     : { type: Date, default: Date.now },
   lastupdate   : { type: Date, default: Date.now }
@@ -73,6 +77,10 @@ exports.page = {
   path         : { type: String, index: { unique: true } },
   view_id      : mongoose.Schema.Types.ObjectId,
   content      : String,
+  cursor : { 
+    row        : { type: Number, default: 0 },
+    column     : { type: Number, default: 0 }
+  },
   access       : { type: String, enum: enums.page_access, default: "Public", required: true },
   status       : { type: String, enum: enums.page_status, default: "Unpublished", required: true },
   publication  : { type: Date, default: Date.now },

@@ -24,6 +24,51 @@ $.ajaxPrefilter( function( options, originalOptions, jqXHR ) {
   options.url = options.url + "?apikey=" + encodeURIComponent(apikey);
 });
 
+function fullscreenEditor(editor) {
+  $('#editor').removeClass('span4 small-editor').addClass('fullscreen-editor');
+  editor.resize();
+  editor.focus();
+  editor.commands.addCommand({
+    name: 'exitFullscreen',
+    bindKey: {win: 'Esc',  mac: 'Esc'},
+    exec: function(editor) {
+      $('#editor').removeClass('fullscreen-editor').addClass('span4 small-editor');
+      editor.resize();
+    }
+  });
+}
+
+function toggleFullscreen(editor) {
+  if ($('#editor').hasClass('fullscreen-editor')) {
+    $('#editor').removeClass('fullscreen-editor').addClass('span4 small-editor');
+  }
+  else {
+    $('#editor').removeClass('span4 small-editor').addClass('fullscreen-editor');
+  }   
+  editor.resize();
+}
+
+function renderEditor(element_id, content, cursor) {
+  var editor = ace.edit(element_id);
+  editor.setTheme("ace/theme/textmate");
+  editor.getSession().setMode("ace/mode/html");
+  editor.getSession().setTabSize(2);
+  editor.getSession().setUseSoftTabs(true);
+  document.getElementById(element_id).style.fontSize='14px';
+  editor.getSession().setUseWrapMode(true);
+  editor.setValue(content);
+  editor.focus();
+  editor.commands.addCommand({
+    name: 'toggleFullscreen',
+    bindKey: {win: 'Esc',  mac: 'Esc'},
+    exec: function(editor) {
+      toggleFullscreen(editor);
+    }
+  });
+  if (cursor) editor.moveCursorTo(cursor.row, cursor.column);
+  return editor;
+}
+
 // on page load
 function init () {
   switch (true) {
@@ -526,10 +571,17 @@ var PageDetailView = Backbone.View.extend({
   events: {
     'submit .edit-page-form' : 'savePage',
     'click  .delete-page'    : 'deletePage',
-    'click  .cancel'         : 'cancel'
+    'click  .cancel'         : 'cancel',
+    'click  .fullscreen-page': 'fullscreenEditPage'
+  },
+  fullscreenEditPage: function (ev) {
+    toggleFullscreen(this.editor);
+    this.editor.focus();
   },
   savePage: function (ev) {
     var pageDetails = $(ev.currentTarget).serializeObject();
+    pageDetails.content = editor.getValue();
+    pageDetails.cursor  = editor.selection.getCursor();
     if (!this.page) {
       this.page = new Page();
     }
@@ -582,13 +634,16 @@ var PageDetailView = Backbone.View.extend({
             success: function (page) {
               var template = _.template($('#edit-page-template').html(), {page: page, views: that.views, access_options: that.access_options, status_options: that.status_options});
               that.$el.html(template);
+              that.editor = renderEditor('editor', that.page.get('content'), that.page.get('cursor'));
             }
           });
         } else {
           that.page = null;
           var template = _.template($('#edit-page-template').html(), {page: that.page, views: that.views, access_options: that.access_options, status_options: that.status_options});
           that.$el.html(template);
+          that.editor = renderEditor('editor', null, { row: 0, column: 0 });
         }
+        
       }
     });
   }
@@ -600,10 +655,17 @@ var ViewDetailView = Backbone.View.extend({
   events: {
     'submit .edit-view-form' : 'saveView',
     'click  .delete-view'    : 'deleteView',
-    'click  .cancel'         : 'cancel'
+    'click  .cancel'         : 'cancel',
+    'click  .fullscreen-view': 'fullscreenEditView'
+  },
+  fullscreenEditView: function (ev) {
+    toggleFullscreen(this.editor);
+    this.editor.focus();
   },
   saveView: function (ev) {
     var viewDetails = $(ev.currentTarget).serializeObject();
+    viewDetails.template = editor.getValue();
+    viewDetails.cursor   = editor.selection.getCursor();
     if (!this.view) {
       this.view = new View();
     }
@@ -646,12 +708,14 @@ var ViewDetailView = Backbone.View.extend({
         success: function (view) {
           var template = _.template($('#edit-view-template').html(), {view: view}); 
           that.$el.html(template);
+          that.editor = renderEditor('editor', that.view.get('template'), that.view.get('cursor'));
         }
       })
     } else {
       this.view = null;
       var template = _.template($('#edit-view-template').html(), {view: this.view});
       this.$el.html(template);
+      this.editor = renderEditor('editor', null, { row: 0, column: 0 });
     }
   }
 });

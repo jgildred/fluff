@@ -23,6 +23,7 @@
 
 <head>
   <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Site Admin</title>
   <link rel="shortcut icon" href="images/favicon.ico"/>
@@ -421,17 +422,25 @@
       <legend><%= page ? 'Edit' : 'New' %> Page</legend>
       <div class="span6">
         <fieldset>
+          <label>
+          <span class="muted">Content</span><a class="fullscreen-page pull-right">Full Screen</a></label>
+          <div id="editor" name="content" class="span4 small-editor"></div>
+          <br/><br/>
+        </fieldset>
+      </div>
+      <div class="span5">
+        <fieldset>
           <div class="control-group">
             <label class="control-label" for="inputName">Name</label>
             <div class="controls">
-              <input type="text" id="inputName" class="span4" name="name" value="<%= page ? page.get('name') : '' %>" placeholder="" />
+              <input type="text" id="inputName" name="name" value="<%= page ? page.get('name') : '' %>" placeholder="" />
             </div>
           </div>
           <div class="control-group">
             <label class="control-label" for="inputPath">Path</label>
             <div class="controls">
               <div class="input-append">
-              <input type="text" id="inputPath" class="span4" name="path" value="<%= page ? page.get('path') : '' %>" placeholder="/put/something/here" />
+              <input type="text" id="inputPath" name="path" value="<%= page ? page.get('path') : '' %>" placeholder="/put/something/here" />
               <a class="add-on" href="<%= page ? page.get('path') : '' %>">Go</a>
               </div>
             </div>
@@ -446,10 +455,6 @@
               </select>
             </div>
           </div>
-        </fieldset>
-      </div>
-      <div class="span4">
-        <fieldset>
           <div class="control-group">
             <label class="control-label" for="inputAccess">Access</label>
             <div class="controls">
@@ -470,47 +475,59 @@
               </select>
             </div>
           </div>
+          <button type="submit" class="btn btn-primary"><%= page ? 'Update' : 'Add' %></button>
+          <button type="button" class="btn cancel">Cancel</button>
+          <% if (page) { %>
+          <input type="hidden" name="id" value="<%= page.id %>" />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" data-page-id="<%= page.id %>" class="btn btn-danger delete-page">Delete Page</button>
+          <br/><br/>
+          <table class="muted">
+            <tr><td>page id </td><td><%= page.id %></td></tr>
+            <tr><td>created </td><td><%= page.get('creation') %></td></tr>
+            <tr><td>published </td><td><%= page.get('publication') %></td></tr>
+            <tr><td>last updated </td><td><%= page.get('lastupdate') %></td></tr>
+          </table>
+          <br/>
+          <% } %>
         </fieldset>
       </div>
-      <textarea name="content" id="inputContent" class="html-textarea" rows="10"><%= page ? page.get('content') : '' %></textarea><br/><br/>
-      <button type="submit" class="btn btn-primary"><%= page ? 'Update' : 'Add' %></button>
-      <button type="button" class="btn cancel">Cancel</button>
-      <% if (page) { %>
-      <input type="hidden" name="id" value="<%= page.id %>" />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button type="button" data-page-id="<%= page.id %>" class="btn btn-danger delete-page">Delete Page</button><br/><br/>
-      <table class="pull-right muted">
-        <tr><td>page id </td><td><%= page.id %></td></tr>
-        <tr><td>created </td><td><%= page.get('creation') %></td></tr>
-        <tr><td>published </td><td><%= page.get('publication') %></td></tr>
-        <tr><td>last updated </td><td><%= page.get('lastupdate') %></td></tr>
-      </table>
-      <% } %>
     </form>
   </script>
 
   <script type="text/template" id="edit-view-template">
     <form class="edit-view-form form-horizontal">
       <legend><%= view ? 'Edit' : 'New' %> View</legend>
-      <div class="control-group">
-        <label class="control-label" for="inputName">Name</label>
-        <div class="controls">
-          <input type="text" id="inputName" class="span4" name="name" value="<%= view ? view.get('name') : '' %>" placeholder="must be unique" />
-        </div>
+      <div class="span6">
+        <fieldset>
+          <label>
+          <span class="muted">Content</span><a class="fullscreen-view pull-right">Full Screen</a></label>
+          <div id="editor" name="template" class="span4 small-editor"></div>
+          <br/><br/>
+        </fieldset>
       </div>
-      <textarea name="template" class="html-textarea" rows="10"><%= view ? view.get('template') : '{{content}}' %></textarea><br/><br/>
-      <button type="submit" class="btn btn-primary"><%= view ? 'Update' : 'Add' %></button>
-      <button type="button" class="btn cancel">Cancel</button>
-      <% if (view) { %>
-      <input type="hidden" name="id" value="<%= view.id %>" />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button type="button" data-view-id="<%= view.id %>" class="btn btn-danger delete-view">Delete View</button><br/><br/>
-      <table class="pull-right muted">
-        <tr><td>view id </td><td><%= view.id %></td></tr>
-        <tr><td>created </td><td><%= view.get('creation') %></td></tr>
-        <tr><td>last updated </td><td><%= view.get('lastupdate') %></td></tr>
-      </table>
-      <% } %>
+      <div class="span5">
+        <fieldset>
+          <div class="control-group">
+            <label class="control-label" for="inputName">Name</label>
+            <div class="controls">
+              <input type="text" id="inputName" name="name" value="<%= view ? view.get('name') : '' %>" placeholder="must be unique" />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary"><%= view ? 'Update' : 'Add' %></button>
+          <button type="button" class="btn cancel">Cancel</button>
+          <% if (view) { %>
+          <input type="hidden" name="id" value="<%= view.id %>" />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" data-view-id="<%= view.id %>" class="btn btn-danger delete-view">Delete View</button><br/><br/>
+          <table class="pull-right muted">
+            <tr><td>view id </td><td><%= view.id %></td></tr>
+            <tr><td>created </td><td><%= view.get('creation') %></td></tr>
+            <tr><td>last updated </td><td><%= view.get('lastupdate') %></td></tr>
+          </table>
+          <% } %>
+        </fieldset>
+      </div>
     </form>
   </script>
 
@@ -680,21 +697,26 @@
 <!--
   <script type="text/javascript" src="jslibs/jquery-1.9.1.js"></script>
 -->
-  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
 <!--
   <script type="text/javascript" src="jslibs/underscore.js"></script>
 -->
-  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
 
 <!--
   <script type="text/javascript" src="jslibs/backbone.js"></script>
 -->
-  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.10/backbone-min.js"></script>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.10/backbone-min.js"></script>
 
   <script type="text/javascript" src="bootstrap/js/bootstrap.js"></script>
 <!--
-  <script type="text/javascript" src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+-->
+    
+  <script src="src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+<!--
+  <script src="//cdnjs.cloudflare.com/ajax/libs/ace/0.2.0/ace.js" type="text/javascript" charset="utf-8"></script>
 -->
 
   <script type="text/javascript" src="admin.js"></script>
