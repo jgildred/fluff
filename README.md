@@ -14,7 +14,7 @@ Installation:
 
 Admin guide:
 
-- Pages tab manages pages. Each page must use a view template.
+- Pages tab manages pages. Each page must use a view template. Hit Esc to toggle full screen edit view.
 - Views tab manages view templates. Just drop {{content}} into any template, right where you want the page content to render. That is the extent of the page design tools. Let the multitude of Javascript UI toolkits do the rest; that's what they're there for.
 - Vars tab manages custom variables. Vars are an easy way to manage strings you use often. Drop {{var.[name]}} into any page or view, where [name] is the name of the var.
 - Users tab manages all users including admins. The 'Admin' role can access everything; the 'User' role cannot access the Admin app or pages with access restricted to admins.
