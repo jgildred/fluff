@@ -97,8 +97,8 @@ function init () {
           }
         },
         error: function () {
-          Backbone.history.start();
           loginView.render();
+          Backbone.history.start();
         }
       });
       break;

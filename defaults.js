@@ -11,7 +11,7 @@ exports.Config = {
   app_service    : 'Custom Install',      // 'Heroku' or 'Custom Install'
   db : {
     service      : 'Other MongoDB',       // 'MongoLab' or 'Other MongoDB'
-    uri          : 'mongodb://localhost:27017/fluff7' // uri required for 'Other MongoDB'
+    uri          : 'mongodb://localhost:27017/fluff' // uri required for 'Other MongoDB'
   },
   admin_path     : '/admin',              // change it to avoid conflict with your pages
   cors : {

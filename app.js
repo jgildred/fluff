@@ -4,7 +4,6 @@
 // Dependencies
 var express    = require('express')
   , mongoose   = require('mongoose')
-  , static     = require('node-static')
   , nodemailer = require('nodemailer')
   , defaults   = require('./defaults')
   , schemas    = require('./schemas')
