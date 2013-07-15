@@ -2,7 +2,7 @@
 // DEFAULT CONFIGURATION
 
 exports.Config = {
-  initialize     : false,                 // set to true to initialize DB with seed data
+  initialize     : true,                 // set to true to initialize DB with seed data
   name           : 'Web Site',
   domain         : 'localhost',           // used in email verification message body
   port           : 3000,                  // ignored unless app_service is 'Custom Install'   
