@@ -5,7 +5,7 @@ The CMS that stays out of your way.
 
 Installation:
 
-1. install nodejs and MongoDB first
+1. install [http://nodejs.org](Node.js) and [http://mongodb.org](MongoDB) first
 2. clone the repo or download the package
 3. cd to the root dir of the app
 4. npm install
