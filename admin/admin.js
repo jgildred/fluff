@@ -593,8 +593,8 @@ var PageDetailView = Backbone.View.extend({
   },
   savePage: function (ev) {
     var pageDetails = $(ev.currentTarget).serializeObject();
-    pageDetails.content = editor.getValue();
-    pageDetails.cursor  = editor.selection.getCursor();
+    pageDetails.content = this.editor.getValue();
+    pageDetails.cursor  = this.editor.selection.getCursor();
     if (!this.page) {
       this.page = new Page();
     }
@@ -677,8 +677,8 @@ var ViewDetailView = Backbone.View.extend({
   },
   saveView: function (ev) {
     var viewDetails = $(ev.currentTarget).serializeObject();
-    viewDetails.template = editor.getValue();
-    viewDetails.cursor   = editor.selection.getCursor();
+    viewDetails.template = this.editor.getValue();
+    viewDetails.cursor   = this.editor.selection.getCursor();
     if (!this.view) {
       this.view = new View();
     }
