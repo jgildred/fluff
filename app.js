@@ -429,7 +429,12 @@ var applyConfig = function(req, res, next) {
   // Site url is useful for email notification which link back to the site
   var protocol    = app.get('config').ssl  ? "https://" : "http://";
   var port        = app.get('config').port ? ":" + app.get('config').port : "";
-  exports.siteUrl = protocol + app.get('config').domain + port;
+  var siteUrl = protocol + app.get('config').domain;
+  // Heroku does not expose the internal server port
+  if (active_config.app_service != "Heroku") {
+    siteUrl += port;
+  }
+  exports.siteUrl = siteUrl;
 
   // Run all the setup routines with the latest config
   app.use(setupMailer);
