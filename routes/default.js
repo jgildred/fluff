@@ -8,23 +8,31 @@ exports.find = function(req, res, resource, filter, callback){
   if (app.HasAccess(req, res, 'Admins', resource)) {
     resource.find(filter).exec(function (err, data) {
       if (err) { var body = err; }
-      else { var body = data; }
+      else { 
+        if (data) { var body = data; }
+        else {res.status = 404; var body = {msg: resource.modelName + ' not found.'}}
+      }
       //console.log("FIND MANY:\n" + body);
       res.json(body);
-      if (!err && callback) {
+      if (!err && data && callback) {
         callback(req, res, data);
       }
     });
   }
 };
 
-exports.where = function(req, res, resource, name, array) {
-  resource.where(name).in(array).exec(function (err, data) {
-    if (err) { var body = err; }
-    else { var body = data; }
-    //console.log("FIND MANY:\n" + body);
-    res.json(body);
-  });
+exports.where = function(req, res, resource, name, array, callback) {
+  if (app.HasAccess(req, res, 'Admins', resource)) {
+    resource.where(name).in(array).exec(function (err, data) {
+      if (err) { var body = err; }
+      else { 
+        if (data) { var body = data; }
+        else {res.status = 404; var body = {msg: resource.modelName + ' not found.'}}
+      }
+      //console.log("FIND MANY:\n" + body);
+      res.json(body);
+    });
+  }
 }
 
 // Handler for GET with id
@@ -32,10 +40,13 @@ exports.findone = function(req, res, resource, filter, callback){
   filter = filter ? filter : {_id: req.params.id};
   resource.findOne(filter).exec(function (err, data) {
     if (err) { var body = err; }
-    else { var body = data; }
+    else { 
+      if (data) { var body = data; }
+      else {res.status = 404; var body = {msg: resource.modelName + ' not found.'}}
+    }
     //console.log("FIND ONE:\n" + body);
     res.json(body);
-    if (!err && callback) {
+    if (!err && data && callback) {
       callback(req, res, data);
     }
   });

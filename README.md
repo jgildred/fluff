@@ -26,6 +26,7 @@ See the [API_README.md](API_README.md) for a list of APIs.
 
 To do:
 
+- user/admin restrictions on all APIs
 - move session timeout to be user specific
 - add alert API and basic alert cases like initializing
 - manage email templates

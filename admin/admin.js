@@ -91,10 +91,10 @@ function init () {
     default:
       session.fetch({
         success: function () {
-          Backbone.history.start();
           if (!session.get('auth')) {
             loginView.render();
           }
+          Backbone.history.start();
         },
         error: function () {
           loginView.render();
@@ -121,12 +121,14 @@ function navselect (type) {
 
 // Load the navbar and authbar
 function loadnavbar (selection) {
-  var template = _.template($('#authbar-template').html(), {session: session});
-  $(".authbar").html(template);
-  var template = _.template($('#navbar-template').html(), {auth: session.get('auth'), admin: (session.get('role') == 'Admin')}); 
-  $(".navbar-inner").html(template);
-  if (selection) {
-    navselect(selection);
+  if (session.get('role') == 'Admin') {
+    var template = _.template($('#authbar-template').html(), {session: session});
+    $(".authbar").html(template);
+    var template = _.template($('#navbar-template').html(), {auth: session.get('auth'), admin: (session.get('role') == 'Admin')}); 
+    $(".navbar-inner").html(template);
+    if (selection) {
+      navselect(selection);
+    }
   }
 }
 
@@ -287,7 +289,7 @@ var LoginView = Backbone.View.extend({
     return false;
   },
   close: function () {
-    window.history.back();
+    //window.history.back();
   },
   render: function (options) {
     var template = $('#login-template').html();
@@ -311,9 +313,14 @@ var PwresetView = Backbone.View.extend({
         type: "PUT",
         url: apibase + "/pwreset/" + this.formData.email,
         data: null,
-        success: function () {
+        success: function (data, status, xhr) {
           $('#pwreset-modal').modal('hide');
-          alertView.render({label:"Check your email", msg: "In a few moments you should receive an email telling you what to do next."});
+          if (data && data.email) {
+            alertView.render({label:"Check your email", msg: "In a few moments you should receive an email telling you what to do next."});
+          }
+          else {
+            alertView.render({label:"Problem", msg: "The email you entered does not match any current user."});
+          }
         },
         error: function (xhr) {
           $('.alert-msg').html($.parseJSON(xhr.responseText).msg);
@@ -323,9 +330,14 @@ var PwresetView = Backbone.View.extend({
     }
   },
   close: function () {
-    //
+    loginView.render();
   },
   render: function (options) {
+    // if coming from the login view, then avoid double dark background
+    if ($('#login-modal')) {
+      console.log("hide");
+      $('#login-modal').modal('hide');
+    }
     var msg = "Enter the email address of the user account. We will send a password reset confirmation to that address.";
     var template = _.template($('#pwreset-template').html(), {email: (options && options.email) ? options.email : null, msg: msg}); 
     this.$el.html(template);
@@ -391,6 +403,7 @@ var UserListView = Backbone.View.extend({
 var PageListView = Backbone.View.extend({
   el: '.page',
   render: function () {
+    console.log("fetchingpagelist");
     // first get the list of views for the page list view
     this.views = new Views();
     var that = this;
@@ -1000,6 +1013,7 @@ router.on('route:verify-email', function(token) {
   }
 })
 router.on('route:list-pages', function() {
+  console.log("listpages");
   navselect("pages");
   // Render page list view
   pageListView.render();

@@ -133,54 +133,64 @@ var doUpdate = function(req, res) {
 };
 
 var updateSession = function(req, res, user) {
-  req.session.email   = user.email;
-  req.session.role    = user.role;
-  req.session.name    = user.displayname;
-  console.log("SESSION UPDATED: " + JSON.stringify(req.session));
+  if (user) {
+    req.session.email   = user.email;
+    req.session.role    = user.role;
+    req.session.name    = user.displayname;
+    console.log("SESSION UPDATED: " + JSON.stringify(req.session));
+  }
 }
 
 var emailToUser = function(mailinfo) {
-  console.log("MAIL TO USER: " + JSON.stringify(mailinfo.user));
-  app.mailer.sendMail({
-    from:    app.App.get('config').email_from,
-    to:      mailinfo.user.email,
-    subject: mailinfo.subject,
-    text:    mailinfo.body
-  });
-  app.mailer.close();
+  if (mailinfo) {
+    console.log("MAIL TO USER: " + JSON.stringify(mailinfo.user));
+    app.mailer.sendMail({
+      from:    app.App.get('config').email_from,
+      to:      mailinfo.user.email,
+      subject: mailinfo.subject,
+      text:    mailinfo.body
+    });
+    app.mailer.close();
+  }
 }
 
 var SendVerifyEmail = function(req, res, user) {
-  var link  = app.siteUrl + app.App.get('config').admin_path + "/#/verify/" + user.verifytoken;
-  emailToUser({
-    user: user,
-    subject: "Verify Your Email Address",
-    body:    "Hi " + user.shortname + "\n\n" 
-           + "In order to complete the signup process, please go to:\n\n" 
-           + link + "\n"
-  });
+  if (user) {
+    var link  = app.siteUrl + app.App.get('config').admin_path + "/#/verify/" + user.verifytoken;
+    emailToUser({
+      user: user,
+      subject: "Verify Your Email Address",
+      body:    "Hi " + user.shortname + "\n\n" 
+             + "In order to complete the signup process, please go to:\n\n" 
+             + link + "\n"
+    });
+  }
 }
 
 var SendResetEmail = function(req, res, user) {
-  var link  = app.siteUrl + app.App.get('config').admin_path + "/#/pwchange/" + user.verifytoken;
-  emailToUser({
-    user: user,
-    subject: "Request to Reset Your Password",
-    body:    "Hi " + user.shortname + "\n\n" 
-           + "We just received a request to reset your password. In order to do so, please go to:\n\n" 
-           + link + "\n"
-  });
+  if (user) {
+    var link  = app.siteUrl + app.App.get('config').admin_path + "/#/pwchange/" + user.verifytoken;
+    emailToUser({
+      user: user,
+      subject: "Request to Reset Your Password",
+      body:    "Hi " + user.shortname + "\n\n" 
+             + "We just received a request to reset your password. In order to do so, please go to:\n\n" 
+             + link + "\n"
+    });
+  }
 }
 
 var SendNewResetEmail = function(req, res, user) {
-  var link  = app.siteUrl + app.App.get('config').admin_path + "/#/pwchange/" + user.verifytoken;
-  emailToUser({
-    user: user,
-    subject: "Your Account is Ready",
-    body:    "Hi " + user.shortname + "\n\n" 
-           + "We just setup a new user account for you. In order to complete the setup process, please go to:\n\n" 
-           + link + "\n"
-  });
+  if (user) {
+    var link  = app.siteUrl + app.App.get('config').admin_path + "/#/pwchange/" + user.verifytoken;
+    emailToUser({
+      user: user,
+      subject: "Your Account is Ready",
+      body:    "Hi " + user.shortname + "\n\n" 
+             + "We just setup a new user account for you. In order to complete the setup process, please go to:\n\n" 
+             + link + "\n"
+    });
+  }
 }
 
 // make sure it's not the last admin
