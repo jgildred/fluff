@@ -431,7 +431,7 @@ var applyConfig = function(req, res, next) {
   var port        = app.get('config').port ? ":" + app.get('config').port : "";
   var siteUrl = protocol + app.get('config').domain;
   // Heroku does not expose the internal server port
-  if (active_config.app_service != "Heroku") {
+  if (app.get('config').app_service != "Heroku") {
     siteUrl += port;
   }
   exports.siteUrl = siteUrl;
