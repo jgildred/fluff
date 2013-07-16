@@ -4,7 +4,7 @@ function htmlEncode(value){
 }
 $.fn.serializeObject = function() {
   var o = {};
-var a = this.serializeArray();
+  var a = this.serializeArray();
   $.each(a, function() {
       if (o[this.name] !== undefined) {
           if (!o[this.name].push) {
@@ -224,7 +224,7 @@ var SignUpView = Backbone.View.extend({
     'click .close'       : 'close'
   },
   saveUser: function (ev) {
-    var userDetails = $(ev.currentTarget).serializeObject();
+    var userDetails = getFormData(ev.currentTarget);
     var user = new User();
     user.save(userDetails, {
       success: function (user) {
@@ -240,7 +240,8 @@ var SignUpView = Backbone.View.extend({
     return false;
   },
   close: function () {
-    window.history.back();
+    this.$el.html('');
+    router.navigate('login');
   },
   render: function (options) {
     var template = _.template($('#signup-template').html(), {user: null});
@@ -257,7 +258,7 @@ var LoginView = Backbone.View.extend({
     'click  .close'       : 'close'
   },
   login: function (ev) {
-    var loginDetails = $(ev.currentTarget).serializeObject();
+    var loginDetails = getFormData(ev.currentTarget);
     session.login(loginDetails, function () {
       if (session.get("auth")) {
         switch (session.get("status")) {
@@ -289,7 +290,7 @@ var LoginView = Backbone.View.extend({
     return false;
   },
   close: function () {
-    //window.history.back();
+    this.$el.html('');
   },
   render: function (options) {
     var template = $('#login-template').html();
@@ -302,11 +303,11 @@ var LoginView = Backbone.View.extend({
 var PwresetView = Backbone.View.extend({
   el: '.popup',
   events: {
-    'click .pwreset' : 'requestReset',
-    'click .close' : 'close'
+    'submit .pwreset' : 'requestReset',
+    'click .close'   : 'close'
   },
   requestReset: function (ev) {
-    this.formData = $(ev.currentTarget).parents("form:first").serializeObject();
+    this.formData = getFormData(ev.currentTarget);
     if (this.formData.email) {
       var that = this;
       $.ajax({
@@ -316,10 +317,10 @@ var PwresetView = Backbone.View.extend({
         success: function (data, status, xhr) {
           $('#pwreset-modal').modal('hide');
           if (data && data.email) {
-            alertView.render({label:"Check your email", msg: "In a few moments you should receive an email telling you what to do next."});
+            alertView.render({label:"Check your email", msg: "In a few moments you should receive an email telling you what to do next.", onclose: "home"});
           }
           else {
-            alertView.render({label:"Problem", msg: "The email you entered does not match any current user."});
+            alertView.render({label:"Problem", msg: "The email you entered does not match any current user.", onclose: "pwreset"});
           }
         },
         error: function (xhr) {
@@ -330,6 +331,7 @@ var PwresetView = Backbone.View.extend({
     }
   },
   close: function () {
+    this.$el.html('');
     loginView.render();
   },
   render: function (options) {
@@ -349,11 +351,11 @@ var PwresetView = Backbone.View.extend({
 var PwchangeView = Backbone.View.extend({
   el: '.popup',
   events: {
-    'click .pwchange' : 'changePassword',
+    'submit .pwchange' : 'changePassword',
     'click .close'    : 'close'
   },
   changePassword: function (ev) {
-    this.formData = $(ev.currentTarget).parents("form:first").serializeObject();
+    this.formData = getFormData(ev.currentTarget);
     if (this.formData.token 
     && this.formData.password 
     && this.formData.confirmpassword 
@@ -365,7 +367,7 @@ var PwchangeView = Backbone.View.extend({
         data: {password: this.formData.password},
         success: function () {
           $('#pwchange-modal').modal('hide');
-          alertView.render({label:"Success", msg: "Your password has been changed,<br/>and you are now logged in."});
+          alertView.render({label:"Success", msg: "Your password has been changed,<br/>and you are now logged in.", onclose: "home"});
         },
         error: function (data) {
           $('.alert-msg').html($.parseJSON(data.responseText).msg);
@@ -375,7 +377,7 @@ var PwchangeView = Backbone.View.extend({
     }
   },
   close: function () {
-    //
+    this.$el.html('');
   },
   render: function (options) {
     var template = _.template($('#pwchange-template').html(), {token: (options && options.token) ? options.token : null}); 
@@ -451,7 +453,7 @@ var VarListView = Backbone.View.extend({
     return false;
   },
   saveVar: function (ev) {
-    var varDetails = $(ev.currentTarget).parents("form:first").serializeObject();
+    var varDetails = getFormData($(ev.currentTarget).parents("form:first"));
     this.var = this.vars.get(varDetails.id);
     if (!this.var) {
       this.var = new Var();
@@ -497,7 +499,7 @@ var UserDetailView = Backbone.View.extend({
     'click .user-pwreset'   : 'requestReset'
   },
   saveUser: function (ev) {
-    var userDetails = $(ev.currentTarget).serializeObject();
+    var userDetails = getFormData(ev.currentTarget);
     if (!this.user) {
       this.user = new User();
     }
@@ -592,7 +594,7 @@ var PageDetailView = Backbone.View.extend({
     this.editor.focus();
   },
   savePage: function (ev) {
-    var pageDetails = $(ev.currentTarget).serializeObject();
+    var pageDetails = getFormData(ev.currentTarget);
     pageDetails.content = this.editor.getValue();
     pageDetails.cursor  = this.editor.selection.getCursor();
     if (!this.page) {
@@ -676,7 +678,7 @@ var ViewDetailView = Backbone.View.extend({
     this.editor.focus();
   },
   saveView: function (ev) {
-    var viewDetails = $(ev.currentTarget).serializeObject();
+    var viewDetails = getFormData(ev.currentTarget);
     viewDetails.template = this.editor.getValue();
     viewDetails.cursor   = this.editor.selection.getCursor();
     if (!this.view) {
@@ -742,7 +744,7 @@ var VarDetailView = Backbone.View.extend({
     'click  .cancel'        : 'cancel'
   },
   saveVar: function (ev) {
-    var varDetails = $(ev.currentTarget).serializeObject();
+    var varDetails = getFormData(ev.currentTarget);
     if (!this.var) {
       this.var = new Var();
     }
@@ -840,7 +842,7 @@ var SiteDetailView = Backbone.View.extend({
   el: '.page',
   events: {
     'submit .edit-site-form' : 'saveSite',
-    'click  .cancel'         : 'cancel'
+    'click .cancel'         : 'cancel'
   },
   saveSite: function (ev) {
     var siteDetails = getFormData(ev.currentTarget);
@@ -848,11 +850,10 @@ var SiteDetailView = Backbone.View.extend({
       this.site = new Site();
     }
     if (siteDetails) {
-
       this.site.save(siteDetails, {
         success: function (site) {
           console.log('site saved');
-          alertView.render({label:"Config changed", msg: "Changes are effective immediately."});
+          alertView.render({label:"Config changed", msg: "Changes are effective immediately.", onclose: "site"});
         },
         error: function (model, xhr) {
           console.log(xhr);
@@ -861,7 +862,6 @@ var SiteDetailView = Backbone.View.extend({
           }
         }
       });
-
     }
     else {
       alertView.render({label:"Update Site", msg: "Nothing to update."});
@@ -900,14 +900,24 @@ var AlertView = Backbone.View.extend({
     'click .close' : 'close'
   },
   close: function () {
+    $('.modal-backdrop').remove();
+    this.$el.html('');
+    // accepts the name of a route to go to after close
+    if (this.onclose) {
+      router.navigate(this.onclose);
+    }
     if (/\/api\/verify/i.test(window.location.pathname)) {
-      loginView.render();
+      //loginView.render();
     }
   },
   render: function (options) {
+    $('.modal-backdrop').remove();
     var template = _.template($('#alert-template').html(), {label: options.label, msg: options.msg }); 
     this.$el.html(template);
     $('#alert-modal').modal('show');
+    if (options && options.onclose) {
+      this.onclose = options.onclose;
+    }
   }
 });
 
@@ -1004,10 +1014,10 @@ router.on('route:verify-email', function(token) {
       url: apibase + "/verify/" + that.token,
       data: null,
       success: function () {
-        alertView.render({label:"Verified", msg: "Your email has been verified.<br/>Your account is ready to use."});
+        alertView.render({label:"Verified", msg: "Your email has been verified.<br/>Your account is ready to use.", onclose: "home"});
       },
       error: function () {
-        alertView.render({label:"Sorry", msg: "Your verification token was missing or invalid."});
+        alertView.render({label:"Sorry", msg: "Your verification token was missing or invalid.", onclose: "home"});
       }
     });
   }

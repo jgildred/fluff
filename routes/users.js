@@ -43,18 +43,16 @@ exports.update = function(req, res){
   if (req.body.role || req.body.status) {
     if (app.HasAccess(req, res, 'Admins')) {
       if ((req.body.role == 'User') || (req.body.status == 'Inactive')) {
-        if (isNotLastAdmin(req, res)) {
-          doUpdate(req, res);
-        }
+        doIfNotLastAdmin(req, res, req.params.id, doUpdate);
       }
       else {
-        doUpdate(req, res);
+        doUpdate(req, res, app.User);
       }
     }
   }
   else {
     if (app.HasAccess(req, res, 'Users')) {
-      doUpdate(req, res);
+      doUpdate(req, res, app.User);
     }
   }
 };
@@ -93,8 +91,8 @@ exports.pwchange = function(req, res){
 
 // Preprocessor for DELETE /users/:id
 exports.remove = function(req, res){
-  if (app.HasAccess(req, res, 'Admins') && isNotLastAdmin(req, res)) {
-    resource.remove(req, res, app.User);
+  if (app.HasAccess(req, res, 'Admins')) {
+    doIfNotLastAdmin(req, res, req.params.id, resource.remove);
   }
 };
 
@@ -123,13 +121,13 @@ var doCreate = function(req, res, callback) {
   resource.create(req, res, app.User, callback);
 }
 
-var doUpdate = function(req, res) {
+var doUpdate = function(req, res, resource) {
   CleanParams(req, res);
   var callback = null;
   if (req.session.user_id == req.params.id) {
     callback = updateSession;
   }
-  resource.update(req, res, app.User, null, callback);
+  resource.update(req, res, resource, null, callback);
 };
 
 var updateSession = function(req, res, user) {
@@ -194,17 +192,31 @@ var SendNewResetEmail = function(req, res, user) {
 }
 
 // make sure it's not the last admin
-var isNotLastAdmin = function (req, res) {
-  app.User.count({role: "Admin"}).exec(function (err, count) {
-    if (!err && (count > 1)) { 
-      console.log("more than one admin left");
-      return true;
-    }
-    else {
-      app.msgResponse(req, res, 403, "Sorry, you can't remove or disable the last admin.");
-      return false;
-    }
-  });
+var doIfNotLastAdmin = function (req, res, user_id, callback) {
+  if (user_id && callback) {
+    app.User.findById(user_id).exec(function (err, user) {
+      if (user) {
+        if (user.role == "Admin") {
+          app.User.count({role: "Admin"}).exec(function (err, count) {
+            if (!err && (count > 1)) { 
+              console.log("more than one admin left");
+              callback(req, res, app.User);
+            }
+            else {
+              app.msgResponse(req, res, 403, "Sorry, you can't remove or disable the last admin.");
+            }
+          });
+        }
+        else {
+          console.log("ok to delete non-admin");
+          callback(req, res, app.User);
+        }
+      }
+      else {
+        app.msgResponse(req, res, 404, "The user cannot be found.");
+      }
+    });
+  }
 } 
 
 var randomString = function () {
