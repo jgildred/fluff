@@ -6,13 +6,13 @@
   var apikey  = '1234567890';
   var version = '0.5';
   var reg     = new RegExp("/$");
-  var apibase = window.location.pathname;
+  var adminbase = window.location.pathname;
   if (!reg.test(window.location.pathname)) {
-    apibase = apibase + '/api';
+    var apibase = adminbase + '/api';
     window.location.href = window.location.href + '/';
   }
   else {
-    apibase = apibase + 'api';
+    var apibase = adminbase + 'api';
   }
   // used for checkboxes in forms
   function setCheckVal(element, checked) {
@@ -98,7 +98,6 @@
   <script type="text/template" id="signup-template">
     <div id="signup-modal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="singupModalLabel" aria-hidden="true">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="signupModalLabel">Welcome to the Fluff admin.</h3>
       </div>
       <div class="modal-body">
@@ -142,7 +141,6 @@
   <script type="text/template" id="login-template">
     <div id="login-modal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="loginModalLabel">Welcome back.</h3>
       </div>
       <div class="modal-body">
@@ -175,14 +173,13 @@
   <script type="text/template" id="pwreset-template">
     <div id="pwreset-modal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="pwresetModalLabel" aria-hidden="true">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="pwresetModalLabel">Password Reset</h3>
       </div>
       <div class="modal-body">
         <div class="alert hide pwreset-fail">
           <span class="alert-msg"></span>
         </div>
-        <form class="login-form form-horizontal">
+        <form class="pwreset-form form-horizontal">
           <div class="control-group">
             <label class="control-label" for="inputEmail">Email</label>
             <div class="controls">
@@ -191,7 +188,8 @@
           </div>
           <div class="control-group">
             <div class="controls">
-              <button type="button" class="btn btn-primary pwreset">Request reset</button>
+              <button type="submit" class="btn btn-primary pwreset">Request reset</button>
+              <button type="button" class="btn cancel">Cancel</button>
             </div>
           </div>
         </form>
@@ -202,7 +200,6 @@
   <script type="text/template" id="pwchange-template">
     <div id="pwchange-modal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="pwchangeModalLabel" aria-hidden="true">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="pwchangeModalLabel">Change your password.</h3>
       </div>
       <div class="modal-body">
@@ -234,7 +231,7 @@
           <% } %>
           <div class="control-group">
             <div class="controls">
-              <button type="button" class="btn btn-primary pwchange">Save and login</button>
+              <button type="submit" class="btn btn-primary pwchange">Save and login</button>
             </div>
           </div>
         </form>

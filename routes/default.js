@@ -5,50 +5,64 @@ var app = require('../app');
 
 // Handler for GET
 exports.find = function(req, res, resource, filter, callback){
-  if (app.HasAccess(req, res, 'Admins', resource)) {
-    resource.find(filter).exec(function (err, data) {
-      if (err) { var body = err; }
-      else { 
-        if (data) { var body = data; }
-        else {res.status = 404; var body = {msg: resource.modelName + ' not found.'}}
+  resource.find(filter).exec(function (err, data) {
+    if (err) { 
+      app.msgResponse(req, res, 500, JSON.stringify(err));
+    }
+    else { 
+      if (data) { 
+        res.json(data);
+        if (callback) {
+          callback(req, res, data);
+        }
       }
-      //console.log("FIND MANY:\n" + body);
-      res.json(body);
-      if (!err && data && callback) {
-        callback(req, res, data);
+      else {
+        app.msgResponse(req, res, 404, resource.modelName + ' not found.');
       }
-    });
-  }
+    }
+    //console.log("FIND ONE:\n" + body);
+  });
 };
 
 exports.where = function(req, res, resource, name, array, callback) {
-  if (app.HasAccess(req, res, 'Admins', resource)) {
-    resource.where(name).in(array).exec(function (err, data) {
-      if (err) { var body = err; }
-      else { 
-        if (data) { var body = data; }
-        else {res.status = 404; var body = {msg: resource.modelName + ' not found.'}}
+  resource.where(name).in(array).exec(function (err, data) {
+    if (err) { 
+      app.msgResponse(req, res, 500, JSON.stringify(err));
+    }
+    else { 
+      if (data) { 
+        res.json(data);
+        if (callback) {
+          callback(req, res, data);
+        }
       }
-      //console.log("FIND MANY:\n" + body);
-      res.json(body);
-    });
-  }
-}
+      else {
+        app.msgResponse(req, res, 404, resource.modelName + ' not found.');
+      }
+    }
+    //console.log("FIND ONE:\n" + body);
+  });
+};
 
 // Handler for GET with id
 exports.findone = function(req, res, resource, filter, callback){
   filter = filter ? filter : {_id: req.params.id};
   resource.findOne(filter).exec(function (err, data) {
-    if (err) { var body = err; }
+    if (err) { 
+      app.msgResponse(req, res, 500, JSON.stringify(err));
+    }
     else { 
-      if (data) { var body = data; }
-      else {res.status = 404; var body = {msg: resource.modelName + ' not found.'}}
+      if (data) { 
+        res.json(data);
+        if (callback) {
+          callback(req, res, data);
+        }
+      }
+      else {
+        app.msgResponse(req, res, 404, resource.modelName + ' not found.');
+      }
     }
     //console.log("FIND ONE:\n" + body);
-    res.json(body);
-    if (!err && data && callback) {
-      callback(req, res, data);
-    }
   });
 };
 
@@ -58,13 +72,21 @@ exports.create = function(req, res, resource, callback){
   if (req.body._id) { delete req.body._id; }
   console.log("INSERTING: "+ JSON.stringify(req.body));
   resource.create(req.body, function (err, data) {
-    if (err) { var body = err; }
-    else { var body = data; }
-    console.log("CREATE ITEM:\n" + body);
-    res.json(body);
-    if (!err && callback) {
-      callback(req, res, data);
+    if (err) { 
+      app.msgResponse(req, res, 500, JSON.stringify(err));
     }
+    else { 
+      if (data) { 
+        res.json(data);
+        if (callback) {
+          callback(req, res, data);
+        }
+      }
+      else {
+        app.msgResponse(req, res, 404, resource.modelName + ' not found.');
+      }
+    }
+    //console.log("CREATE:\n" + body);
   });
 };
 
@@ -80,12 +102,12 @@ exports.update = function(req, res, resource, filter, callback){
       app.msgResponse(req, res, 500, JSON.stringify(err));
     }
     else { 
-      if (filter && !data) {
-        app.msgResponse(req, res, 404, "Nothing to update.");
-      }
-      else {
+      if (data) {
         console.log("UPDATE ITEM:\n" + JSON.stringify(data));
         res.json(data);
+      }
+      else {
+        app.msgResponse(req, res, 404, "Nothing to update.");
       }
     }
     if (!err && callback) {

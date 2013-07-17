@@ -97,5 +97,6 @@ exports.detach = function(req, res){
     csrf.generate(req, res, function () {
       res.send({auth: false, _csrf: req.session._csrf});
     });
+    req.session.auth = false;
   });
 };

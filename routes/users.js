@@ -70,6 +70,7 @@ exports.pwreset = function(req, res){
   if (req.params.email) {
     var filter = {email: req.params.email, status: "Active" };
     resource.findone(req, res, app.User, filter, SendResetEmail);
+    res.json({msg:"Password reset instructions sent to " + req.params.email + "."});
   }
   else {
     app.msgResponse(req, res, 400, "Email address is missing from your request.");

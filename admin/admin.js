@@ -24,6 +24,46 @@ $.ajaxPrefilter( function( options, originalOptions, jqXHR ) {
   options.url = options.url + "?apikey=" + encodeURIComponent(apikey);
 });
 
+var addArrayOrString = function(object, name, text) {
+  if (name.match(/\[\]/)) {
+    name = name.replace('[]','');
+    object[name] = text.replace(' ','').split(',');
+    return object;
+  }
+  else {
+    object[name] = text;
+    return object;
+  }
+}
+
+// grabs all form data, puts into an object
+// form elements with a name like 'item.subitem' will be put into an 'item' subobject
+// form elements with a name like 'items[]' will be parsed into an 'items' array of text
+var getFormData = function(form) {
+  if (form) {
+    var formObject = {};
+    var formData = $(form).serializeObject();
+    for (item in formData) {
+      if (item.split('.').length>1) {
+        var item_name    = item.split('.')[0];
+        var subitem_name = item.split('.')[1];
+        // make sure the formObject has the subobject
+        if (!formObject.hasOwnProperty(item_name)) {
+          formObject[item_name] = {};
+        }
+        formObject[item_name] = addArrayOrString(formObject[item_name], subitem_name, formData[item]);
+      }
+      else {
+        formObject = addArrayOrString(formObject, item, formData[item]);
+      }
+    }
+    return formObject;
+  }
+  else {
+    return null;
+  }
+}
+
 function fullscreenEditor(editor) {
   $('#editor').removeClass('span4 small-editor').addClass('fullscreen-editor');
   editor.resize();
@@ -93,6 +133,11 @@ function init () {
         success: function () {
           if (!session.get('auth')) {
             loginView.render();
+          }
+          else {
+            if (session.get('role') != "Admin") {
+              alertView.render({label:"Restricted", msg: "Sorry, you need to be an admin to access this.", cantclose: true});
+            }
           }
           Backbone.history.start();
         },
@@ -183,7 +228,7 @@ var Session = Backbone.Model.extend({
         // The server also returns a new csrf token so that
         // the user can relogin without refreshing the page
         //that.set({'auth': false, '_csrf': resp._csrf});
-        loginView.render();
+        window.location.href = adminbase;
       }
     });
   },
@@ -293,6 +338,8 @@ var LoginView = Backbone.View.extend({
     this.$el.html('');
   },
   render: function (options) {
+    // make sure not to have a double backdrop
+    $(".modal-backdrop").remove();
     var template = $('#login-template').html();
     this.$el.html(template);
     $('#login-modal').modal('show');
@@ -303,24 +350,27 @@ var LoginView = Backbone.View.extend({
 var PwresetView = Backbone.View.extend({
   el: '.popup',
   events: {
-    'submit .pwreset' : 'requestReset',
-    'click .close'   : 'close'
+    'submit .pwreset-form' : 'requestReset',
+    'click  .cancel'       : 'cancel'
   },
   requestReset: function (ev) {
     this.formData = getFormData(ev.currentTarget);
     if (this.formData.email) {
-      var that = this;
       $.ajax({
         type: "PUT",
         url: apibase + "/pwreset/" + this.formData.email,
         data: null,
         success: function (data, status, xhr) {
-          $('#pwreset-modal').modal('hide');
-          if (data && data.email) {
-            alertView.render({label:"Check your email", msg: "In a few moments you should receive an email telling you what to do next.", onclose: "home"});
+          if (data) {
+            $('#pwreset-modal').modal('hide');
+            alertView.render({
+              label:   "Check your email", 
+              msg:     "In a few moments you should receive<br/>an email telling you what to do next.", 
+              cantclose: true});
           }
           else {
-            alertView.render({label:"Problem", msg: "The email you entered does not match any current user.", onclose: "pwreset"});
+            $('.alert-msg').html('The email you entered does not match any current user');
+            $('.pwreset-fail').show();
           }
         },
         error: function (xhr) {
@@ -329,17 +379,19 @@ var PwresetView = Backbone.View.extend({
         }
       });
     }
+    else {
+      $('.alert-msg').html("Where's the email?");
+      $('.pwreset-fail').show();
+    }
+    return false;
   },
-  close: function () {
-    this.$el.html('');
-    loginView.render();
+  cancel: function () {
+    $('#pwreset-modal').modal('hide');
+    window.history.back();
   },
   render: function (options) {
-    // if coming from the login view, then avoid double dark background
-    if ($('#login-modal')) {
-      console.log("hide");
-      $('#login-modal').modal('hide');
-    }
+    // make sure not to have a double backdrop
+    $(".modal-backdrop").remove();
     var msg = "Enter the email address of the user account. We will send a password reset confirmation to that address.";
     var template = _.template($('#pwreset-template').html(), {email: (options && options.email) ? options.email : null, msg: msg}); 
     this.$el.html(template);
@@ -351,8 +403,8 @@ var PwresetView = Backbone.View.extend({
 var PwchangeView = Backbone.View.extend({
   el: '.popup',
   events: {
-    'submit .pwchange' : 'changePassword',
-    'click .close'    : 'close'
+    'submit .pwchange-form' : 'changePassword',
+    'click  .close'         : 'close'
   },
   changePassword: function (ev) {
     this.formData = getFormData(ev.currentTarget);
@@ -360,14 +412,16 @@ var PwchangeView = Backbone.View.extend({
     && this.formData.password 
     && this.formData.confirmpassword 
     && (this.formData.password == this.formData.confirmpassword)) {
-      var that = this;
       $.ajax({
         type: "PUT",
         url: apibase + "/pwchange/" + this.formData.token,
         data: {password: this.formData.password},
         success: function () {
           $('#pwchange-modal').modal('hide');
-          alertView.render({label:"Success", msg: "Your password has been changed,<br/>and you are now logged in.", onclose: "home"});
+          alertView.render({
+            label:   "Success", 
+            msg:     "Your password has been changed,<br/>and you can login with the new password.", 
+            cantclose: true});
         },
         error: function (data) {
           $('.alert-msg').html($.parseJSON(data.responseText).msg);
@@ -375,6 +429,11 @@ var PwchangeView = Backbone.View.extend({
         }
       });
     }
+    else {
+      $('.alert-msg').html("Something is missing or passwords don't match.");
+      $('.pwchange-fail').show();
+    }
+    return false;
   },
   close: function () {
     this.$el.html('');
@@ -550,7 +609,7 @@ var UserDetailView = Backbone.View.extend({
         url: apibase + "/pwreset/" + this.email,
         data: null,
         success: function () {
-          alertView.render({label:"Check your email", msg: "In a few moments you should receive an email telling you what to do next."});
+          alertView.render({label:"Email sent", msg: "In a few moments the user should receive<br/>an email with password reset instructions."});
         },
         error: function (xhr) {
           alertView.render({label:"Sorry", msg: $.parseJSON(xhr.responseText).msg});
@@ -797,46 +856,6 @@ var VarDetailView = Backbone.View.extend({
   }
 });
 
-var addArrayOrString = function(object, name, text) {
-  if (name.match(/\[\]/)) {
-    name = name.replace('[]','');
-    object[name] = text.replace(' ','').split(',');
-    return object;
-  }
-  else {
-    object[name] = text;
-    return object;
-  }
-}
-
-// grabs all form data, puts into an object
-// form elements with a name like 'item.subitem' will be put into an 'item' subobject
-// form elements with a name like 'items[]' will be parsed into an 'items' array of text
-var getFormData = function(form) {
-  if (form) {
-    var formObject = {};
-    var formData = $(form).serializeObject();
-    for (item in formData) {
-      if (item.split('.').length>1) {
-        var item_name    = item.split('.')[0];
-        var subitem_name = item.split('.')[1];
-        // make sure the formObject has the subobject
-        if (!formObject.hasOwnProperty(item_name)) {
-          formObject[item_name] = {};
-        }
-        formObject[item_name] = addArrayOrString(formObject[item_name], subitem_name, formData[item]);
-      }
-      else {
-        formObject = addArrayOrString(formObject, item, formData[item]);
-      }
-    }
-    return formObject;
-  }
-  else {
-    return null;
-  }
-}
-
 // Setup the site detail view
 var SiteDetailView = Backbone.View.extend({
   el: '.page',
@@ -918,6 +937,9 @@ var AlertView = Backbone.View.extend({
     if (options && options.onclose) {
       this.onclose = options.onclose;
     }
+    if (options && options.cantclose) {
+      $('#alert-modal .close').addClass('hidden');
+    }
   }
 });
 
@@ -970,9 +992,17 @@ var Router = Backbone.Router.extend({
 var router = new Router;
 router.on('route:home', function() {
   if (session.get('auth')) {
-    navselect("pages");
-    // Render pages list view
-    pageListView.render();
+    if (session.get('role') == 'Admin') {
+      navselect("pages");
+      // Render pages list view
+      pageListView.render();
+    }
+    else {
+      alertView.render({label:"Restricted", msg: "Sorry, you need to be an admin to access this.", cantclose: true});
+    }
+  }
+  else {
+    loginView.render();
   }
 })
 router.on('route:signup', function() {

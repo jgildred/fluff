@@ -112,6 +112,17 @@ var allowCrossDomain = function(req, res, next) {
   }
 }
 
+var doIfHasAccess = function (req, res, level, resourceScope, callback) {
+  if (HasAccess(req, res, level, resourceScope)) {
+    if ((callback == resource.update) && (resourceScope == Site)) {
+      callback(req, res, resourceScope, null, reloadConfig);
+    }
+    else {
+      callback(req, res, resourceScope);
+    }
+  }
+}
+
 var HasAccess = function(req, res, level, resourceScope){
   if (req.session.auth && (req.session.status == 'Active')) {
     switch (level) {
@@ -146,6 +157,7 @@ var HasAccess = function(req, res, level, resourceScope){
     }
   }
   else {
+    msgResponse(req, res, 403, "You must be logged in.");
     return false;
   }
 };
@@ -462,29 +474,30 @@ var applyConfig = function(req, res, next) {
   app.put (base + '/pwchange/:token', users.pwchange);
   app.del (base + '/users/:id',       users.remove);
 
-  app.get (base + '/sites',     function(req, res) {resource.find   (req, res, Site);} );
-  app.get (base + '/sites/:id', function(req, res) {resource.findone(req, res, Site);} );
+  app.get (base + '/sites',     function(req, res) {doIfHasAccess(req, res, 'Admins', Site, resource.find);} );
+  app.get (base + '/sites/:id', function(req, res) {doIfHasAccess(req, res, 'Admins', Site, resource.findone);} );
   //app.post(base + '/sites',     function(req, res) {resource.create (req, res, Site, reloadConfig);} );
-  app.put (base + '/sites/:id', function(req, res) {resource.update (req, res, Site, null, reloadConfig);} );
+  app.put (base + '/sites/:id', function(req, res) {doIfHasAccess(req, res, 'Admins', Site, resource.update);} );
   //app.del (base + '/sites/:id', function(req, res) {resource.remove (req, res, Site);} );
 
-  app.get (base + '/pages',     function(req, res) {resource.find   (req, res, Page);} );
-  app.get (base + '/pages/:id', function(req, res) {resource.findone(req, res, Page);} );
-  app.post(base + '/pages',     function(req, res) {resource.create (req, res, Page);} );
-  app.put (base + '/pages/:id', function(req, res) {resource.update (req, res, Page);} );
-  app.del (base + '/pages/:id', function(req, res) {resource.remove (req, res, Page);} );
+  app.get (base + '/pages',     function(req, res) {doIfHasAccess(req, res, 'Admins', Page, resource.find);} );
+  app.get (base + '/pages/:id', function(req, res) {doIfHasAccess(req, res, 'Admins', Page, resource.findone);} );
+  app.post(base + '/pages',     function(req, res) {doIfHasAccess(req, res, 'Admins', Page, resource.create);} );
+  app.put (base + '/pages/:id', function(req, res) {doIfHasAccess(req, res, 'Admins', Page, resource.update);} );
+  app.del (base + '/pages/:id', function(req, res) {doIfHasAccess(req, res, 'Admins', Page, resource.remove);} );
 
-  app.get (base + '/views',     function(req, res) {resource.find   (req, res, View);} );
-  app.get (base + '/views/:id', function(req, res) {resource.findone(req, res, View);} );
-  app.post(base + '/views',     function(req, res) {resource.create (req, res, View);} );
-  app.put (base + '/views/:id', function(req, res) {resource.update (req, res, View);} );
-  app.del (base + '/views/:id', function(req, res) {removeIfNotLast (req, res, View);} );
+  app.get (base + '/views',     function(req, res) {doIfHasAccess(req, res, 'Admins', View, resource.find);} );
+  app.get (base + '/views/:id', function(req, res) {doIfHasAccess(req, res, 'Admins', View, resource.findone);} );
+  app.post(base + '/views',     function(req, res) {doIfHasAccess(req, res, 'Admins', View, resource.create);} );
+  app.put (base + '/views/:id', function(req, res) {doIfHasAccess(req, res, 'Admins', View, resource.update);} );
+  app.del (base + '/views/:id', function(req, res) {doIfHasAccess(req, res, 'Admins', View, removeIfNotLast);} );
 
-  app.get (base + '/vars',      function(req, res) {resource.find   (req, res, Var);} );
-  app.get (base + '/vars/:id',  function(req, res) {resource.findone(req, res, Var);} );
-  app.post(base + '/vars',      function(req, res) {resource.create (req, res, Var);} );
-  app.put (base + '/vars/:id',  function(req, res) {resource.update (req, res, Var);} );
-  app.del (base + '/vars/:id',  function(req, res) {resource.remove (req, res, Var);} );
+  app.get (base + '/vars',      function(req, res) {doIfHasAccess(req, res, 'Admins', Var, resource.find);} );
+  app.get (base + '/vars/:id',  function(req, res) {doIfHasAccess(req, res, 'Admins', Var, resource.findone);} );
+  app.post(base + '/vars',      function(req, res) {doIfHasAccess(req, res, 'Admins', Var, resource.create);} );
+  app.put (base + '/vars/:id',  function(req, res) {doIfHasAccess(req, res, 'Admins', Var, resource.update);} );
+  app.del (base + '/vars/:id',  function(req, res) {doIfHasAccess(req, res, 'Admins', Var, resource.remove);} );
+  app.all (base + '/*', function(req, res) {res.status=404; res.json({msg:"The requested resource does not exist."});} );
 }
 
 // make sure it's not the last item in cases where at least one is required
