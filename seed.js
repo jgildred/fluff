@@ -7,7 +7,6 @@ exports.Data = {
     "lastname" : "Administrator",
     "email"    : "admin@domain.com",
     "password" : "fluff",
-    "apikey"   : "fluff",
     "role"     : "Admin",
     "status"   : "Active"
   }],

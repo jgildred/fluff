@@ -24,7 +24,7 @@ exports.Config = {
     port         : 25,                    // ignored unless service is 'Other SMTP'
     ssl          : true,                  // ignored unless service is 'Other SMTP'
     username     : 'user@domain.com',
-    password     : 'password'
+    password     : 'fluff'
   },
   apikey : {
     required     : false,                 // if set to true make sure admin index.html has apikey
