@@ -16,84 +16,89 @@ var enums = {
 exports.enums = enums;
 
 exports.site = {
-  name          : String,
-  domain        : String,
-  port          : { type: Number,  default: 80 },
-  ssl           : { type: Boolean, default: false },
-  admin_path    : { type: String,  default: "/admin", required: true },
+  name           : String,
+  domain         : String,
+  port           : { type: Number,  default: 80 },
+  ssl            : { type: Boolean, default: false },
+  admin_path     : { type: String,  default: "/admin", required: true },
   cors : {
-    restricted  : { type: Boolean,  default: false },
-    whitelist   : [ String ]
+    restricted   : { type: Boolean,  default: false },
+    whitelist    : [ String ]
   },
-  email_from    : String,
+  email_from     : String,
   smtp : {
-    service     : { type: String, enum: enums.smtp_service, default: "Other SMTP" },
-    host        : String,
-    ssl         : { type: Boolean, default: true },
-    port        : { type: Number,  default: 25 },
-    username    : String,
-    password    : String,
+    service      : { type: String, enum: enums.smtp_service, default: "Other SMTP" },
+    host         : String,
+    ssl          : { type: Boolean, default: true },
+    port         : { type: Number,  default: 25 },
+    username     : String,
+    password     : String,
   },
   apikey : {
-    required    : { type: Boolean, default: false },
-    keychain    : [ String ]
+    required     : { type: Boolean, default: false },
+    keychain     : [ String ]
   },
-  creator_id    : mongoose.Schema.Types.ObjectId,
-  creation      : { type: Date,    default: Date.now },
-  lastupdate    : { type: Date,    default: Date.now }
+  creator_id     : mongoose.Schema.Types.ObjectId,
+  lastupdater_id : mongoose.Schema.Types.ObjectId,
+  creation       : { type: Date,    default: Date.now },
+  lastupdate     : { type: Date,    default: Date.now }
 }
 
 exports.user = {
-  firstname   : String, 
-  lastname    : String, 
-  orgname     : String, 
-  email       : { type: String, index: { unique: true } },
-  pwhash      : { type: String, required: true, select: false },
-  salt        : { type: String, required: true, select: false },
-  verifytoken : { type: String, unique: true },
-  phone       : String,
-  role        : { type: String, enum: enums.user_role,   default: "User",       required: true },
-  status      : { type: String, enum: enums.user_status, default: "Unverified", required: true },
-  notes       : String,
-  lastlogin   : Date,
-  creator_id  : mongoose.Schema.Types.ObjectId,
-  creation    : { type: Date, default: Date.now },
-  lastupdate  : { type: Date, default: Date.now }
+  firstname      : String, 
+  lastname       : String, 
+  orgname        : String, 
+  email          : { type: String, index: { unique: true } },
+  pwhash         : { type: String, required: true, select: false },
+  salt           : { type: String, required: true, select: false },
+  verifytoken    : { type: String, unique: true },
+  phone          : String,
+  role           : { type: String, enum: enums.user_role,   default: "User",       required: true },
+  status         : { type: String, enum: enums.user_status, default: "Unverified", required: true },
+  notes          : String,
+  lastlogin      : Date,
+  creator_id     : mongoose.Schema.Types.ObjectId,
+  lastupdater_id : mongoose.Schema.Types.ObjectId,
+  creation       : { type: Date, default: Date.now },
+  lastupdate     : { type: Date, default: Date.now }
 }
 
 exports.view = {
-  name         : { type: String, unique: true },
-  template     : { type: String, default: "{{content}}" },
+  name           : { type: String, unique: true },
+  template       : { type: String, default: "{{content}}" },
   cursor : { 
-    row        : { type: Number, default: 0 },
-    column     : { type: Number, default: 0 }
+    row          : { type: Number, default: 0 },
+    column       : { type: Number, default: 0 }
   },
-  creator_id   : mongoose.Schema.Types.ObjectId,
-  creation     : { type: Date, default: Date.now },
-  lastupdate   : { type: Date, default: Date.now }
+  creator_id     : mongoose.Schema.Types.ObjectId,
+  lastupdater_id : mongoose.Schema.Types.ObjectId,
+  creation       : { type: Date, default: Date.now },
+  lastupdate     : { type: Date, default: Date.now }
 }
 
 exports.page = {
-  name         : String,
-  path         : { type: String, index: { unique: true } },
-  view_id      : mongoose.Schema.Types.ObjectId,
-  content      : String,
+  name           : String,
+  path           : { type: String, index: { unique: true } },
+  view_id        : mongoose.Schema.Types.ObjectId,
+  content        : String,
   cursor : { 
-    row        : { type: Number, default: 0 },
-    column     : { type: Number, default: 0 }
+    row          : { type: Number, default: 0 },
+    column       : { type: Number, default: 0 }
   },
-  access       : { type: String, enum: enums.page_access, default: "Public", required: true },
-  status       : { type: String, enum: enums.page_status, default: "Unpublished", required: true },
-  publication  : { type: Date, default: Date.now },
-  creator_id   : mongoose.Schema.Types.ObjectId,
-  creation     : { type: Date, default: Date.now },
-  lastupdate   : { type: Date, default: Date.now }
+  access         : { type: String, enum: enums.page_access, default: "Public", required: true },
+  status         : { type: String, enum: enums.page_status, default: "Unpublished", required: true },
+  publication    : { type: Date, default: Date.now },
+  creator_id     : mongoose.Schema.Types.ObjectId,
+  lastupdater_id : mongoose.Schema.Types.ObjectId,
+  creation       : { type: Date, default: Date.now },
+  lastupdate     : { type: Date, default: Date.now }
 }
 
 exports.var = {
-  name         : { type: String, unique: true },
-  value        : String,
-  creator_id   : mongoose.Schema.Types.ObjectId,
-  creation     : { type: Date, default: Date.now },
-  lastupdate   : { type: Date, default: Date.now }
+  name           : { type: String, unique: true },
+  value          : String,
+  creator_id     : mongoose.Schema.Types.ObjectId,
+  lastupdater_id : mongoose.Schema.Types.ObjectId,
+  creation       : { type: Date, default: Date.now },
+  lastupdate     : { type: Date, default: Date.now }
 }

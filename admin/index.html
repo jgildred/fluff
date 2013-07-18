@@ -415,10 +415,10 @@
       <button type="button" data-user-email="<%= user.get('email') %>" class="btn user-pwreset">Reset Password</button>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <button type="button" data-user-id="<%= user.id %>" class="btn btn-danger delete-user">Delete User</button><br/><br/>
-      <table class="pull-right muted">
+      <table class="pull-right muted stats-table">
         <tr><td>user id </td><td><%= user.id %></td></tr>
-        <tr><td>created </td><td><%= user.get('creation') %></td></tr>
-        <tr><td>last updated </td><td><%= user.get('lastupdate') %></td></tr>
+        <tr><td>created </td><td><%= user.get('creation') %> by <%= user.get('creator_id') ? user.get('creator_id') : '?' %></td></tr>
+            <tr><td>last updated </td><td><%= user.get('lastupdate') %> by <%= user.get('lastupdater_id') ? user.get('lastupdater_id') : '?' %></td></tr>
       </table>
       <% } %>
     </form>
@@ -489,11 +489,11 @@
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <button type="button" data-page-id="<%= page.id %>" class="btn btn-danger delete-page">Delete Page</button>
           <br/><br/>
-          <table class="muted">
+          <table class="muted stats-table">
             <tr><td>page id </td><td><%= page.id %></td></tr>
-            <tr><td>created </td><td><%= page.get('creation') %></td></tr>
             <tr><td>published </td><td><%= page.get('publication') %></td></tr>
-            <tr><td>last updated </td><td><%= page.get('lastupdate') %></td></tr>
+            <tr><td>created </td><td><%= page.get('creation') %> by <%= page.get('creator_id') ? page.get('creator_id') : '?' %></td></tr>
+            <tr><td>last updated </td><td><%= page.get('lastupdate') %> by <%= page.get('lastupdater_id') ? page.get('lastupdater_id') : '?' %></td></tr>
           </table>
           <br/>
           <% } %>
@@ -527,10 +527,10 @@
           <input type="hidden" name="id" value="<%= view.id %>" />
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <button type="button" data-view-id="<%= view.id %>" class="btn btn-danger delete-view">Delete View</button><br/><br/>
-          <table class="pull-right muted">
+          <table class="pull-right muted stats-table">
             <tr><td>view id </td><td><%= view.id %></td></tr>
-            <tr><td>created </td><td><%= view.get('creation') %></td></tr>
-            <tr><td>last updated </td><td><%= view.get('lastupdate') %></td></tr>
+            <tr><td>created </td><td><%= view.get('creation') %> by <%= view.get('creator_id') ? view.get('creator_id') : '?' %></td></tr>
+            <tr><td>last updated </td><td><%= view.get('lastupdate') %> by <%= view.get('lastupdater_id') ? view.get('lastupdater_id') : '?' %></td></tr>
           </table>
           <% } %>
         </fieldset>
@@ -553,10 +553,10 @@
       <input type="hidden" name="id" value="<%= vari.id %>" />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <button type="button" data-var-id="<%= vari.id %>" class="btn btn-danger delete-var">Delete Var</button><br/><br/>
-      <table class="pull-right muted">
+      <table class="pull-right muted stats-table">
         <tr><td>var id </td><td><%= vari.id %></td></tr>
-        <tr><td>created </td><td><%= vari.get('creation') %></td></tr>
-        <tr><td>last updated </td><td><%= vari.get('lastupdate') %></td></tr>
+        <tr><td>created </td><td><%= vari.get('creation') %> by <%= vari.get('creator_id') ? vari.get('creator_id') : '?' %></td></tr>
+            <tr><td>last updated </td><td><%= vari.get('lastupdate') %> by <%= vari.get('lastupdater_id') ? vari.get('lastupdater_id') : '?' %></td></tr>
       </table>
       <% } %>
     </form>

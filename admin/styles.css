@@ -42,8 +42,9 @@ body {
 .btn-navbar {
   margin-right: 150px !important;
 }
-.html-textarea {
-  width: 100%;
+.stats-table td {
+  padding-left: 5px;
+  white-space: nowrap;
 }
 .base-editor {
   margin: 0 !important;

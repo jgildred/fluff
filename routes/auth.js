@@ -67,19 +67,31 @@ exports.attach = function(req, res){
           }
           else {
             req.session.auth = false;
-            app.msgResponse(req, res, 401, "Password is incorrect.");
+            res.status       = 400;
+            var body = {
+              auth: req.session.auth, 
+              msg:  "Password is incorrect."};
           }
         }
         else {
           req.session.auth = false;
-          app.msgResponse(req, res, 401, "Your account is disabled. Please contact an administrator.");
+          res.status       = 401;
+          var body = {
+            auth:   req.session.auth,
+            status: user.status, 
+            msg:    "Your account is not active. Please contact an administrator."};
         }
       }
-      res.send(body);
+      res.json(body);
     });
   }
   else {
-    app.msgResponse(req, res, 400, "Credentials are missing.");
+    req.session.auth = false;
+    res.status       = 400;
+    var body = {
+      auth: false, 
+      msg:  "Credentials are missing."};
+    res.json(body);
   }
 };
 

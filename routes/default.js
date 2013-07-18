@@ -93,6 +93,7 @@ exports.findone = function(req, res, resource, filter, callback){
 exports.create = function(req, res, resource, callback){
   if (req.body.id)  { delete req.body.id; }
   if (req.body._id) { delete req.body._id; }
+  req.body.creator_id = req.session.user_id;
   console.log("INSERTING: "+ JSON.stringify(req.body));
   resource.create(req.body, function (err, data) {
     if (err) { 
@@ -117,7 +118,8 @@ exports.create = function(req, res, resource, callback){
 exports.update = function(req, res, resource, filter, callback){
   if (req.body.id)  { delete req.body.id; }
   if (req.body._id) { delete req.body._id; }
-  req.body.lastupdate = new Date;
+  req.body.lastupdate     = new Date;
+  req.body.lastupdater_id = req.session.user_id;
   filter = filter ? filter : {"_id": req.params.id}
   console.log("FILTER: " + JSON.stringify(filter));
   resource.findOneAndUpdate(filter, req.body, function (err, data) {
