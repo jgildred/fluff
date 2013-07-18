@@ -1,17 +1,40 @@
 
 // GENERIC RESOURCE HANDLER
 
-var app = require('../app');
+var app     = require('../app'),
+    schemas = require('../schemas');
 
 // Handler for GET
 exports.find = function(req, res, resource, filter, callback){
+  // First check if the query has a filter, and if so, use it
+  var query_filter = {};
+  for (param in req.query) {
+    if (schemas.enums.match_fields.indexOf(param) >= 0) {
+      query_filter[param] = new RegExp(req.query[param], 'i');
+    }
+  }
+  filter = filter ? filter : query_filter;
+  console.log("findfilter: " + JSON.stringify(filter));
   resource.find(filter).exec(function (err, data) {
     if (err) { 
       app.msgResponse(req, res, 500, JSON.stringify(err));
     }
     else { 
-      if (data) { 
-        res.json(data);
+      if (data) {
+        var dataset = []; 
+        if (req.query.fields) {
+          data.forEach(function (item) {
+            var iteminfo = {_id: item.id};
+            req.query.fields.split(',').forEach(function (field) {
+              iteminfo[field] = item[field];
+            });
+            dataset.push(iteminfo);
+          });
+        }
+        else {
+          dataset = data;
+        }
+        res.json(dataset);
         if (callback) {
           callback(req, res, data);
         }

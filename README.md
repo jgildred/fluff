@@ -38,12 +38,10 @@ See the [API_README.md](API_README.md) for a list of APIs.
 
 To do:
 
-- don't return page content or view template in list screen
-- search pages, views in admin
-- move session timeout to be user specific
 - add alert API and basic alert cases like initializing
 - manage email templates
 - manage error pages
+- move session timeout to be user specific
 
 Would be nice:
 

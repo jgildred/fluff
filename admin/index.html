@@ -44,7 +44,7 @@
     <br/>
   </header>
   <div class="container">
-    <br/>
+    
     <div class="page"></div>
     <div class="popup"></div>
   </div>
@@ -252,6 +252,7 @@
   </script>
   
   <script type="text/template" id="user-list-template">
+    <br/>
     <a href="#/users/new" class="btn btn-primary"><i class="icon-plus-sign icon-white"></i> Add a User</a>
     <br/><br/>
     <table class="table striped">
@@ -276,8 +277,15 @@
   </script>
 
   <script type="text/template" id="page-list-template">
-    <a href="#/pages/new" class="btn btn-primary"><i class="icon-plus-sign icon-white"></i> Add a Page</a>
-    <br/><br/>
+    <div class="span3">
+    <a href="#/pages/new" class="btn btn-primary"><i class="icon-plus-sign icon-white"></i> Add a Page</a><br/><br/>
+    </div>
+    <form class="search-pages-form form-search">
+    <div class="pull-right span3">
+      <input type="text" name="keyword" class="span2 search-query search-pages-keyword" placeholder="search contents" />
+      <br/><br/>
+    </div>
+    </form>
     <table class="table striped">
       <thead>
         <tr>
@@ -302,6 +310,7 @@
   </script>
 
   <script type="text/template" id="view-list-template">
+    <br/>
     <a href="#/views/new" class="btn btn-primary"><i class="icon-plus-sign icon-white"></i> Add a View</a>
     <br/><br/>
     <table class="table striped">
@@ -323,6 +332,7 @@
   </script>
 
   <script type="text/template" id="var-list-template">
+    <br/>
     <a href="#/vars/new" class="btn btn-primary"><i class="icon-plus-sign icon-white"></i> Add a Var</a>
       <br/><br/><br/>
       <% _.each(vars, function(vari) { %>
@@ -346,7 +356,6 @@
   <script type="text/template" id="edit-user-template">
     <form class="edit-user-form form-horizontal">
       <legend><%= user ? 'Edit' : 'New' %> User</legend>
-
       <div class="control-group">
         <label class="control-label" for="inputFirstname">Name</label>
         <div class="controls">
@@ -422,7 +431,7 @@
         <fieldset>
           <label>
           <span class="muted">Content</span><a class="fullscreen-page pull-right">Full Screen</a></label>
-          <div id="editor" name="content" class="span4 small-editor"></div>
+          <div id="editor" name="content" class="span4 base-editor small-editor"></div>
           <br/><br/>
         </fieldset>
       </div>
@@ -500,7 +509,7 @@
         <fieldset>
           <label>
           <span class="muted">Content</span><a class="fullscreen-view pull-right">Full Screen</a></label>
-          <div id="editor" name="template" class="span4 small-editor"></div>
+          <div id="editor" name="template" class="span4 base-editor small-editor"></div>
           <br/><br/>
         </fieldset>
       </div>
@@ -696,6 +705,7 @@
   <script type="text/javascript" src="jslibs/jquery-1.9.1.js"></script>
 -->
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 
 <!--
   <script type="text/javascript" src="jslibs/underscore.js"></script>

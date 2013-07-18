@@ -1,3 +1,58 @@
+// For those who need them (< IE 9), add support for CSS functions
+var isStyleFuncSupported = !!CSSStyleDeclaration.prototype.getPropertyValue;
+if (!isStyleFuncSupported) {
+    CSSStyleDeclaration.prototype.getPropertyValue = function(a) {
+        return this.getAttribute(a);
+    };
+    CSSStyleDeclaration.prototype.setProperty = function(styleName, value, priority) {
+        this.setAttribute(styleName,value);
+        var priority = typeof priority != 'undefined' ? priority : '';
+        if (priority != '') {
+            // Add priority manually
+            var rule = new RegExp(RegExp.escape(styleName) + '\\s*:\\s*' + RegExp.escape(value) + '(\\s*;)?', 'gmi');
+            this.cssText = this.cssText.replace(rule, styleName + ': ' + value + ' !' + priority + ';');
+        } 
+    }
+    CSSStyleDeclaration.prototype.removeProperty = function(a) {
+        return this.removeAttribute(a);
+    }
+    CSSStyleDeclaration.prototype.getPropertyPriority = function(styleName) {
+        var rule = new RegExp(RegExp.escape(styleName) + '\\s*:\\s*[^\\s]*\\s*!important(\\s*;)?', 'gmi');
+        return rule.test(this.cssText) ? 'important' : '';
+    }
+}
+
+// Escape regex chars with \
+RegExp.escape = function(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}
+
+// The style function
+jQuery.fn.style = function(styleName, value, priority) {
+    // DOM node
+    var node = this.get(0);
+    // Ensure we have a DOM node 
+    if (typeof node == 'undefined') {
+        return;
+    }
+    // CSSStyleDeclaration
+    var style = this.get(0).style;
+    // Getter/Setter
+    if (typeof styleName != 'undefined') {
+        if (typeof value != 'undefined') {
+            // Set style property
+            var priority = typeof priority != 'undefined' ? priority : '';
+            style.setProperty(styleName, value, priority);
+        } else {
+            // Get style property
+            return style.getPropertyValue(styleName);
+        }
+    } else {
+        // Get CSSStyleDeclaration
+        return style;
+    }
+}
+
 // Helper functions
 function htmlEncode(value){
   return $('<div/>').text(value).html();
@@ -79,12 +134,13 @@ function fullscreenEditor(editor) {
 }
 
 function toggleFullscreen(editor) {
-  if ($('#editor').hasClass('fullscreen-editor')) {
-    $('#editor').removeClass('fullscreen-editor').addClass('span4 small-editor');
+  var e = $('#editor');
+  if (e.hasClass('fullscreen-editor')) {
+    e.removeClass('fullscreen-editor').addClass('span4 small-editor');
   }
   else {
-    $('#editor').removeClass('span4 small-editor').addClass('fullscreen-editor');
-  }   
+    e.removeClass('span4 small-editor').addClass('fullscreen-editor');
+  }    
   editor.resize();
 }
 
@@ -448,12 +504,12 @@ var PwchangeView = Backbone.View.extend({
 // Setup the user list view
 var UserListView = Backbone.View.extend({
   el: '.page',
-  render: function () {
+  render: function (keyword) {
+    this.users = new Users();
     var that = this;
-    var users = new Users();
-    users.fetch({
+    this.users.fetch({
       success: function (users) {
-        var template = _.template($('#user-list-template').html(), {users: users.models});
+        var template = _.template($('#user-list-template').html(), {users: that.users.models});
         that.$el.html(template);
       }
     })
@@ -463,20 +519,37 @@ var UserListView = Backbone.View.extend({
 // Setup the page list view
 var PageListView = Backbone.View.extend({
   el: '.page',
-  render: function () {
+  events: {
+    'submit .search-pages-form' : 'searchPages'
+  },
+  searchPages: function (ev) {
+    var keyword = getFormData(ev.currentTarget).keyword;
+    this.render(keyword);
+    return false;
+  },
+  render: function (keyword) {
     console.log("fetchingpagelist");
     // first get the list of views for the page list view
     this.views = new Views();
     var that = this;
     this.views.fetch({
+      data: $.param({ fields: 'name'}),
       success: function (views) {
         that.views = views ? views : [];
         // then get the list of pages
         that.pages = new Pages();
+        that.params = {fields: 'name,path,view_id,access,status,lastupdate'};
+        if (keyword) {
+          that.params.content = keyword;
+        }
         that.pages.fetch({
+          data: $.param(that.params),
           success: function (pages) {
-            var template = _.template($('#page-list-template').html(), {pages: that.pages.models, views: that.views});
+            var template = _.template($('#page-list-template').html(), {pages: pages.models, views: that.views});
             that.$el.html(template);
+            if (keyword) {
+              $('.search-pages-keyword').val(keyword);
+            }
           }
         });
       }
@@ -489,8 +562,9 @@ var ViewListView = Backbone.View.extend({
   el: '.page',
   render: function () {
     var that = this;
-    var views = new Views();
-    views.fetch({
+    this.views = new Views();
+    this.views.fetch({
+      data: $.param({ fields: 'name,lastupdate'}),
       success: function (views) {
         var template = _.template($('#view-list-template').html(), {views: views.models});
         that.$el.html(template);

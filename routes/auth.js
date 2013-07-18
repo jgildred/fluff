@@ -79,8 +79,7 @@ exports.attach = function(req, res){
     });
   }
   else {
-    var body = {msg: 'Credentials missing.'};
-    res.send(body);
+    app.msgResponse(req, res, 400, "Credentials are missing.");
   }
 };
 

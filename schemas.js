@@ -4,6 +4,7 @@
 var mongoose = require('mongoose');
 
 var enums = {
+  match_fields : ['name', 'content', 'template', 'firstname', 'lastname', 'email', 'path', 'notes', 'orgname', 'domain'],
   smtp_service : [ "Other SMTP", "Gmail", "DynectEmail", "Gmail", "hot.ee", "Hotmail", "iCloud", "mail.ee", "Mail.Ru", "Mailgun", "Mailjet", "Mandrill", "Postmark", "QQ", "SendGrid", "SES", "Yahoo", "yandex", "Zoho" ],
   app_service  : [ "Custom Install", "Heroku" ],
   db_service   : [ "Other MongoDB", "MongoLab" ],
