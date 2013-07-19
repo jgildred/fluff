@@ -1,4 +1,4 @@
-fluff
+Fluff
 =====
 
 The CMS that stays out of your way.
@@ -26,7 +26,7 @@ INSTALL on Heroku:
 
 ADMIN GUIDE:
 
-- the Pages tab manages pages. Each page must use a view template. Hit Esc to toggle full screen edit view.
+- the Pages tab manages pages. Each page must use a view template. When editing a page (or view), you can hit Esc to toggle full screen edit view.
 - the Views tab manages view templates. Just drop {{content}} into any template, right where you want the page content to render. That is the extent of the page design tools. Let the multitude of Javascript UI toolkits do the rest; that's what they're there for.
 - the Vars tab manages custom variables. Vars are an easy way to manage strings you use often. Drop {{var.[name]}} into any page or view, where [name] is the name of the var.
 - the Users tab manages all users including admins. The 'Admin' role can access everything; the 'User' role cannot access the Admin app or pages with access restricted to admins.
@@ -38,7 +38,7 @@ See the [API_README.md](API_README.md) for a list of APIs.
 
 TO DO:
 
-- alert API and basic alert cases like initializing
+- alert API with basic alert cases like initializing
 - manage email templates
 - manage error pages
 - move session timeout to be user specific
