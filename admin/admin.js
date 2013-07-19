@@ -514,7 +514,7 @@ var ViewListView = Backbone.View.extend({
     var that = this;
     this.views = new Views();
     this.views.fetch({
-      data: $.param({ fields: 'name,lastupdate'}),
+      data: $.param({ fields: 'name,content_type,lastupdate'}),
       success: function (views) {
         var template = _.template($('#view-list-template').html(), {views: views.models});
         that.$el.html(template);

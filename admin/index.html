@@ -316,7 +316,7 @@
     <table class="table striped">
       <thead>
         <tr>
-          <th></th><th>View</th><th>Last Updated</th>
+          <th></th><th>View</th><th>Content Type</th><th>Last Updated</th>
         </tr>
       </thead>
       <tbody>
@@ -324,6 +324,7 @@
           <tr>
             <td><i class="icon-list-alt"></i></a>&nbsp;&nbsp;&nbsp;<a title="Edit" href="#/views/<%= view.id %>"><i class="icon-edit"></i></a></td>
             <td><%= htmlEncode(view.get('name')) %></td>
+            <td><%= htmlEncode(view.get('content_type')) %></td>
             <td><%= htmlEncode(view.get('lastupdate')) %></td>
           </tr>
         <% }); %>
