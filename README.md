@@ -38,6 +38,7 @@ See the [API_README.md](API_README.md) for a list of APIs.
 
 TO DO:
 
+- move defaults.js to config.js and seed.js
 - alert API with basic alert cases like initializing
 - manage email templates
 - manage error pages

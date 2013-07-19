@@ -9,7 +9,7 @@ exports.find = function(req, res, resource, filter, callback){
   // First check if the query has a filter, and if so, use it
   var query_filter = {};
   for (param in req.query) {
-    if (schemas.enums.match_fields.indexOf(param) >= 0) {
+    if (schemas.enums.match_field.indexOf(param) >= 0) {
       query_filter[param] = new RegExp(req.query[param], 'i');
     }
   }
@@ -93,7 +93,8 @@ exports.findone = function(req, res, resource, filter, callback){
 exports.create = function(req, res, resource, callback){
   if (req.body.id)  { delete req.body.id; }
   if (req.body._id) { delete req.body._id; }
-  req.body.creator_id = req.session.user_id;
+  req.body.creator_id     = req.session.user_id;
+  req.body.lastupdater_id = req.session.user_id;
   console.log("INSERTING: "+ JSON.stringify(req.body));
   resource.create(req.body, function (err, data) {
     if (err) { 

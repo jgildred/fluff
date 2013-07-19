@@ -4,7 +4,7 @@
 <script>
   // make sure the api key is correct if required
   var apikey  = '1234567890';
-  var version = '0.5';
+  var version = '0.6';
   var reg     = new RegExp("/$");
   var adminbase = window.location.pathname;
   if (!reg.test(window.location.pathname)) {
@@ -106,19 +106,19 @@
             <div class="control-group">
               <label class="control-label" for="inputEmail">Email</label>
               <div class="controls">
-                <input type="text" id="inputEmail" name="email" placeholder="Email">
+                <input type="email" id="inputEmail" name="email" placeholder="required" required />
               </div>
             </div>
             <div class="control-group">
               <label class="control-label" for="inputPassword">Password</label>
               <div class="controls">
-                <input type="password" id="inputPassword" name="password" placeholder="Password">
+                <input type="password" id="inputPassword" name="password" placeholder="required" required />
               </div>
             </div>
             <div class="control-group">
               <label class="control-label" for="inputPassword">Confirm</label>
               <div class="controls">
-                <input type="password" id="inputPassword" placeholder="Password">
+                <input type="password" id="inputPassword" placeholder="required" required />
               </div>
             </div>
             <div class="control-group">
@@ -151,13 +151,13 @@
           <div class="control-group">
             <label class="control-label" for="inputEmail">Email</label>
             <div class="controls">
-              <input type="text" id="inputEmail" name="email" placeholder="Email">
+              <input type="email" id="inputEmail" name="email" placeholder="" required />
             </div>
           </div>
           <div class="control-group">
             <label class="control-label" for="inputPassword">Password</label>
             <div class="controls">
-              <input type="password" id="inputPassword" name="password" placeholder="Password">
+              <input type="password" id="inputPassword" name="password" placeholder="" required />
             </div>
           </div>
           <div class="control-group">
@@ -183,7 +183,7 @@
           <div class="control-group">
             <label class="control-label" for="inputEmail">Email</label>
             <div class="controls">
-              <input type="text" id="inputEmail" name="email" value="<%= email ? htmlEncode(email) : '' %>" placeholder="">
+              <input type="email" id="inputEmail" name="email" value="<%= email ? htmlEncode(email) : '' %>" placeholder="" required />
             </div>
           </div>
           <div class="control-group">
@@ -366,7 +366,7 @@
       <div class="control-group">
         <label class="control-label" for="inputEmail">Email</label>
         <div class="controls">
-          <input type="text" id="inputEmail" class="span4" name="email" value="<%= user ? user.get('email') : '' %>" placeholder="required" />
+          <input type="email" id="inputEmail" class="span4" name="email" value="<%= user ? user.get('email') : '' %>" placeholder="required" required />
         </div>
       </div>
       <div class="control-group">
@@ -447,7 +447,7 @@
             <label class="control-label" for="inputPath">Path</label>
             <div class="controls">
               <div class="input-append">
-              <input type="text" id="inputPath" name="path" value="<%= page ? page.get('path') : '' %>" placeholder="/put/something/here" />
+              <input type="text" id="inputPath" name="path" value="<%= page ? page.get('path') : '' %>" placeholder="/unique/path/here" required />
               <a class="add-on" href="<%= page ? page.get('path') : '' %>">Go</a>
               </div>
             </div>
@@ -518,7 +518,17 @@
           <div class="control-group">
             <label class="control-label" for="inputName">Name</label>
             <div class="controls">
-              <input type="text" id="inputName" name="name" value="<%= view ? view.get('name') : '' %>" placeholder="must be unique" />
+              <input type="text" id="inputName" name="name" value="<%= view ? view.get('name') : '' %>" placeholder="must be unique" required />
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="inputContentType">Content Type</label>
+            <div class="controls">
+              <select name="content_type" id="inputContentType">
+                <% for (o = 0; o < content_types.length; o++) { %>
+                <option value="<%= content_types[o] %>"<%= (view && (content_types[o] == view.get('content_type'))) ? ' selected' : ''%>><%= content_types[o] %></option>
+                <% } %>
+              </select>
             </div>
           </div>
           <button type="submit" class="btn btn-primary"><%= view ? 'Update' : 'Add' %></button>
@@ -543,8 +553,8 @@
       <legend><%= vari ? 'Edit' : 'New' %> Var</legend>
       <br/>
       <div class="input-prepend">
-        <input name="name" class="span2 add-on" type="text" value="<%= vari ? vari.get('name') : '' %>" placeholder="name" />
-        <input name="value" class="span8" type="text" value="<%= vari ? vari.get('value') : '' %>" placeholder="value"/>
+        <input name="name" class="span2 add-on edit-var-name" type="text" value="<%= vari ? vari.get('name') : '' %>" placeholder="name" required />
+        <input name="value" class="span8 edit-var-value" type="text" value="<%= vari ? vari.get('value') : '' %>" placeholder="value" />
       </div>
       <br/><br/>
       <button type="submit" class="btn btn-primary"><%= vari ? 'Update' : 'Add' %></button>
@@ -633,7 +643,7 @@
         <div class="control-group">
           <label class="control-label" for="inputEmailFrom">Email Address</label>
           <div class="controls">
-            <input type="text" id="inputEmailFrom" name="email_from" value="<%= site ? site.get('email_from') : '' %>" placeholder="notifications sent from address" />
+            <input type="email" id="inputEmailFrom" name="email_from" value="<%= site ? site.get('email_from') : '' %>" placeholder="notifications sent from address" required />
           </div>
         </div>
         <div class="control-group">
@@ -682,7 +692,7 @@
         <div class="control-group">
           <label class="control-label" for="inputAdminPath">Admin Path</label>
           <div class="controls">
-            <input type="text" id="inputAdminPath" name="admin_path" value="<%= site ? site.get('admin_path') : '' %>" placeholder="/admin" />
+            <input type="text" id="inputAdminPath" name="admin_path" value="<%= site ? site.get('admin_path') : '' %>" placeholder="/admin" required />
             <p>(The api path will be <%= site ? site.get('admin_path') : '' %>/api)</p>
           </div>
         </div>

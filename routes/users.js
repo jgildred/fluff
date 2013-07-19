@@ -2,7 +2,7 @@
 // USER RESOURCE PREPROCESSOR
 
 var app = require('../app');
-var resource = require('./default');
+var resource = require('./resource');
 
 // Preprocessor for GET /users
 exports.find = function(req, res){

@@ -345,6 +345,7 @@ var LoginView = Backbone.View.extend({
     var template = $('#login-template').html();
     this.$el.html(template);
     $('#login-modal').modal('show');
+    $('.login-form input')[0].focus();
   }
 });
 
@@ -398,6 +399,7 @@ var PwresetView = Backbone.View.extend({
     var template = _.template($('#pwreset-template').html(), {email: (options && options.email) ? options.email : null, msg: msg}); 
     this.$el.html(template);
     $('#pwreset-modal').modal('show');
+    $('.pwreset-form input')[0].focus();
   }
 });
 
@@ -444,6 +446,7 @@ var PwchangeView = Backbone.View.extend({
     var template = _.template($('#pwchange-template').html(), {token: (options && options.token) ? options.token : null}); 
     this.$el.html(template);
     $('#pwchange-modal').modal('show');
+    $('.pwchange-form input')[0].focus();
   }
 });
 
@@ -496,6 +499,7 @@ var PageListView = Backbone.View.extend({
             if (keyword) {
               $('.search-pages-keyword').val(keyword);
             }
+            $('.search-pages-keyword').focus();
           }
         });
       }
@@ -563,6 +567,7 @@ var VarListView = Backbone.View.extend({
       success: function (vars) {
         var template = _.template($('#var-list-template').html(), {vars: vars.models});
         that.$el.html(template);
+        $('.edit-var-quickform .edit-var-value')[0].focus();
       }
     })
   }
@@ -797,17 +802,18 @@ var ViewDetailView = Backbone.View.extend({
   render: function (options) {
     var that = this;
     if(options.id) {
+      this.content_types = [ "text/html", "text/css", "text/plain", "application/javascript", "application/json", "application/xml" ];
       this.view = new View({_id: options.id});
       this.view.fetch({
         success: function (view) {
-          var template = _.template($('#edit-view-template').html(), {view: view}); 
+          var template = _.template($('#edit-view-template').html(), {view: view, content_types: that.content_types}); 
           that.$el.html(template);
           that.editor = renderEditor('editor', that.view.get('template'), that.view.get('cursor'));
         }
       })
     } else {
       this.view = null;
-      var template = _.template($('#edit-view-template').html(), {view: this.view});
+      var template = _.template($('#edit-view-template').html(), {view: this.view, content_types: this.content_types});
       this.$el.html(template);
       this.editor = renderEditor('editor', null, { row: 0, column: 0 });
     }
@@ -866,12 +872,14 @@ var VarDetailView = Backbone.View.extend({
         success: function (vari) {
           var template = _.template($('#edit-var-template').html(), {vari: vari}); 
           that.$el.html(template);
+          $('.edit-var-form .edit-var-name')[0].focus();
         }
       })
     } else {
       this.var = null;
       var template = _.template($('#edit-var-template').html(), {vari: this.var});
       this.$el.html(template);
+      $('.edit-var-form .edit-var-name')[0].focus();
     }
   }
 });
@@ -923,11 +931,13 @@ var SiteDetailView = Backbone.View.extend({
           that.site = sites.models[0];
           var template = _.template($('#edit-site-template').html(), {site: that.site, cors_mode_options: that.cors_mode_options, smtp_service_options: that.smtp_service_options});
           that.$el.html(template);
+          $('.edit-site-form input')[0].focus();
         }
       })
     } else {
       var template = _.template($('#edit-site-template').html(), {site: this.site, cors_mode_options: this.cors_mode_options, smtp_service_options: this.smtp_service_options});
       this.$el.html(template);
+      $('.edit-site-form input')[0].focus();
     }
   }
 });

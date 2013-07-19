@@ -5,11 +5,11 @@
 var express    = require('express')
   , mongoose   = require('mongoose')
   , nodemailer = require('nodemailer')
-  , defaults   = require('./defaults')
+  , config     = require('./config')
   , schemas    = require('./schemas')
   , csrf       = require('./csrf')
   , users      = require('./routes/users')
-  , resource   = require('./routes/default')
+  , resource   = require('./routes/resource')
   , auth       = require('./routes/auth');
 
 // Create the app
@@ -22,25 +22,43 @@ var handleError = function(err) {
 
 // Load the default config
 var loadDefaults = function () {
-  var active_config = defaults.Config;
-  // if on Heroku then fix config
-  if (active_config.app_service == "Heroku") {
-    if ((active_config.db.service == "MongoLab") && process.env.MONGOLAB_URI) {
-      active_config.db.uri = process.env.MONGOLAB_URI;
-    }
-    if (process.env.PORT) {
-      active_config.port = process.env.PORT;
-    }
+  var active_config = config.Info;
+  // if on Heroku or AppFog then fix config
+  switch (active_config.app_service) {
+    case "Heroku":
+      if ((active_config.db.service == "MongoLab") && process.env.MONGOLAB_URI) {
+        active_config.db.uri = process.env.MONGOLAB_URI;
+      }
+      if (process.env.PORT) {
+        active_config.port = process.env.PORT;
+      }
+      break;
+    case "AppFog":
+      if ((active_config.db.service == "MongoDB") && process.env.VCAP_SERVICES) {
+        var env   = JSON.parse(process.env.VCAP_SERVICES);
+        var obj   = env['mongodb-1.8'][0]['credentials'];
+        var cred  = '';
+        if (obj.username && obj.password) {
+          cred = obj.username + ":" + obj.password + "@";
+        }
+        var dburi = "mongodb://" + cred + obj.hostname + ":" + obj.port + "/" + obj.db;
+        active_config.db.uri = dburi;
+      }
+      if (process.env.VMC_APP_PORT) {
+        active_config.port = process.env.VMC_APP_PORT;
+      }
+      break;
+    default:
   }
   app.set('config', active_config);
 }
 
 // Setup globals
-var Site, User, View, Page, Var;
+var Site, User, View, Page, Var; 
 
 // Setup DB connection
 var connectDb = function (req, res, callback) {
-  console.log("connecting to " + app.get('config').db.uri);
+  console.log("Connecting to " + app.get('config').db.uri);
   mongoose.connect(app.get('config').db.uri);
 
   // Create schemas and use them to register the models
@@ -127,7 +145,7 @@ var HasAccess = function(req, res, level, resourceScope){
   if (req.session.auth && (req.session.status == 'Active')) {
     switch (level) {
     case 'Users':
-      console.log("resource is: " + (resourceScope ? resourceScope.modelName : 'none'));
+      console.log("The requested resource is: " + (resourceScope ? resourceScope.modelName : 'none'));
       if (resourceScope && (resourceScope.modelName != "User")) {
         return true;
       }
@@ -208,6 +226,7 @@ var renderView = function (req, res, page, callback) {
   var template = '';
   View.findById(page.view_id).exec(function (err, data) {
     if (!err && data) {
+      res.header('Content-Type', data.content_type ? data.content_type : 'text/html');
       var content_tag = "content"; // this may move to a site config
       template = data.template;
       var pattern = new RegExp("{{\\s*" + content_tag + "\\s*}}", "i");
@@ -227,12 +246,12 @@ var renderView = function (req, res, page, callback) {
 
 // Setup cms route based upon page in db with matching path
 var cmsPages = function (req, res, next) {
-  console.log("starting cmsPages");
+  console.log("Looking up pages...");
   var url = req.originalUrl;
   if (url != "/favicon.ico") {
     Page.findOne({"path": url}).exec(function (err, data) {
       if (!err && data) { 
-        console.log("matched a cmsPage");
+        console.log("Matched a page path.");
         if (data.get('status') == "Published") {
           if (data.get('access') == "Public") {
             renderView(req, res, data, renderOutput);
@@ -248,7 +267,7 @@ var cmsPages = function (req, res, next) {
           }
         }
         else {
-          console.log("cmsPage unpublished");
+          console.log("The requested page is unpublished.");
           res.status = 404;
           res.send("The page you requested does not exist.");
         }
@@ -275,32 +294,44 @@ var initDb = function (req, res, callback) {
   Site.count().exec(function (err, count) {
     if (!err && (count == 0)) { 
 
-      console.log("No site in the db yet.");
-      Site.create(defaults.Config, function (err) {
+      console.log("No site in the DB yet.");
+      Site.create(seed.Data.sites, function (err) {
         if (err) return handleError(err);
 
-        seed.Data.users.forEach(function(user) { 
-          user.salt        = users.randomString();
-          user.pwhash      = users.saltyHash(user.password, user.salt);
-          user.verifytoken = users.makeToken();
+        var firstuser = seed.Data.users[0];
+        seed.Data.users.forEach(function (user) { 
+          user.salt           = users.randomString();
+          user.pwhash         = users.saltyHash(user.password, user.salt);
+          user.verifytoken    = users.makeToken();
+          user.creator_id     = firstuser._id;
+          user.lastupdater_id = firstuser._id;
         });
         User.create(seed.Data.users, function (err) {
           if (err) return handleError(err);
 
+          seed.Data.views.forEach(function (view) {
+            view.creator_id     = firstuser._id;
+            view.lastupdater_id = firstuser._id;
+          });
           View.create(seed.Data.views, function (err, view) {
             if (err) return handleError(err);
-
-            console.log("created page for view " + view._id);
-            seed.Data.pages.forEach(function(page) { 
-              page.view_id = view._id;
+            
+            seed.Data.pages.forEach(function (page) {
+              page.view_id        = view._id;
+              page.creator_id     = firstuser._id;
+              page.lastupdater_id = firstuser._id;
             });
             Page.create(seed.Data.pages, function (err) {
               if (err) return handleError(err);
               
+              seed.Data.vars.forEach(function (vari) {
+                vari.creator_id     = firstuser._id;
+                vari.lastupdater_id = firstuser._id;
+              });
               Var.create(seed.Data.vars, function (err) {
                 if (err) return handleError(err);
 
-                console.log("initialized DB with seed data");
+                console.log("Initialized DB with seed data.");
                 if (callback) {
                   callback(req, res);
                 }
@@ -320,14 +351,14 @@ var initDb = function (req, res, callback) {
       else {
         console.log("DB init error: " + err);
       }
-      console.log("Wipe DB and restart app, or set 'initialize' to false in defaults.js.");
+      console.log("Wipe DB and restart Fluff, or set 'initialize' to false in config.js.");
     }
   });
 }
 
 var mergeConfig = function (active_config, stored_config) {
-  console.log("active config: " + JSON.stringify(active_config));
-  console.log("stored config: " + JSON.stringify(stored_config));
+  console.log("App  config: " + JSON.stringify(active_config));
+  console.log("Site config: " + JSON.stringify(stored_config));
   for (item in stored_config) {
     if ((Object.prototype.toString.call(stored_config[item]) === '[object Object]') && (Object.keys(stored_config[item]).length > 0)) {
       if (!active_config.hasOwnProperty(item)){
@@ -338,7 +369,15 @@ var mergeConfig = function (active_config, stored_config) {
       }
     }
     else {
-      active_config[item] = stored_config[item];
+      // don't merge in the port unless custom app_service
+      if (item != 'port') {
+        active_config[item] = stored_config[item];
+      }
+      else {
+        if (active_config.app_service == "Custom") {
+          active_config[item] = stored_config[item];
+        }
+      }
     }
   }
   return active_config;
@@ -346,18 +385,13 @@ var mergeConfig = function (active_config, stored_config) {
 
 // Load the site config from the db
 var loadConfig = function (req, res, callback) {
-  console.log("load config");
+  console.log("Loading config...");
   Site.findOne().exec(function (err, data) {
     if (!err && data) {
       var active_config = app.get('config');
       var stored_config = data.toJSON();
-      active_config = mergeConfig(active_config, stored_config);
-      // if on Heroku then make sure server port uses the Heroku env
-      if (process.env.PORT) {
-        active_config.port = process.env.PORT;
-      }      
-      app.set('config', active_config);
-      console.log("loaded config: " + JSON.stringify(active_config));
+      app.set('config', mergeConfig(active_config, stored_config));
+      console.log("Loaded complete config: " + JSON.stringify(app.get('config')));
     }
     else {
       if (!data) {
@@ -366,7 +400,7 @@ var loadConfig = function (req, res, callback) {
       else {
         console.log("DB load error: " + err);
       }
-      console.log("Point to another DB and restart app, or set 'initialize' to true in defaults.js.");
+      console.log("Point to another DB and restart Fluff, or set 'initialize' to true in config.js.");
     }
     if (callback) {
       callback(req, res);
@@ -442,8 +476,8 @@ var applyConfig = function(req, res, next) {
   var protocol    = app.get('config').ssl  ? "https://" : "http://";
   var port        = app.get('config').port ? ":" + app.get('config').port : "";
   var siteUrl = protocol + app.get('config').domain;
-  // Heroku does not expose the internal server port
-  if (app.get('config').app_service != "Heroku") {
+  // Heroku and other paas will not expose the internal server port
+  if (app.get('config').app_service != "Custom") {
     siteUrl += port;
   }
   exports.siteUrl = siteUrl;
@@ -498,6 +532,8 @@ var applyConfig = function(req, res, next) {
   app.put (base + '/vars/:id',  function(req, res) {doIfHasAccess(req, res, 'Admins', Var, resource.update);} );
   app.del (base + '/vars/:id',  function(req, res) {doIfHasAccess(req, res, 'Admins', Var, resource.remove);} );
   app.all (base + '/*', function(req, res) {res.status=404; res.json({msg:"The requested resource does not exist."});} );
+
+  startListening(req, res);
 }
 
 // make sure it's not the last item in cases where at least one is required
@@ -519,9 +555,9 @@ var removeIfNotLast = function (req, res, resourceScope) {
 } 
 
 var startupConfig = function (req, res) {
-  console.log("startup config");
+  console.log("Starting Fluff...");
   if (app.get('config').initialize) {
-    console.log("initialize DB");
+    console.log("Initialize DB...");
     // initialize db with seed data (site, admin, example page/view/vars)
     connectDb(req, res, initDb);
   }
@@ -531,7 +567,7 @@ var startupConfig = function (req, res) {
 }
 
 var reloadConfig = function (req, res) {
-  console.log("reload config");
+  console.log("Reloading config from DB...");
   loadConfig(req, res);
 }
 
@@ -554,7 +590,9 @@ loadDefaults();
 startupConfig();
 
 // Start listening
-console.log("listening on port " + app.get('config').port);
-console.log("admin located at " + app.get('config').admin_path);
-app.listen(app.get('config').port);
-
+var startListening = function (req, res) {
+  app.listen(app.get('config').port);
+  console.log("Listening on port " + app.get('config').port + ".");
+  console.log("Admin is located at " + app.get('config').admin_path + ".");
+  console.log("Fluff is up.");
+}

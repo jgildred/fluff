@@ -4,14 +4,15 @@
 var mongoose = require('mongoose');
 
 var enums = {
-  match_fields : ['name', 'content', 'template', 'firstname', 'lastname', 'email', 'path', 'notes', 'orgname', 'domain'],
-  smtp_service : [ "Other SMTP", "Gmail", "DynectEmail", "Gmail", "hot.ee", "Hotmail", "iCloud", "mail.ee", "Mail.Ru", "Mailgun", "Mailjet", "Mandrill", "Postmark", "QQ", "SendGrid", "SES", "Yahoo", "yandex", "Zoho" ],
-  app_service  : [ "Custom Install", "Heroku" ],
+  match_field  : ['name', 'content', 'template', 'firstname', 'lastname', 'email', 'path', 'notes', 'orgname', 'domain'],
+  smtp_service : [ "SMTP", "Gmail", "DynectEmail", "Gmail", "hot.ee", "Hotmail", "iCloud", "mail.ee", "Mail.Ru", "Mailgun", "Mailjet", "Mandrill", "Postmark", "QQ", "SendGrid", "SES", "Yahoo", "yandex", "Zoho" ],
+  app_service  : [ "Custom", "Heroku", "AppFog" ],
   db_service   : [ "Other MongoDB", "MongoLab" ],
   user_role    : [ "User", "Admin" ],
   user_status  : [ "Active", "Inactive", "Unverified" ],
   page_access  : [ "Public", "Users", "Admins" ],
-  page_status  : [ "Published", "Unpublished" ]
+  page_status  : [ "Published", "Unpublished" ],
+  content_type : [ "text/html", "application/javascript", "text/css", "application/json", "application/xml", "text/plain"]
 }
 exports.enums = enums;
 
@@ -66,6 +67,7 @@ exports.user = {
 exports.view = {
   name           : { type: String, unique: true },
   template       : { type: String, default: "{{content}}" },
+  content_type   : String,
   cursor : { 
     row          : { type: Number, default: 0 },
     column       : { type: Number, default: 0 }
