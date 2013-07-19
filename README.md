@@ -9,19 +9,28 @@ INSTALL on local machine:
 2. clone this repo or download the [zip package](https://github.com/jgildred/fluff/archive/master.zip)
 3. cd to the root dir of the app
 4. type 'npm install'
-5. edit defaults.js: db uri points to an empty Mongo DB, initialize is true
+5. edit config.js: db uri should point to an empty Mongo DB, and set initialize to true
 6. type 'node app'
 7. open http://localhost:3000/admin in your browser
 8. login with 'admin@domain.com', password 'fluff'
-9. goto Site page and edit as needed
+9. goto Site tab in admin and edit settings as needed
 
 INSTALL on Heroku:
 
 1. steps 2 and 3 above
-2. edit defaults.js: app_service is 'Heroku', db service is 'MongoLab', initialize is true
+2. edit config.js: app_service is 'Heroku', db service is 'MongoLab', initialize is true
 3. create a new app on Heroku and get the MongoLab addon
-4. push to heroku
+4. push to Heroku (type 'git push heroku master')
 5. open the Heroku app url in your browser
+6. steps 8 and 9 above
+
+INSTALL on AppFog:
+
+1. steps 2 and 3 above
+2. edit config.js: app_service is 'AppFog', db service is 'MongoDB', initialize is true
+3. create a new app on AppFog and bind the MongoDB service
+4. push to AppFog (type 'af update [name of app]')
+5. open the AppFog app url in your browser
 6. steps 8 and 9 above
 
 ADMIN GUIDE:
