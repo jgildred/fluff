@@ -8,6 +8,12 @@ body {
   margin-bottom: 0px;
 }
 
+.brand {
+  padding-top: 2px !important;
+  padding-bottom: 8px !important;
+  height: 30px;
+}
+
 .pointer {
   cursor: pointer;
 }
@@ -40,7 +46,7 @@ body {
   margin-right: 6px !important;
 }
 .btn-navbar {
-  margin-right: 150px !important;
+  margin-right: 180px !important;
 }
 .stats-table td {
   padding-left: 5px;
@@ -60,4 +66,8 @@ body {
   bottom: 0 !important;
   left: 0 !important;
   right: 0 !important;
+}
+
+body {
+  min-width: 240px;
 }
