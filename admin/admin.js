@@ -134,7 +134,7 @@ function init () {
       session.fetch({
         success: function () {
           if (!session.get('auth')) {
-            loginView.render();
+            loginView.render(window.location.pathname);
           }
           else {
             if (session.get('role') != "Admin") {
@@ -320,11 +320,16 @@ var LoginView = Backbone.View.extend({
           default:
             $('#login-modal').modal('hide');
             if (session.get("role") == "Admin") {
-              router.navigate('pages', {trigger:true});
-              loadnavbar();
+              if (/#\/login/i.test(window.location.href)) {
+                loadnavbar();
+                router.navigate('pages', {trigger: true});
+              }
+              else {
+                document.location.reload();
+              }
             }
             else {
-              window.location.href = "/";
+              document.location.href = "/";
             }
             break;
         } 
@@ -339,7 +344,7 @@ var LoginView = Backbone.View.extend({
   close: function () {
     this.$el.html('');
   },
-  render: function (options) {
+  render: function () {
     // make sure not to have a double backdrop
     $(".modal-backdrop").remove();
     var template = $('#login-template').html();

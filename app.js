@@ -22,7 +22,15 @@ var handleError = function(err) {
 
 // Load the default config
 var loadDefaults = function () {
-  var active_config = config.Info;
+  var default_config = {
+    initialize  : false,
+    app_service : 'Custom',
+    db : {
+      service   : 'MongoDB',
+      uri       : 'mongodb://localhost:27017/fluff'
+    }
+  }
+  var active_config = (config && config.Info) ? config.Info : defalut_config;
   // if on Heroku or AppFog then fix config
   switch (active_config.app_service) {
     case "Heroku":
@@ -49,6 +57,7 @@ var loadDefaults = function () {
       }
       break;
     default:
+      active_config.port = 3000;
   }
   app.set('config', active_config);
 }
@@ -246,9 +255,9 @@ var renderView = function (req, res, page, callback) {
 
 // Setup cms route based upon page in db with matching path
 var cmsPages = function (req, res, next) {
-  console.log("Looking up pages...");
   var url = req.originalUrl;
   if (url != "/favicon.ico") {
+    console.log("Looking up pages...");
     Page.findOne({"path": url}).exec(function (err, data) {
       if (!err && data) { 
         console.log("Matched a page path.");
@@ -257,7 +266,7 @@ var cmsPages = function (req, res, next) {
             renderView(req, res, data, renderOutput);
           }
           else {
-            console.log("access by " + data.get('access'));
+            console.log("Access requested by " + data.get('access'));
             if (HasAccess(req, res, data.get('access'), Page)) {
               renderView(req, res, data, renderOutput);
             }
@@ -279,6 +288,7 @@ var cmsPages = function (req, res, next) {
     });
   }
   else {
+    console.log("Favicon requested.");
     next();
   }
 }
@@ -296,6 +306,7 @@ var initDb = function (req, res, callback) {
 
       console.log("No site in the DB yet.");
       Site.create(seed.Data.sites, function (err) {
+        console.log("Creating a site...");
         if (err) return handleError(err);
 
         var firstuser = seed.Data.users[0];
@@ -307,6 +318,7 @@ var initDb = function (req, res, callback) {
           user.lastupdater_id = firstuser._id;
         });
         User.create(seed.Data.users, function (err) {
+          console.log("Creating a user...");
           if (err) return handleError(err);
 
           seed.Data.views.forEach(function (view) {
@@ -314,6 +326,7 @@ var initDb = function (req, res, callback) {
             view.lastupdater_id = firstuser._id;
           });
           View.create(seed.Data.views, function (err, view) {
+            console.log("Creating a view...");
             if (err) return handleError(err);
             
             seed.Data.pages.forEach(function (page) {
@@ -322,6 +335,7 @@ var initDb = function (req, res, callback) {
               page.lastupdater_id = firstuser._id;
             });
             Page.create(seed.Data.pages, function (err) {
+              console.log("Creating a page...");
               if (err) return handleError(err);
               
               seed.Data.vars.forEach(function (vari) {
@@ -329,6 +343,7 @@ var initDb = function (req, res, callback) {
                 vari.lastupdater_id = firstuser._id;
               });
               Var.create(seed.Data.vars, function (err) {
+                console.log("Creating a var...");
                 if (err) return handleError(err);
 
                 console.log("Initialized DB with seed data.");
@@ -336,7 +351,7 @@ var initDb = function (req, res, callback) {
                   callback(req, res);
                 }
                 else {
-                  applyConfig(req, res);
+                  loadConfig(req, res);
                 }
               });
             });
@@ -352,12 +367,13 @@ var initDb = function (req, res, callback) {
         console.log("DB init error: " + err);
       }
       console.log("Wipe DB and restart Fluff, or set 'initialize' to false in config.js.");
+      runAlertMode(req, res, null, "Not feeling fluffy.<br/>Fluff DB already initialized.");
     }
   });
 }
 
 var mergeConfig = function (active_config, stored_config) {
-  console.log("App  config: " + JSON.stringify(active_config));
+  console.log("App config: "  + JSON.stringify(active_config));
   console.log("Site config: " + JSON.stringify(stored_config));
   for (item in stored_config) {
     if ((Object.prototype.toString.call(stored_config[item]) === '[object Object]') && (Object.keys(stored_config[item]).length > 0)) {
@@ -392,6 +408,12 @@ var loadConfig = function (req, res, callback) {
       var stored_config = data.toJSON();
       app.set('config', mergeConfig(active_config, stored_config));
       console.log("Loaded complete config: " + JSON.stringify(app.get('config')));
+      if (callback) {
+        callback(req, res);
+      }
+      else {
+        applyConfig(req, res);
+      }
     }
     else {
       if (!data) {
@@ -401,12 +423,7 @@ var loadConfig = function (req, res, callback) {
         console.log("DB load error: " + err);
       }
       console.log("Point to another DB and restart Fluff, or set 'initialize' to true in config.js.");
-    }
-    if (callback) {
-      callback(req, res);
-    }
-    else {
-      applyConfig(req, res);
+      runAlertMode(req, res, null, "Not feeling fluffy.<br/>Fluff DB is not initialized.");
     }
   });
 }
@@ -468,6 +485,40 @@ var requireApiKey = function(req, res, next) {
     console.log("API key not required.");
     next();
   }
+}
+
+var defaultAlertPage = function(message) {
+  var html  = "<html>\n";
+      html += "<head>\n";
+      html += "<title>Fluff Alert</title>\n";
+      html += "<style>\n";
+      html += "body {\n";
+      html += "  padding-top:100px;\n";
+      html += "}\n";
+      html += "p {\n";
+      html += "  font-size:18pt;\n";
+      html += "  font-family:helvetica,arial;\n";
+      html += "  color:#606060;\n";
+      html += "  text-align:center;\n";
+      html += "  margin-top:20px;\n";
+      html += "}\n";
+      html += "</style>\n";
+      html += "</head>\n";
+      html += "<body>\n";
+      html += "<p><img src='/images/sad_fluffy.png' /></p>\n";
+      html += "<p>" + message + "</p>\n";
+      html += "</body>\n";
+      html += "</html>";
+      return html;
+}
+
+var runAlertMode = function(req, res, next, text) {
+  app.use ('/images', express.static(__dirname + '/images'));
+  app.all ('*', function(req, res) {
+    res.status=500; 
+    res.send(defaultAlertPage(text));
+  });
+  startListening(req, res, false);
 }
 
 var applyConfig = function(req, res, next) {
@@ -533,7 +584,7 @@ var applyConfig = function(req, res, next) {
   app.del (base + '/vars/:id',  function(req, res) {doIfHasAccess(req, res, 'Admins', Var, resource.remove);} );
   app.all (base + '/*', function(req, res) {res.status=404; res.json({msg:"The requested resource does not exist."});} );
 
-  startListening(req, res);
+  startListening(req, res, true);
 }
 
 // make sure it's not the last item in cases where at least one is required
@@ -590,9 +641,14 @@ loadDefaults();
 startupConfig();
 
 // Start listening
-var startListening = function (req, res) {
+var startListening = function (req, res, ok) {
   app.listen(app.get('config').port);
   console.log("Listening on port " + app.get('config').port + ".");
-  console.log("Admin is located at " + app.get('config').admin_path + ".");
-  console.log("Fluff is up.");
+  if (ok && app.get('config').admin_path) {
+    console.log("Admin is located at " + app.get('config').admin_path + ".");
+    console.log("Fluff is up.");
+  }
+  else {
+    console.log("Fluff is in alert mode.");
+  }
 }

@@ -47,14 +47,14 @@ See the [API_README.md](API_README.md) for a list of APIs.
 
 TO DO:
 
-- alert API with basic alert cases like initializing
 - manage email templates
 - manage error pages
-- move session timeout to be user specific
 
 WOULD BE NICE:
 
 - a plugin framework
 - page versioning
 - a model manager like in django admin
+- a jslib for easy model ui
+- move session timeout to be user specific
 - multi-site (may require rethink of config loader)
