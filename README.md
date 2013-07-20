@@ -52,9 +52,9 @@ TO DO:
 
 WOULD BE NICE:
 
-- a plugin framework
 - page versioning
 - a model manager like in django admin
 - a jslib for easy model ui
 - move session timeout to be user specific
-- multi-site (may require rethink of config loader)
+- a plugin framework
+- multi-site (will need to rethink config loader)
