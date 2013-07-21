@@ -47,6 +47,7 @@ See the [API_README.md](API_README.md) for a list of APIs.
 
 TO DO:
 
+- list of redirected domains in site config
 - manage email templates
 - manage error pages
 
