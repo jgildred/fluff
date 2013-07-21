@@ -810,8 +810,8 @@ var ViewDetailView = Backbone.View.extend({
   },
   render: function (options) {
     var that = this;
+    this.content_types = [ "text/html", "text/css", "text/plain", "application/javascript", "application/json", "application/xml" ];
     if(options.id) {
-      this.content_types = [ "text/html", "text/css", "text/plain", "application/javascript", "application/json", "application/xml" ];
       this.view = new View({_id: options.id});
       this.view.fetch({
         success: function (view) {
