@@ -46,13 +46,13 @@ exports.update = function(req, res){
         doIfNotLastAdmin(req, res, req.params.id, doUpdate);
       }
       else {
-        doUpdate(req, res, app.User);
+        doUpdate(req, res);
       }
     }
   }
   else {
     if (app.HasAccess(req, res, 'Users')) {
-      doUpdate(req, res, app.User);
+      doUpdate(req, res);
     }
   }
 };
@@ -122,13 +122,13 @@ var doCreate = function(req, res, callback) {
   resource.create(req, res, app.User, callback);
 }
 
-var doUpdate = function(req, res, resource) {
+var doUpdate = function(req, res) {
   CleanParams(req, res);
   var callback = null;
   if (req.session.user_id == req.params.id) {
     callback = updateSession;
   }
-  resource.update(req, res, resource, null, callback);
+  resource.update(req, res, app.User, null, callback);
 };
 
 var updateSession = function(req, res, user) {
