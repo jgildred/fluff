@@ -5,7 +5,7 @@
 // This data is required for the app to run.
 
 exports.Info = {
-  initialize  : true,       // Set this to true to initialize DB with data from seed.js on startup.
+  initialize  : false,       // Set this to true to initialize DB with data from seed.js on startup.
   app_service : 'Heroku',    // 'Heroku', 'AppFog' or 'Custom' (blank = 'Custom')
   db : {
     service   : 'MongoLab',   // 'MongoLab' or 'MongoDB' (blank = 'MongoDB')
