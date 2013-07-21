@@ -22,14 +22,6 @@ var handleError = function(err) {
 
 // Load the default config
 var loadDefaults = function () {
-  var default_config = {
-    initialize  : false,
-    app_service : 'Custom',
-    db : {
-      service   : 'MongoDB',
-      uri       : 'mongodb://localhost:27017/fluff'
-    }
-  }
   var active_config = (config && config.Info) ? config.Info : defalut_config;
   // if on Heroku or AppFog then fix config
   switch (active_config.app_service) {
@@ -37,9 +29,7 @@ var loadDefaults = function () {
       if ((active_config.db.service == "MongoLab") && process.env.MONGOLAB_URI) {
         active_config.db.uri = process.env.MONGOLAB_URI;
       }
-      if (process.env.PORT) {
-        active_config.port = process.env.PORT;
-      }
+      active_config.port = process.env.PORT ? process.env.PORT : 3000;
       break;
     case "AppFog":
       if ((active_config.db.service == "MongoDB") && process.env.VCAP_SERVICES) {
@@ -52,9 +42,7 @@ var loadDefaults = function () {
         var dburi = "mongodb://" + cred + obj.hostname + ":" + obj.port + "/" + obj.db;
         active_config.db.uri = dburi;
       }
-      if (process.env.VMC_APP_PORT) {
-        active_config.port = process.env.VMC_APP_PORT;
-      }
+      active_config.port = process.env.VMC_APP_PORT ? process.env.VMC_APP_PORT : 3000;
       break;
     default:
       active_config.port = 3000;
@@ -63,7 +51,7 @@ var loadDefaults = function () {
 }
 
 // Setup globals
-var Site, User, View, Page, Var; 
+var Server, Site, User, View, Page, Var; 
 
 // Setup DB connection
 var connectDb = function (req, res, callback) {
@@ -102,6 +90,7 @@ var connectDb = function (req, res, callback) {
 
   var siteSchema = new mongoose.Schema(schemas.site);
   Site   = mongoose.model('Site', siteSchema);
+  exports.Site = Site;
 
   var viewSchema = new mongoose.Schema(schemas.view);
   View   = mongoose.model('View', viewSchema);
@@ -618,8 +607,12 @@ var startupConfig = function (req, res) {
 }
 
 var reloadConfig = function (req, res) {
-  console.log("Reloading config from DB...");
-  loadConfig(req, res);
+  var time = new Date();
+  console.log("Closing server at " + time + " and waiting for connections to time out...");
+  Server.close(function (req, res) {
+    console.log("Starting back up at " + time + " and reloading config from DB...");
+    loadConfig(req, res);
+  });
 }
 
 var msgResponse = function (req, res, status, msg) {
@@ -642,8 +635,9 @@ startupConfig();
 
 // Start listening
 var startListening = function (req, res, ok) {
-  app.listen(app.get('config').port);
-  console.log("Listening on port " + app.get('config').port + ".");
+  var time = new Date();
+  Server = app.listen(app.get('config').port);
+  console.log("Started listening on port " + app.get('config').port + " at " + time + ".");
   if (ok && app.get('config').admin_path) {
     console.log("Admin is located at " + app.get('config').admin_path + ".");
     console.log("Fluff is up.");

@@ -8,23 +8,25 @@ exports.check = function(req, res){
   if (req.session.auth) {
     console.log("AUTH OK.");
     var body = {
-      auth:    req.session.auth,
-      _id:     req.session.id,
-      user_id: req.session.user_id,
-      email:   req.session.email,
-      role:    req.session.role,
-      name:    req.session.name,
-      status:  req.session.status,
-      _csrf:   req.session._csrf
+      auth     : req.session.auth,
+      _id      : req.session.id,
+      _csrf    : req.session._csrf,
+      site     : req.session.site,
+      user: {
+        _id    : req.session.user_id,
+        email  : req.session.email,
+        role   : req.session.role,
+        name   : req.session.name,
+        status : req.session.status }
     };
   }
   else {
     console.log("AUTH BAD.");
     res.status(401);
     var body = {
-      auth:   false,
-      status: req.session.status,
-      _csrf:  req.session._csrf
+      auth   : false,
+      status : req.session.status,
+      _csrf  : req.session._csrf
     };
   }
   res.send(body);
@@ -32,7 +34,7 @@ exports.check = function(req, res){
 
 // Response for POST with email and password
 exports.attach = function(req, res){
-  console.log("trying to auth");
+  console.log("Authenticating a user...");
   if (req.body.email && req.body.password) {
     app.User.findOne({"email": req.body.email}).select("firstname lastname email role pwhash salt status").exec(function (err, user) {
       if (err || !user) {
@@ -46,24 +48,26 @@ exports.attach = function(req, res){
         console.log("LOGIN FOUND USER: " + JSON.stringify(user));
         if (user.status == "Active") {
           if (user.pwMatch(req.body.password)) {
-            console.log("LOGIN USER: " + JSON.stringify(user));
+            console.log("LOGIN USER " + user.displayname + ":" + JSON.stringify(user));
             req.session.auth    = true;
             req.session.user_id = user._id;
             req.session.email   = user.email;
             req.session.role    = user.role;
             req.session.name    = user.displayname;
             req.session.status  = user.status;
+            req.session.site    = app.App.get('config').name;
             var body = {
-              auth:    req.session.auth,
-              _id:     req.session.id,
-              user_id: req.session.user_id,
-              email:   req.session.email,
-              role:    req.session.role,
-              name:    req.session.name,
-              status:  req.session.status,
-              _csrf:   req.session._csrf
+              auth     : req.session.auth,
+              _id      : req.session.id,
+              _csrf    : req.session._csrf,
+              site     : req.session.site,
+              user: {
+                _id    : req.session.user_id,
+                email  : req.session.email,
+                role   : req.session.role,
+                name   : req.session.name,
+                status : req.session.status }
             };
-            console.log("LOGIN: " + user.displayname);
           }
           else {
             req.session.auth = false;
@@ -79,7 +83,7 @@ exports.attach = function(req, res){
           var body = {
             auth:   req.session.auth,
             status: user.status, 
-            msg:    "Your account is not active. Please contact an administrator."};
+            msg:    "Your account is not active. Please contact an administrator for help."};
         }
       }
       res.json(body);

@@ -137,8 +137,11 @@ function init () {
             loginView.render(window.location.pathname);
           }
           else {
-            if (session.get('role') != "Admin") {
+            if (session.get('user') && (session.get('user').role != "Admin")) {
               alertView.render({label:"Restricted", msg: "Sorry, you need to be an admin to access this.", cantclose: true});
+            }
+            else {
+              $('title').html((session.get('site') ? session.get('site') : 'Site') + ' Admin');
             }
           }
           Backbone.history.start();
@@ -148,7 +151,6 @@ function init () {
           Backbone.history.start();
         }
       });
-      break;
   }
 }
 
@@ -168,10 +170,10 @@ function navselect (type) {
 
 // Load the navbar and authbar
 function loadnavbar (selection) {
-  if (session.get('role') == 'Admin') {
+  if (session.get('user') && (session.get('user').role == 'Admin')) {
     var template = _.template($('#authbar-template').html(), {session: session});
     $(".authbar").html(template);
-    var template = _.template($('#navbar-template').html(), {auth: session.get('auth'), admin: (session.get('role') == 'Admin')}); 
+    var template = _.template($('#navbar-template').html(), {auth: session.get('auth'), admin: (session.get('user').role == 'Admin')}); 
     $(".navbar-inner").html(template);
     if (selection) {
       navselect(selection);
@@ -307,8 +309,8 @@ var LoginView = Backbone.View.extend({
   login: function (ev) {
     var loginDetails = getFormData(ev.currentTarget);
     session.login(loginDetails, function () {
-      if (session.get("auth")) {
-        switch (session.get("status")) {
+      if (session.get("auth") && session.get("user")) {
+        switch (session.get("user").status) {
           case 'Inactive':
             $('.alert-msg').html('This account has been deactivated.');
             $('.login-fail').show();
@@ -319,7 +321,7 @@ var LoginView = Backbone.View.extend({
             break;
           default:
             $('#login-modal').modal('hide');
-            if (session.get("role") == "Admin") {
+            if (session.get("user").role == "Admin") {
               if (/#\/login/i.test(window.location.href)) {
                 loadnavbar();
                 router.navigate('pages', {trigger: true});
@@ -905,7 +907,15 @@ var SiteDetailView = Backbone.View.extend({
       this.site.save(siteDetails, {
         success: function (site) {
           console.log('site saved');
-          alertView.render({label:"Config changed", msg: "Changes are effective immediately.", onclose: "site"});
+          session.fetch({
+            success: function (session) {
+              $('title').html((session.get('site') ? session.get('site') : 'Site') + ' Admin');
+              alertView.render({label:"Config changed", msg: "It may take a few minutes for the changes to apply,<br/>depending upon the number of current connections.", onclose: "site"});
+            },
+            error: function (model, xhr) {
+              alertView.render({label:"Config changed", msg: "Oops. After the configuration changed,<br/>you can no longer login. Please check your config.", onclose: "site"});
+            }
+          });
         },
         error: function (model, xhr) {
           console.log(xhr);
@@ -1027,7 +1037,7 @@ var Router = Backbone.Router.extend({
 var router = new Router;
 router.on('route:home', function() {
   if (session.get('auth')) {
-    if (session.get('role') == 'Admin') {
+    if (session.get('user') && (session.get('user').role == 'Admin')) {
       navselect("pages");
       // Render pages list view
       pageListView.render();

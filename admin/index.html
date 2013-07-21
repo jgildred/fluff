@@ -60,7 +60,7 @@
     <div class="btn-toolbar pull-right authbar">
       <div class="btn-group">
         <% if(session.get('auth')) { %>
-        <a href="#/users/<%= session.get('user_id') %>" class="btn btn-mini"><i class="icon-user"></i>  <%= htmlEncode(session.get('name'))%></a>
+        <a href="#/users/<%= session.get('user')._id %>" class="btn btn-mini"><i class="icon-user"></i>  <%= htmlEncode(session.get('user').name)%></a>
         <a href="#/logout" class="btn btn-mini">Logout</a>
         <% } %>
       </div>
