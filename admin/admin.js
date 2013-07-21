@@ -170,6 +170,8 @@ function navselect (type) {
 
 // Load the navbar and authbar
 function loadnavbar (selection) {
+  $('header').removeClass('hidden');
+  $('footer').removeClass('hidden');
   if (session.get('user') && (session.get('user').role == 'Admin')) {
     var template = _.template($('#authbar-template').html(), {session: session});
     $(".authbar").html(template);
