@@ -11,12 +11,12 @@ exports.check = function(req, res){
       auth     : req.session.auth,
       _id      : req.session.id,
       _csrf    : req.session._csrf,
-      site     : req.session.site,
+      site     : app.App.get('config').name,
       user: {
         _id    : req.session.user_id,
         email  : req.session.email,
         role   : req.session.role,
-        name   : app.App.get('config').name,
+        name   : user.displayname,
         status : req.session.status }
     };
   }
