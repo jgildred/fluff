@@ -16,7 +16,7 @@ exports.check = function(req, res){
         _id    : req.session.user_id,
         email  : req.session.email,
         role   : req.session.role,
-        name   : user.displayname,
+        name   : req.session.name,
         status : req.session.status }
     };
   }
