@@ -16,7 +16,7 @@ exports.check = function(req, res){
         _id    : req.session.user_id,
         email  : req.session.email,
         role   : req.session.role,
-        name   : app.App.get('config').name;
+        name   : app.App.get('config').name,
         status : req.session.status }
     };
   }
