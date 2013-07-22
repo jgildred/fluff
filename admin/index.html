@@ -529,7 +529,7 @@
             <div class="controls">
               <select name="content_type" id="inputContentType">
                 <% for (o = 0; o < content_types.length; o++) { %>
-                <option value="<%= content_types[o] %>"<%= (view && (content_types[o] == view.get('content_type'))) ? ' selected' : ''%>><%= content_types[o] %></option>
+                <option value="<%= content_types[o] %>"<%= ((view && (content_types[o] == view.get('content_type'))) || (!view && (content_types[o] == 'text/html'))) ? ' selected' : ''%>><%= content_types[o] %></option>
                 <% } %>
               </select>
             </div>
