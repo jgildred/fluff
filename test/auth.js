@@ -1,26 +1,19 @@
 
-var request = require('supertest'),
-    app     = require('../app'),
-    //mongoose = require('mongoose'),
-    db_uri  = 'mongodb://localhost:27017/fluff-test';
+var request  = require('supertest'),
+    app      = require('../app');
+var mongoose = require('mongoose'),
+    db_name  = 'fluff-test-' + app.randomString(5);
 
 before(function (done) {
 	var custom_config = {
 		initialize  : true,
-  	db_uri      : db_uri
-	}
-	//mongoose.connect(db_uri);
-	//for (collection in mongoose.connection.collections) {
-	//	mongoose.connection.collections[collection].drop(function(err) {
-	//		app.launch(custom_config, done);
-	//	});
-	//}
+  	db_uri      : 'mongodb://localhost:27017/' + db_name
+	};
 	app.launch(custom_config, done);
 })
 
 after(function (done) {
-	//drop again
-	done();
+	mongoose.connection.db.dropDatabase(done);
 })
 
 describe('POST /fluff/admin/api/auth', function() {
@@ -33,7 +26,6 @@ describe('POST /fluff/admin/api/auth', function() {
       .expect(200)
       .end(function(err, res){
       	if (err) return done(err);
-      	console.log(res.header);
       	res.body.should.have.property('auth', true);
         res.body.user.should.have.property('email', 'admin@domain.com');
         done();

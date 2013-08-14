@@ -155,7 +155,7 @@ var toModel = function (model, callback) {
   obj.lastupdate     = { type: Date, default: Date.now };
   //console.log("Schema data is: " + model.schema_data);
   var schema = new mongoose.Schema(obj);
-  var newModel = mongoose.model(users.randomString(), schema, model.model_id.toLowerCase());
+  var newModel = mongoose.model(randomString(), schema, model.model_id.toLowerCase());
   return newModel
 }
 exports.toModel = toModel;
@@ -347,7 +347,7 @@ var initDb = function (req, res, callback) {
 
         var firstuser = seed.Data.users[0];
         seed.Data.users.forEach(function (user) { 
-          user.salt           = users.randomString();
+          user.salt           = randomString();
           user.pwhash         = users.saltyHash(user.password, user.salt);
           user.verifytoken    = users.makeToken();
           user.creator_id     = firstuser._id;
@@ -792,6 +792,13 @@ var applyConfig = function (req, res, callback) {
     startListening(true, callback);
   }
 }
+
+var randomString = function (size) {
+  var crypto = require('crypto');
+  size = size ? size : 10;
+  return crypto.randomBytes(Math.ceil(size * 3 / 4)).toString('base64').slice(0, size);
+}
+exports.randomString = randomString;
 
 var removeRoutes = function (regex) {
   for (method in app.routes) {

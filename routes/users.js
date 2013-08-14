@@ -23,7 +23,7 @@ exports.create = function(req, res){
       }
       else {
         // if password not supplied, then make one up and force reset
-        req.body.password = randomString();
+        req.body.password = app.randomString();
         var callback = SendNewResetEmail;
       }
       doCreate(req, res, callback);
@@ -78,7 +78,7 @@ exports.pwchange = function(req, res){
   if (req.body && req.body.password) {
     var password = req.body.password;
     req.body = {};
-    req.body.salt = randomString();
+    req.body.salt = app.randomString();
     req.body.pwhash = saltyHash(password, req.body.salt);
   }
   // as the token is stored urlencoded, make sure it's not urldecoded
@@ -112,7 +112,7 @@ var CleanParams = function(req, res) {
 
 var doCreate = function(req, res, callback) {
   CleanParams(req, res);
-  req.body.salt = randomString();
+  req.body.salt = app.randomString();
   req.body.pwhash = saltyHash(req.body.password, req.body.salt);
   req.body.verifytoken = makeToken();
   resource.create(req, res, app.User, callback);
@@ -214,13 +214,7 @@ var doIfNotLastAdmin = function (req, res, user_id, callback) {
       }
     });
   }
-} 
-
-var randomString = function () {
-  var crypto = require('crypto');
-  return crypto.randomBytes(Math.ceil(10 * 3 / 4)).toString('base64').slice(0, 10);
 }
-exports.randomString = randomString;
 
 var saltyHash = function (text, salt) {
   var crypto = require('crypto');
@@ -229,6 +223,6 @@ var saltyHash = function (text, salt) {
 exports.saltyHash = saltyHash;
 
 var makeToken = function () {
-  return encodeURIComponent(randomString());
+  return encodeURIComponent(app.randomString());
 }
 exports.makeToken = makeToken;

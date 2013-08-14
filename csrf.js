@@ -1,13 +1,6 @@
-// TODO - Write a better csrf module
 
-var crypto = require('crypto');
-var server = require('./app');
+var app = require('./app');
 
-var generateToken = function(len) {
-  return crypto.randomBytes(Math.ceil(len * 3 / 4))
-    .toString('base64')
-    .slice(0, len);
-};
 function defaultValue(req) {
   return (req.body && req.body._csrf)
     || (req.query && req.query._csrf)
@@ -15,7 +8,7 @@ function defaultValue(req) {
 }
 var checkToken = function(req, res, next){
     var apikey = req.session.apikey;
-    var token = req.session._csrf || (req.session._csrf = generateToken(24));
+    var token = req.session._csrf || (req.session._csrf = app.randomString(24));
     var val = defaultValue(req);
     console.log("REQ " + req.method + ": " + req.path);
     console.log("REQ BODY: " + JSON.stringify(req.body));
@@ -29,8 +22,8 @@ var checkToken = function(req, res, next){
       (
         (req.method == 'POST')
         && (
-          (req.path == (server.App.get('config').fluff_path + '/admin/api/users'))
-          || (req.path == (server.App.get('config').fluff_path + '/admin/api/auth'))
+          (req.path == (app.App.get('config').fluff_path + '/admin/api/users'))
+          || (req.path == (app.App.get('config').fluff_path + '/admin/api/auth'))
         )
       ) 
       || (
@@ -51,14 +44,14 @@ var checkToken = function(req, res, next){
     }
     if ((val != token) && (!bypass)) {
       //return next({auth: false});
-      server.msgResponse(req, res, 400, "CSRF missing or incorrect.");
+      app.msgResponse(req, res, 400, "CSRF missing or incorrect.");
     }
     else {
       next();
     }
 }
 var newToken = function(req, res, next) {
-  var token = req.session._csrf || (req.session._csrf = generateToken(24));
+  var token = req.session._csrf || (req.session._csrf = app.randomString(24));
   next();
 }
 module.exports = {

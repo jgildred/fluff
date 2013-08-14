@@ -1,7 +1,7 @@
 fluff REST API
 ==============
 
-All API urls must be preceded by '[admin path]/api'.
+All API urls must be preceded by '[fluff path]/admin/api'.
 
 Authentication:
 - GET /auth
@@ -43,3 +43,18 @@ Vars:
 - POST /vars
 - PUT /vars/:id
 - DELETE /vars/:id
+
+Models:
+- GET /models
+- GET /models/:id
+- POST /models
+- PUT /models/:id
+- DELETE /models/:id
+
+Model resources:
+- GET /[model name]
+- GET /[model name]/:id
+- GET /[model name]/:id/count
+- POST /[model name]
+- PUT /[model name]/:id
+- DELETE /[model name]/:id
