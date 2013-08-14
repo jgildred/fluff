@@ -10,7 +10,7 @@ var enums = {
   db_service   : [ "Other MongoDB", "MongoLab" ],
   user_role    : [ "User", "Admin" ],
   user_status  : [ "Active", "Inactive", "Unverified" ],
-  page_access  : [ "Public", "Users", "Admins" ],
+  access_level : [ "Public", "Users", "Admins" ],
   page_status  : [ "Published", "Unpublished" ],
   content_type : [ "text/html", "application/javascript", "text/css", "application/json", "application/xml", "text/plain"]
 }
@@ -21,7 +21,7 @@ exports.site = {
   domain         : String,
   port           : { type: Number,  default: 80 },
   ssl            : { type: Boolean, default: false },
-  admin_path     : { type: String,  default: "/admin", required: true },
+  fluff_path     : { type: String,  default: "/fluff", required: true },
   cors : {
     restricted   : { type: Boolean,  default: false },
     whitelist    : [ String ]
@@ -87,8 +87,8 @@ exports.page = {
     row          : { type: Number, default: 0 },
     column       : { type: Number, default: 0 }
   },
-  access         : { type: String, enum: enums.page_access, default: "Public", required: true },
-  status         : { type: String, enum: enums.page_status, default: "Unpublished", required: true },
+  access         : { type: String, enum: enums.access_level, default: "Public", required: true },
+  status         : { type: String, enum: enums.page_status,  default: "Unpublished", required: true },
   publication    : { type: Date, default: Date.now },
   creator_id     : mongoose.Schema.Types.ObjectId,
   lastupdater_id : mongoose.Schema.Types.ObjectId,
@@ -99,6 +99,36 @@ exports.page = {
 exports.var = {
   name           : { type: String, unique: true },
   value          : String,
+  creator_id     : mongoose.Schema.Types.ObjectId,
+  lastupdater_id : mongoose.Schema.Types.ObjectId,
+  creation       : { type: Date, default: Date.now },
+  lastupdate     : { type: Date, default: Date.now }
+}
+
+exports.model = {
+  name           : { type: String, unique: true },
+  model_id       : { type: String, unique: true },
+  schema_data    : String,
+  cursor : { 
+    row          : { type: Number, default: 0 },
+    column       : { type: Number, default: 0 }
+  },
+  access : {
+    view         : { type: String, enum: enums.access_level, default: "Public", required: true },
+    create       : { type: String, enum: enums.access_level, default: "Users",  required: true },
+    update       : { type: String, enum: enums.access_level, default: "Users",  required: true },
+    remove       : { type: String, enum: enums.access_level, default: "Users",  required: true }
+  },
+  browse_cursor: {
+    item_id      : mongoose.Schema.Types.ObjectId,
+    attribute    : String
+  },
+  column_order   : [ String ],
+  column_sizes   : [ Number ],
+  sort_column    : {
+    name      : String,
+    order     : Boolean
+  },
   creator_id     : mongoose.Schema.Types.ObjectId,
   lastupdater_id : mongoose.Schema.Types.ObjectId,
   creation       : { type: Date, default: Date.now },

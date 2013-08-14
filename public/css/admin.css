@@ -1,0 +1,128 @@
+
+body {
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+ 
+  height: 100% !important;
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+}
+
+a.navbar-brand {
+  padding-top: 7px;
+  padding-bottom: 0px;
+}
+.brand {
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+  height: 35px;
+}
+
+.pointer {
+  cursor: pointer;
+}
+.darkbg {
+  background: #434343; /* for non-css3 browsers */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#434343', endColorstr='#797979'); /* for IE */
+  background: -webkit-gradient(linear, left top, left bottom, from(#434343), to(#797979)); /* for webkit browsers */
+  background: -moz-linear-gradient(top,  #434343,  #797979); /* for firefox 3.6+ */
+}
+.device-info-image{
+  height: 60px;
+}
+.device-info-detail{
+  height: 60px;
+}
+.device-activity {
+  margin-left: auto !important;
+  margin-right: auto !important;
+  width: 480px !important;
+  height: 360px !important;
+}
+.device-streams {
+  margin-left: auto !important;
+  margin-right: auto !important;
+  width: 480px !important;
+  height: 420px !important;
+}
+.authbar {
+  margin-top: -28px !important;
+  margin-right: 6px !important;
+}
+.navbar-toggle {
+  margin-right: 180px !important;
+}
+.stats-table td {
+  padding-left: 5px;
+  white-space: nowrap;
+}
+.small-editor { 
+  width: 100%;
+  height: 400px;
+  margin: 0 !important;
+  z-index: 1000 !important;
+}
+.label-fse {
+  margin-top: 4px;
+  margin-bottom: 0px;
+  color: #c0c0c0;
+}
+.btn-fse {
+  margin-top: 1px;
+}
+.x-overflow-scroll {
+  overflow-x: scroll;
+}
+#fullscreen-editor {
+  position: absolute !important;
+  top: 30px !important;
+  bottom: 0px !important;
+  left: 0px !important;
+  right: 0px !important;
+  margin: 0px !important;
+  z-index: 1000 !important;
+}
+#fullscreen-editor-controlbar {
+  background-color: #797979;
+  position: absolute !important;
+  top: 0px !important;
+  left: 0px !important;
+  right: 0px !important;
+  margin: 0px !important;
+  z-index: 1000 !important;
+  height: 30px !important;
+}
+#fullscreen-editor-container {
+  background-color: #000000;
+  position: absolute !important;
+  top: 0px !important;
+  bottom: 0px !important;
+  left: 0px !important;
+  right: 0px !important;
+  margin: 0px !important;
+  z-index: 1000 !important;
+}
+.caps {
+  text-transform: capitalize;
+}
+table.htCore th {
+  white-space: nowrap;
+}
+table.htCore td {
+  white-space: nowrap;
+}
+table.backgrid th {
+  padding-left: 5px;
+}
+table.backgrid td {
+  padding-left: 5px;
+}
+select.column-picker {
+  height: 200px;
+}
+.modal-skinny {
+  width: 350px;
+}
+body {
+  min-width: 240px;
+}

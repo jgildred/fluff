@@ -29,7 +29,7 @@ exports.check = function(req, res){
       _csrf  : req.session._csrf
     };
   }
-  res.send(body);
+  res.json(body);
 };
 
 // Response for POST with email and password

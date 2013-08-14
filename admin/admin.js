@@ -1,7 +1,22 @@
 
 // Helper functions
+function objectType(obj){
+    return Object.prototype.toString.call(obj).slice(8, -1);
+}
 function htmlEncode(value){
   return $('<div/>').text(value).html();
+}
+// Useful when comparing schema attributes
+var lowerCaseObject = function (obj) {
+  var key,
+      keys = Object.keys(obj);
+  var n = keys.length;
+  var newobj={};
+  while (n--) {
+    key = keys[n];
+    newobj[key.toLowerCase()] = obj[key];
+  }
+  return newobj;
 }
 $.fn.serializeObject = function() {
   var o = {};
@@ -18,12 +33,45 @@ $.fn.serializeObject = function() {
   });
   return o;
 };
+// use the "good" Collection methods to emulate Array.splice
+function hacked_splice(index, howMany /* model1, ... modelN */) {
+  var args  = _.toArray(arguments).slice(2).concat({at: index}),
+    removed = this.models.slice(index, index + howMany);
+  this.remove(removed).add.apply(this, args);
+  return removed;
+}
+// show a log of events getting fired
+function log_events(event, model) {
+  var now = new Date();
+  $("#example1_events").prepend(
+      $("<option/>").text([
+        ":", now.getSeconds(), ":", now.getMilliseconds(),
+        "[" + event + "]",
+        JSON.stringify(model)
+      ].join(" "))
+    )
+    .scrollTop(0);
+}
 
 // prefilter for all ajax calls
 $.ajaxPrefilter( function( options, originalOptions, jqXHR ) {
   // Modify options, control originalOptions, store jqXHR, etc
   options.url = options.url + "?apikey=" + encodeURIComponent(apikey);
 });
+
+var metaSave = function(on, callback) {
+  if (on && callback) {
+    $(window).bind('keydown',function(e){
+      if (!( String.fromCharCode(e.which).toLowerCase() == 's' && e.metaKey)) return true;
+      e.preventDefault();
+      callback();
+      return false;
+    });
+  }
+  else {
+    $(window).unbind('keydown');
+  }
+}
 
 var addArrayOrString = function(object, name, text) {
   if (name.match(/\[\]/)) {
@@ -37,9 +85,9 @@ var addArrayOrString = function(object, name, text) {
   }
 }
 
-// grabs all form data, puts into an object
-// form elements with a name like 'item.subitem' will be put into an 'item' subobject
-// form elements with a name like 'items[]' will be parsed into an 'items' array of text
+// Grabs all form data and puts it into an object.
+// Form elements with a name like 'item.subitem' will be put into an 'item' subobject.
+// Form elements with a name like 'items[]' will be parsed into an 'items' array of text.
 var getFormData = function(form) {
   if (form) {
     var formObject = {};
@@ -65,41 +113,45 @@ var getFormData = function(form) {
   }
 }
 
-function fullscreenEditor(editor) {
-  $('#editor').removeClass('span4 small-editor').addClass('fullscreen-editor');
-  editor.resize();
-  editor.focus();
-  editor.commands.addCommand({
-    name: 'exitFullscreen',
-    bindKey: {win: 'Esc',  mac: 'Esc'},
-    exec: function(editor) {
-      $('#editor').removeClass('fullscreen-editor').addClass('span4 small-editor');
-      editor.resize();
-    }
-  });
-}
-
 function toggleFullscreen(editor) {
-  var e = $('#editor');
-  if (e.hasClass('fullscreen-editor')) {
-    e.removeClass('fullscreen-editor').addClass('span4 small-editor');
+  var e   = $('#editor');
+  var fse = $('#fullscreen-editor-container');
+  if (fse.hasClass('hidden')) {
+    var element_id = 'fullscreen-editor';
+    var content    = editor.getValue();
+    var cursor     = editor.selection.getCursor();
+    var mode       = editor.getSession().getMode();
+    var view       = editor.targetView;
+    editor.targetView.editor = renderEditor(element_id, content, cursor, mode, view, true);
+    fse.removeClass('hidden');
+    e.addClass('hidden');
   }
   else {
-    e.removeClass('span4 small-editor').addClass('fullscreen-editor');
-  }    
-  editor.resize();
+    var element_id = 'editor';
+    var content    = editor.getValue();
+    var cursor     = editor.selection.getCursor();
+    var mode       = editor.getSession().getMode();
+    var view       = editor.targetView;
+    editor.targetView.editor = renderEditor(element_id, content, cursor, mode, view);
+    e.removeClass('hidden');
+    fse.addClass('hidden');
+  }
+  editor.targetView.editor.resize();
 }
 
-function renderEditor(element_id, content, cursor) {
+function renderEditor(element_id, content, cursor, mode, view, fullscreen) {
   var editor = ace.edit(element_id);
   editor.setTheme("ace/theme/textmate");
-  editor.getSession().setMode("ace/mode/html");
+  if (mode) {
+    editor.getSession().setMode(mode);
+  } else {
+    editor.getSession().setMode("ace/mode/html");
+  }
   editor.getSession().setTabSize(2);
   editor.getSession().setUseSoftTabs(true);
   document.getElementById(element_id).style.fontSize='14px';
   editor.getSession().setUseWrapMode(true);
   editor.setValue(content);
-  editor.focus();
   editor.commands.addCommand({
     name: 'toggleFullscreen',
     bindKey: {win: 'Esc',  mac: 'Esc'},
@@ -107,6 +159,19 @@ function renderEditor(element_id, content, cursor) {
       toggleFullscreen(editor);
     }
   });
+  if (view) {
+    editor.targetView = view;
+    if (fullscreen) {
+      metaSave(true, view.submitForm);
+    }
+    else {
+      metaSave(false);
+    }
+  }
+  else {
+    metaSave(false);
+  }
+  editor.focus();
   if (cursor) editor.moveCursorTo(cursor.row, cursor.column);
   return editor;
 }
@@ -187,17 +252,20 @@ function loadnavbar (selection) {
 Backbone.Model.prototype.idAttribute = "_id";
 
 // Setup the models
-var User = Backbone.Model.extend({
+var User    = Backbone.Model.extend({
   urlRoot: apibase + '/users'
 });
-var Page = Backbone.Model.extend({
+var Page    = Backbone.Model.extend({
   urlRoot: apibase + '/pages'
 });
-var View = Backbone.Model.extend({
+var View    = Backbone.Model.extend({
   urlRoot: apibase + '/views'
 });
-var Var = Backbone.Model.extend({
+var Var     = Backbone.Model.extend({
   urlRoot: apibase + '/vars'
+});
+var Model   = Backbone.Model.extend({
+  urlRoot: apibase + '/models'
 });
 var Session = Backbone.Model.extend({
   urlRoot: apibase + '/auth',
@@ -230,40 +298,32 @@ var Session = Backbone.Model.extend({
       success: function (model, resp) {
         model.clear();
         model.id = null;
-        // Set auth to false to trigger a change:auth event
-        // The server also returns a new csrf token so that
-        // the user can relogin without refreshing the page
-        //that.set({'auth': false, '_csrf': resp._csrf});
         window.location.href = adminbase;
       }
     });
   },
   getAuth: function(callback) {
-    // getAuth is wrapped around our router
-    // before we start any routers let us see if the user is valid
-    //this.fetch({ success: callback });
-    this.fetch({ 
-      success: function(mode, resp) {
-        //alert(JSON.stringify(resp));
-      }
-    });
+    this.fetch();
   }
 });
 
 // Setup the collections
-var Users = Backbone.Collection.extend({
+var Users  = Backbone.Collection.extend({
   url: apibase + '/users'
 });
-var Pages = Backbone.Collection.extend({
+var Pages  = Backbone.Collection.extend({
   url: apibase + '/pages'
 });
-var Views = Backbone.Collection.extend({
+var Views  = Backbone.Collection.extend({
   url: apibase + '/views'
 });
-var Vars = Backbone.Collection.extend({
+var Vars   = Backbone.Collection.extend({
   url: apibase + '/vars'
 });
-var Sites = Backbone.Collection.extend({
+var Models = Backbone.Collection.extend({
+  url: apibase + '/models'
+});
+var Sites  = Backbone.Collection.extend({
   url: apibase + '/sites'
 });
 
@@ -271,8 +331,8 @@ var Sites = Backbone.Collection.extend({
 var SignUpView = Backbone.View.extend({
   el: '.popup',
   events: {
-    'submit .signup-form': 'saveUser',
-    'click .close'       : 'close'
+    'submit .signup-form' : 'saveUser',
+    'click  .close'       : 'close'
   },
   saveUser: function (ev) {
     var userDetails = getFormData(ev.currentTarget);
@@ -305,8 +365,8 @@ var SignUpView = Backbone.View.extend({
 var LoginView = Backbone.View.extend({
   el: '.popup',
   events: {
-    'submit .login-form'  : 'login',
-    'click  .close'       : 'close'
+    'submit .login-form' : 'login',
+    'click  .close'      : 'close'
   },
   login: function (ev) {
     var loginDetails = getFormData(ev.currentTarget);
@@ -486,7 +546,7 @@ var PageListView = Backbone.View.extend({
     return false;
   },
   render: function (keyword) {
-    console.log("fetchingpagelist");
+    console.log("fetching page list");
     // first get the list of views for the page list view
     this.views = new Views();
     var that = this;
@@ -537,7 +597,6 @@ var VarListView = Backbone.View.extend({
   el: '.page',
   events: {
     'submit .edit-var-quickform'   : 'noSubmit',
-    'change .edit-var-name'        : 'saveVar',
     'change .edit-var-value'       : 'saveVar',
     'click  .delete-var-quickform' : 'deleteVar'
   },
@@ -582,14 +641,94 @@ var VarListView = Backbone.View.extend({
   }
 });
 
+// Setup the var add view
+var VarAddView = Backbone.View.extend({
+  el: '.popup',
+  events: {
+    'submit .add-var-form' : 'saveVar',
+    'click  .cancel'       : 'cancel'
+  },
+  saveVar: function (ev) {
+    var varDetails = getFormData(ev.currentTarget);
+    var vari = new Var();
+    vari.save(varDetails, {
+      success: function (vari) {
+        console.log('var saved');
+        $('#add-var-modal').modal('hide');
+        router.navigate('list-vars');
+        varListView.render();
+      },
+      error: function (model, xhr) {
+        if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
+          alertView.render({label:"Save Var", msg: $.parseJSON(xhr.responseText).msg});
+        }
+      }
+    });
+    return false;
+  },
+  cancel: function() {
+    $('#add-var-modal').modal('hide');
+    window.history.back();
+  },
+  render: function () {
+    var template = _.template($('#add-var-template').html(), {vari: null});
+    this.$el.html(template);
+    $('#add-var-modal').modal('show');
+    $('.add-var-form .add-var-name')[0].focus();
+  }
+});
+
+// Setup the model list view
+var ModelListView = Backbone.View.extend({
+  el: '.page',
+  render: function (keyword) {
+    this.models = new Models();
+    var that = this;
+    this.models.fetch({
+      success: function (models) {
+        if (models.length > 0) {
+          _.each(that.models.models, function (model) { 
+            model.set({count: '?'});
+            $.ajax({
+              type: "GET",
+              dataType: "json",
+              url: adminbase.slice(0,adminbase.indexOf('admin')-1) + '/api/' + model.get('name').toLowerCase() + '/count',
+              data: null,
+              success: function (data) {
+                if (data) {
+                  model.set({count: data.count});
+                }
+                var template = _.template($('#model-list-template').html(), {models: that.models.models});
+                that.$el.html(template);
+              },
+              // Show the table even if the counts are missing
+              error: function () {
+                var template = _.template($('#model-list-template').html(), {models: that.models.models});
+                that.$el.html(template);
+              }
+            });
+          });
+        }
+        else {
+          var template = _.template($('#model-list-template').html(), {models: null});
+          that.$el.html(template);
+        }
+      },
+      error: function (xhr) {
+        alertView.render({label:"Sorry", msg: $.parseJSON(xhr.responseText).msg});
+      }
+    })
+  }
+});
+
 // Setup the user detail view
 var UserDetailView = Backbone.View.extend({
   el: '.page',
   events: {
-    'submit .edit-user-form': 'saveUser',
-    'click .delete-user'    : 'deleteUser',
-    'click .cancel'         : 'cancel',
-    'click .user-pwreset'   : 'requestReset'
+    'submit .edit-user-form' : 'saveUser',
+    'click .delete-user'     : 'deleteUser',
+    'click .cancel'          : 'cancel',
+    'click .user-pwreset'    : 'requestReset'
   },
   saveUser: function (ev) {
     var userDetails = getFormData(ev.currentTarget);
@@ -677,14 +816,16 @@ var UserDetailView = Backbone.View.extend({
 var PageDetailView = Backbone.View.extend({
   el: '.page',
   events: {
-    'submit .edit-page-form' : 'savePage',
-    'click  .delete-page'    : 'deletePage',
-    'click  .cancel'         : 'cancel',
-    'click  .fullscreen-page': 'fullscreenEditPage'
+    'submit .edit-page-form'  : 'savePage',
+    'click  .delete-page'     : 'deletePage',
+    'click  .cancel'          : 'cancel',
+    'click  .fullscreen-page' : 'fullscreen'
   },
-  fullscreenEditPage: function (ev) {
+  fullscreen: function (ev) {
     toggleFullscreen(this.editor);
-    this.editor.focus();
+  },
+  submitForm: function () {
+    $('.edit-page-form').submit();
   },
   savePage: function (ev) {
     var pageDetails = getFormData(ev.currentTarget);
@@ -696,7 +837,9 @@ var PageDetailView = Backbone.View.extend({
     this.page.save(pageDetails, {
       success: function (page) {
         console.log('page saved');
-        window.history.back();
+        if ($('#fullscreen-editor-container').hasClass('hidden')) {
+          window.history.back();
+        }
       },
       error: function (model, xhr) {
         console.log(xhr);
@@ -742,14 +885,24 @@ var PageDetailView = Backbone.View.extend({
             success: function (page) {
               var template = _.template($('#edit-page-template').html(), {page: page, views: that.views, access_options: that.access_options, status_options: that.status_options});
               that.$el.html(template);
-              that.editor = renderEditor('editor', that.page.get('content'), that.page.get('cursor'));
+              that.editor = renderEditor('editor', that.page.get('content'), that.page.get('cursor'), null, that);
+              $('#fullscreen-editor-controlbar').html($('#editor-controlbar-template').html());
+              $('.save-fullscreen-editor').click(that.submitForm);
+              $('.close-fullscreen-editor').click(function() {
+                toggleFullscreen(that.editor);
+              });
             }
           });
         } else {
           that.page = null;
           var template = _.template($('#edit-page-template').html(), {page: that.page, views: that.views, access_options: that.access_options, status_options: that.status_options});
           that.$el.html(template);
-          that.editor = renderEditor('editor', null, { row: 0, column: 0 });
+          that.editor = renderEditor('editor', null, { row: 0, column: 0 }, null, that);
+          $('#fullscreen-editor-controlbar').html($('#editor-controlbar-template').html());
+          $('.save-fullscreen-editor').click(that.submitForm);
+          $('.close-fullscreen-editor').click(function() {
+            toggleFullscreen(that.editor);
+          });
         }
         
       }
@@ -768,7 +921,9 @@ var ViewDetailView = Backbone.View.extend({
   },
   fullscreenEditView: function (ev) {
     toggleFullscreen(this.editor);
-    this.editor.focus();
+  },
+  submitForm: function () {
+    $('.edit-view-form').submit();
   },
   saveView: function (ev) {
     var viewDetails = getFormData(ev.currentTarget);
@@ -780,7 +935,9 @@ var ViewDetailView = Backbone.View.extend({
     this.view.save(viewDetails, {
       success: function (view) {
         console.log('view saved');
-        window.history.back();
+        if ($('#fullscreen-editor-container').hasClass('hidden')) {
+          window.history.back();
+        }
       },
       error: function (model, xhr) {
         console.log(xhr);
@@ -817,55 +974,81 @@ var ViewDetailView = Backbone.View.extend({
         success: function (view) {
           var template = _.template($('#edit-view-template').html(), {view: view, content_types: that.content_types}); 
           that.$el.html(template);
-          that.editor = renderEditor('editor', that.view.get('template'), that.view.get('cursor'));
+          that.editor = renderEditor('editor', that.view.get('template'), that.view.get('cursor'), null, that);
+          $('#fullscreen-editor-controlbar').html($('#editor-controlbar-template').html());
+          $('.save-fullscreen-editor').click(that.submitForm);
+          $('.close-fullscreen-editor').click(function() {
+            toggleFullscreen(that.editor);
+          });
         }
       })
     } else {
       this.view = null;
       var template = _.template($('#edit-view-template').html(), {view: this.view, content_types: this.content_types});
       this.$el.html(template);
-      this.editor = renderEditor('editor', null, { row: 0, column: 0 });
+      this.editor = renderEditor('editor', null, { row: 0, column: 0 }, null, that);
+      $('#fullscreen-editor-controlbar').html($('#editor-controlbar-template').html());
+      $('.save-fullscreen-editor').click(that.submitForm);
+      $('.close-fullscreen-editor').click(function() {
+        toggleFullscreen(that.editor);
+      });
     }
   }
 });
 
-// Setup the var detail view
-var VarDetailView = Backbone.View.extend({
+// Setup the model detail view
+var ModelDetailView = Backbone.View.extend({
   el: '.page',
   events: {
-    'submit .edit-var-form' : 'saveVar',
-    'click  .delete-var'    : 'deleteVar',
-    'click  .cancel'        : 'cancel'
+    'submit .edit-model-form'   : 'saveModel',
+    'click  .delete-model'      : 'deleteModel',
+    'click  .cancel'            : 'cancel',
+    'click  .fullscreen-schema' : 'fullscreenEditSchema'
   },
-  saveVar: function (ev) {
-    var varDetails = getFormData(ev.currentTarget);
-    if (!this.var) {
-      this.var = new Var();
+  fullscreenEditSchema: function (ev) {
+    toggleFullscreen(this.editor);
+  },
+  submitForm: function () {
+    $('.edit-model-form').submit();
+  },
+  saveModel: function (ev) {
+    var modelDetails = getFormData(ev.currentTarget);
+    modelDetails.schema_data = this.editor.getValue();
+    modelDetails.cursor      = this.editor.selection.getCursor();
+    // Remove the model_id as you can't change it
+    delete modelDetails.model_id;
+    console.log ("Model to save:");
+    console.log (modelDetails);
+    if (!this.model) {
+      this.model = new Model();
     }
-    this.var.save(varDetails, {
-      success: function (vari) {
-        console.log('var saved');
-        window.history.back();
+    this.model.save(modelDetails, {
+      patch: true,
+      success: function (model) {
+        console.log('model saved');
+        if ($('#fullscreen-editor-container').hasClass('hidden')) {
+          window.history.back();
+        }
       },
       error: function (model, xhr) {
         console.log(xhr);
         if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
-          alertView.render({label:"Save Var", msg: $.parseJSON(xhr.responseText).msg});
+          alertView.render({label:"Save Model", msg: $.parseJSON(xhr.responseText).msg});
         }
       }
     });
     return false;
   },
-  deleteVar: function (ev) {
-    this.var.destroy({
+  deleteModel: function (ev) {
+    this.model.destroy({
       success: function () {
-        console.log('var destroyed');
+        console.log('model destroyed');
         window.history.back();
       },
       error: function (model, xhr) {
         console.log(xhr);
         if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
-          alertView.render({label:"Delete Var", msg: $.parseJSON(xhr.responseText).msg});
+          alertView.render({label:"Delete Model", msg: $.parseJSON(xhr.responseText).msg});
         }
       }
     })
@@ -874,22 +1057,285 @@ var VarDetailView = Backbone.View.extend({
     window.history.back();
   },
   render: function (options) {
+    // build the list of access options
+    this.access_options = ['Public', 'Users', 'Admins'];
     var that = this;
-    if(options.id) {
-      this.var = new Var({_id: options.id});
-      this.var.fetch({
-        success: function (vari) {
-          var template = _.template($('#edit-var-template').html(), {vari: vari}); 
+    if (options.id) {
+      // then get the model details
+      that.model = new Model({_id: options.id});
+      that.model.fetch({
+        success: function (model) {
+          var template = _.template($('#edit-model-template').html(), {model: model, access_options: that.access_options});
           that.$el.html(template);
-          $('.edit-var-form .edit-var-name')[0].focus();
+          that.editor = renderEditor('editor', that.model.get('schema_data'), that.model.get('cursor'), 'ace/mode/javascript', that);
+          $('#fullscreen-editor-controlbar').html($('#editor-controlbar-template').html());
+          $('.save-fullscreen-editor').click(that.submitForm);
+          $('.close-fullscreen-editor').click(function() {
+            toggleFullscreen(that.editor);
+          });
         }
-      })
+      });
     } else {
-      this.var = null;
-      var template = _.template($('#edit-var-template').html(), {vari: this.var});
-      this.$el.html(template);
-      $('.edit-var-form .edit-var-name')[0].focus();
+      that.model = null;
+      var template = _.template($('#edit-model-template').html(), {model: that.model, access_options: that.access_options});
+      that.$el.html(template);
+      that.editor = renderEditor('editor', null, { row: 0, column: 0 }, 'ace/mode/javascript', that);
+      $('#fullscreen-editor-controlbar').html($('#editor-controlbar-template').html());
+      $('.save-fullscreen-editor').click(that.submitForm);
+      $('.close-fullscreen-editor').click(function() {
+        toggleFullscreen(that.editor);
+      });
     }
+  }
+});
+
+// Setup the model browse view
+var ModelBrowseView = Backbone.View.extend({
+  el: '.page',
+  events: {
+    'click  .add-modelitem'   : 'addItem',
+    'click  .arrange-columns' : 'arrangeColumns'
+  },
+  addItem: function () {
+    this.modelItem = new this.ModelItem();
+    this.modelItems.add(this.modelItem);
+  },
+  arrangeColumns: function () {
+    var available_columns = [];
+    var display_columns   = [];
+    for (attribute in this.schema) {
+      available_columns.push(attribute);
+    }
+    this.model.get('column_order').forEach(function (column, index) {
+      var matchIndex = available_columns.indexOf(column);
+      if (matchIndex != -1) {
+        available_columns.splice(matchIndex, 1);
+      }
+      display_columns.push(column);
+    });
+    available_columns = display_columns.concat(available_columns);
+    arrangeColumnsView.render(available_columns, display_columns);
+  },
+  render: function (options) {
+    // build the list of access options
+    this.access_options = ['Public', 'Users', 'Admins'];
+    var that = this;
+    if (options.id) {
+      // then get the model details
+      this.model = new Model({_id: options.id});
+      this.model.fetch({
+        success: function (model) {
+          that.ModelItem = Backbone.Model.extend({
+            urlRoot: adminbase.slice(0, adminbase.indexOf('admin') - 1) + '/api/' + model.get('name').toLowerCase(),
+            initialize: function () {
+              this.on("change", function (model, options) {
+                if (options && options.save === false) return;
+                if (model.hasChanged("name")) {
+                  model.save();
+                }
+              });
+            }
+          });
+          that.ModelItems = Backbone.Collection.extend({
+            url: adminbase.slice(0, adminbase.indexOf('admin') - 1) + '/api/' + model.get('name').toLowerCase(),
+            model: that.ModelItem,
+            // Backbone.Collection doesn't support `splice`, yet! Easy to add.
+            splice: hacked_splice
+          });
+          var noUpdateFields = [
+            '_id',
+            'creator_id',
+            'lastupdater_id',
+            'lastupdate',
+            'creation'
+          ];
+          var ObjectId = String,
+              Buffer   = String,
+              Mixed    = String;
+          eval("var schema = " + model.get('schema_data'));
+          schema = lowerCaseObject(schema);
+          schema._id            = String;
+          schema.creator_id     = String;
+          schema.lastupdater_id = String;
+          schema.creation       = Date;
+          schema.lastupdate     = Date;
+          that.schema     = schema;
+          that.modelItem  = new that.ModelItem();
+          that.modelItems = new that.ModelItems();
+          that.modelItems.fetch({
+            reset:   true,
+            success: function (modelItems) {
+              var template = _.template($('#browse-model-template').html(), {model: that.model});
+              that.$el.html(template);
+              var attr = function (attr) {
+                // this lets us remember 'attr' for when when it is get/set
+                return {
+                  data: function (modelItem, value) {
+                    if (_.isUndefined(value)) {
+                      return modelItem.get(attr);
+                    }
+                    else {
+                      modelItem.set(attr, value);
+                      modelItem.save();
+                    }
+                  },
+                  readOnly: (noUpdateFields.indexOf(attr) == -1) ? false : true
+                };
+              };
+              var columns     = [];
+              var colHeaders  = [];
+              that.colWidths  = [];
+              that.sortColumn = that.model.get('sort_column');
+              // FIXME need to make sure column_order is set on model create
+              that.model.get('column_order').forEach(function (attribute, index) {
+                if (Object.prototype.hasOwnProperty.call(that.schema, attribute)) {
+                  if (that.model.get('column_sizes') && that.model.get('column_sizes')[index]) {
+                    that.colWidths.push(that.model.get('column_sizes')[index]);
+                  }
+                  else {
+                    that.colWidths.push($("#model-data-grid").width()/Object.keys(that.schema).length);
+                  }
+                  // Add the index to the sortColumn so that the sort can be applied
+                  if (that.model.get('sort_column') && (that.model.get('sort_column').name == attribute)) {
+                    that.sortColumn.number = index;
+                  }
+                  columns.push(attr(attribute));
+                  colHeaders.push(attribute.humanize() != '' ? attribute.humanize() : 'ID');
+                }
+              });
+              that.$container = $("#model-data-grid");
+              that.$container.handsontable({
+                data:               that.modelItems,
+                dataSchema:         that.modelItem,
+                manualColumnMove:   true,
+                manualColumnResize: true,
+                contextMenu:        false,
+                columnSorting:      true,
+                columns:            columns,
+                colHeaders:         colHeaders,
+                colWidths:          that.colWidths,
+                afterColumnMove:    function (oldIndex, newIndex) {
+                  that.updateColumnOrder(oldIndex, newIndex);
+                },
+                afterColumnResize:  function (index, size) {
+                  that.updateColumnSizes(index, size);
+                }
+              });
+              // Add event listener for afterColumnSort
+              that.$container.handsontable('getInstance').addHook('afterColumnSort', function (index, order) {
+                  that.updateSortColumn(index, order);
+                });
+              // Apply sort if sort_column is set in model
+              if (that.sortColumn) {
+                that.$container.handsontable('getInstance').sort(that.sortColumn.number, that.sortColumn.order);
+              }
+              that.modelItems
+                .on("add", function () {
+                  that.$container.handsontable("render");
+                })
+                .on("remove", function () {
+                  that.$container.handsontable("render");
+                })
+            }
+          });
+        }
+      });
+    }
+  },
+  updateColumnOrder: function (oldIndex, newIndex) {
+    var display_columns = this.model.get('column_order');
+    var movedColumn     = this.model.get('column_order')[oldIndex];
+    var movedColumnSize = this.colWidths[oldIndex];
+    if (oldIndex > newIndex) {
+      display_columns.splice(oldIndex, 1);
+      display_columns.splice(newIndex, 0, movedColumn);
+      this.colWidths.splice(oldIndex, 1);
+      this.colWidths.splice(newIndex, 0, movedColumnSize);
+    }
+    else {
+      display_columns.splice(newIndex, 0, movedColumn);
+      display_columns.splice(oldIndex, 1);
+      this.colWidths.splice(newIndex, 0, movedColumnSize);
+      this.colWidths.splice(oldIndex, 1);
+    }
+    this.model.save({column_order: display_columns, column_sizes: this.colWidths}, {
+      patch: true,
+      success: function (model) {
+        console.log('model saved');
+      },
+      error: function (model, xhr) {
+        if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
+          alertView.render({label:"Save Model", msg: $.parseJSON(xhr.responseText).msg});
+        }
+      }
+    });
+  },
+  updateColumnSizes: function (index, size) {
+    this.colWidths[index] = size;
+    this.model.save({column_sizes: this.colWidths}, {
+      patch: true,
+      success: function (model) {
+        console.log('model saved');
+      },
+      error: function (model, xhr) {
+        if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
+          alertView.render({label:"Save Model", msg: $.parseJSON(xhr.responseText).msg});
+        }
+      }
+    });
+  },
+  updateSortColumn: function (index, order) {
+    var sort_column = {name: this.model.get('column_order')[index], order: order};
+    this.sortColumn = {number: index, order: order};
+    this.model.save({sort_column: sort_column}, {
+      patch: true,
+      success: function (model) {
+        console.log('model saved');
+      },
+      error: function (model, xhr) {
+        if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
+          alertView.render({label:"Save Model", msg: $.parseJSON(xhr.responseText).msg});
+        }
+      }
+    });
+  }
+});
+
+// Setup the arrange columns view
+var ArrangeColumnsView = Backbone.View.extend({
+  el: '.popup',
+  events: {
+    'submit .arrange-columns-form' : 'applyColumns',
+    'click  .cancel-arrange'       : 'cancel'
+  },
+  // FIXME make sure to save columns respecting previous order, col widths, and sort
+  applyColumns: function (ev) {
+    var display_columns = getFormData(ev.currentTarget).display_columns;
+    console.log(display_columns);
+    var columns = [];
+    modelBrowseView.model.save({column_order: display_columns}, {
+      patch: true,
+      success: function (model) {
+        console.log('model saved');
+        modelBrowseView.render({id: model.id});
+        $('#arrange-columns-modal').modal('hide');
+      },
+      error: function (model, xhr) {
+        console.log(xhr);
+        if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
+          alertView.render({label:"Save Model", msg: $.parseJSON(xhr.responseText).msg});
+        }
+      }
+    });
+    return false;
+  },
+  cancel: function () {
+    $('#arrange-columns-modal').modal('hide');
+  },
+  render: function (available_columns, display_columns) {
+    var template = _.template($('#arrange-columns-template').html(), {available_columns: available_columns, display_columns: display_columns});
+    $('.popup').html(template);
+    $('#arrange-columns-modal').modal('show');
   }
 });
 
@@ -897,8 +1343,17 @@ var VarDetailView = Backbone.View.extend({
 var SiteDetailView = Backbone.View.extend({
   el: '.page',
   events: {
-    'submit .edit-site-form' : 'saveSite',
-    'click .cancel'         : 'cancel'
+    'change .smtp-service-select' : 'toggleSmtpOptions',
+    'submit .edit-site-form'      : 'saveSite',
+    'click  .cancel'              : 'cancel'
+  },
+  toggleSmtpOptions: function () {
+    if ($('.smtp-service-select').val() != 'SMTP') {
+      $('#inputSmtpHost').attr('disabled', '');
+    }
+    else {
+      $('#inputSmtpHost').removeAttr('disabled');
+    }
   },
   saveSite: function (ev) {
     var siteDetails = getFormData(ev.currentTarget);
@@ -912,10 +1367,10 @@ var SiteDetailView = Backbone.View.extend({
           session.fetch({
             success: function (session) {
               $('title').html((session.get('site') ? session.get('site') : 'Site') + ' Admin');
-              alertView.render({label:"Config changed", msg: "It may take a few minutes for the changes to apply,<br/>depending upon the number of current connections.", onclose: "site"});
+              alertView.render({label:"Configuration changed.", msg: "Changes take effect immediately, unless you changed<br/>the port number which may take a few minutes.", onclose: "site"});
             },
             error: function (model, xhr) {
-              alertView.render({label:"Config changed", msg: "Oops. After the configuration changed,<br/>you can no longer login. Please check your config.", onclose: "site"});
+              alertView.render({label:"Configuration changed.", msg: "After the configuration changed, you can no longer login.<br/>Please check your port number or CORS settings in the DB.", onclose: "site"});
             }
           });
         },
@@ -936,10 +1391,11 @@ var SiteDetailView = Backbone.View.extend({
     window.history.back();
   },
   render: function () {
+    
     // build the list of cors mode options
     this.cors_mode_options = ['Allow All', 'White List'];
     // build the list of smtp service options
-    this.smtp_service_options = ['Gmail', 'Other SMTP'];
+    this.smtp_service_options = [ "SMTP", "Gmail", "DynectEmail", "hot.ee", "Hotmail", "iCloud", "mail.ee", "Mail.Ru", "Mailgun", "Mailjet", "Mandrill", "Postmark", "QQ", "SendGrid", "SES", "Yahoo", "yandex", "Zoho" ];
     var that = this;
     if (!this.site) {
       var sites = new Sites();
@@ -948,6 +1404,7 @@ var SiteDetailView = Backbone.View.extend({
           that.site = sites.models[0];
           var template = _.template($('#edit-site-template').html(), {site: that.site, cors_mode_options: that.cors_mode_options, smtp_service_options: that.smtp_service_options});
           that.$el.html(template);
+          that.toggleSmtpOptions();
           $('.edit-site-form input')[0].focus();
         }
       })
@@ -991,47 +1448,54 @@ var AlertView = Backbone.View.extend({
 });
 
 // Create the session and views
-var session           = new Session();
-var signUpView        = new SignUpView();
-var loginView         = new LoginView();
-var pwresetView       = new PwresetView();
-var pwchangeView      = new PwchangeView();
-var alertView         = new AlertView();
-var userListView      = new UserListView();
-var pageListView      = new PageListView();
-var viewListView      = new ViewListView();
-var varListView       = new VarListView();
-var userDetailView    = new UserDetailView();
-var pageDetailView    = new PageDetailView();
-var viewDetailView    = new ViewDetailView();
-var varDetailView     = new VarDetailView();
-var siteDetailView    = new SiteDetailView();
+var session              = new Session();
+var signUpView           = new SignUpView();
+var loginView            = new LoginView();
+var pwresetView          = new PwresetView();
+var pwchangeView         = new PwchangeView();
+var alertView            = new AlertView();
+var userListView         = new UserListView();
+var userDetailView       = new UserDetailView();
+var pageListView         = new PageListView();
+var pageDetailView       = new PageDetailView();
+var viewListView         = new ViewListView();
+var viewDetailView       = new ViewDetailView();
+var varListView          = new VarListView();
+var varAddView           = new VarAddView();
+var modelListView        = new ModelListView();
+var modelDetailView      = new ModelDetailView();
+var modelBrowseView      = new ModelBrowseView();
+var arrangeColumnsView   = new ArrangeColumnsView();
+var siteDetailView       = new SiteDetailView();
 
 // Map an event to each route
 var Router = Backbone.Router.extend({
     routes: {
-      "":                          "home",
-      "signup":                    "signup",
-      "login":                     "login",
-      "logout":                    "logout",
-      "pwreset":                   "pw-reset",
-      "pwreset/:email":            "pw-reset",
-      "pwchange":                  "pw-change",
-      "pwchange/:token":           "pw-change",
-      "users":                     "list-users",
-      "users/new":                 "edit-user",
-      "users/:id":                 "edit-user",
-      "verify/:token":             "verify-email",
-      "pages":                     "list-pages",
-      "pages/new":                 "edit-page",
-      "pages/:id":                 "edit-page",
-      "views":                     "list-views",
-      "views/new":                 "edit-view",
-      "views/:id":                 "edit-view",
-      "vars":                      "list-vars",
-      "vars/new":                  "edit-var",
-      "vars/:id":                  "edit-var",
-      "site":                      "edit-site"
+      ""                  : "home",
+      "signup"            : "signup",
+      "login"             : "login",
+      "logout"            : "logout",
+      "pwreset"           : "pw-reset",
+      "pwreset/:email"    : "pw-reset",
+      "pwchange"          : "pw-change",
+      "pwchange/:token"   : "pw-change",
+      "users"             : "list-users",
+      "users/new"         : "edit-user",
+      "users/:id"         : "edit-user",
+      "verify/:token"     : "verify-email",
+      "pages"             : "list-pages",
+      "pages/new"         : "edit-page",
+      "pages/:id"         : "edit-page",
+      "views"             : "list-views",
+      "views/new"         : "edit-view",
+      "views/:id"         : "edit-view",
+      "vars"              : "list-vars",
+      "vars/new"          : "add-var",
+      "models"            : "list-models",
+      "models/new"        : "edit-model",
+      "models/:id"        : "edit-model",
+      "models/:id/browse" : "browse-model",
+      "site"              : "edit-site"
     }
 });
 
@@ -1051,36 +1515,36 @@ router.on('route:home', function() {
   else {
     loginView.render();
   }
-})
+});
 router.on('route:signup', function() {
   // Render signup view
   signUpView.render();
-})
+});
 router.on('route:login', function() {
   // Render login view
   loginView.render();
-})
+});
 router.on('route:logout', function() {
   session.logout();
-})
+});
 router.on('route:pw-reset', function(email) {
   // Render pwreset view
   pwresetView.render({email: email});
-})
+});
 router.on('route:pw-change', function(token) {
   // Render pwchange view
   pwchangeView.render({token: token});
-})
+});
 router.on('route:list-users', function() {
   navselect("users");
   // Render user list view
   userListView.render();
-})
+});
 router.on('route:edit-user', function(id) {
   navselect("users");
   // Render user detail view
   userDetailView.render({id: id});
-})
+});
 router.on('route:verify-email', function(token) {
   // Verify email and show alert view
   if (token) {
@@ -1098,43 +1562,58 @@ router.on('route:verify-email', function(token) {
       }
     });
   }
-})
+});
 router.on('route:list-pages', function() {
   console.log("listpages");
   navselect("pages");
   // Render page list view
   pageListView.render();
-})
+});
 router.on('route:edit-page', function(id) {
   navselect("pages");
   // Render page detail view
   pageDetailView.render({id: id});
-})
+});
 router.on('route:list-views', function() {
   navselect("views");
   // Render view list view
   viewListView.render();
-})
+});
 router.on('route:edit-view', function(id) {
   navselect("views");
   // Render view detail view
   viewDetailView.render({id: id});
-})
+});
 router.on('route:list-vars', function() {
   navselect("vars");
   // Render var list view
   varListView.render();
-})
-router.on('route:edit-var', function(id) {
+});
+router.on('route:add-var', function() {
   navselect("vars");
-  // Render var detail view
-  varDetailView.render({id: id});
-})
+  // Render var add view
+  varAddView.render();
+});
+router.on('route:list-models', function() {
+  navselect("models");
+  // Render model list view
+  modelListView.render();
+});
+router.on('route:edit-model', function(id) {
+  navselect("models");
+  // Render model detail view
+  modelDetailView.render({id: id});
+});
+router.on('route:browse-model', function(id) {
+  navselect("models");
+  // Render model browse view
+  modelBrowseView.render({id: id});
+});
 router.on('route:edit-site', function() {
   navselect("site");
   // Render site detail view
   siteDetailView.render();
-})
+});
 
 // Init
 init();

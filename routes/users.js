@@ -6,16 +6,12 @@ var resource = require('./resource');
 
 // Preprocessor for GET /users
 exports.find = function(req, res){
-  if (app.HasAccess(req, res, 'Admins')) {
-    resource.find(req, res, app.User);
-  }
+  app.doIfHasAccess(req, res, 'Admins', app.User, resource.find);
 };
 
 // Preprocessor for GET /users/:id
 exports.findone = function(req, res){
-  if (app.HasAccess(req, res, 'Users')) {
-    resource.findone(req, res, app.User);
-  }
+  app.doIfHasAccess(req, res, 'Admins', app.User, resource.findone);
 };
 
 // Preprocessor for POST /users
@@ -155,7 +151,7 @@ var emailToUser = function(mailinfo) {
 
 var SendVerifyEmail = function(req, res, user) {
   if (user) {
-    var link  = app.siteUrl + app.App.get('config').admin_path + "/#/verify/" + user.verifytoken;
+    var link  = app.siteUrl + app.App.get('config').fluff_path + "/admin/#/verify/" + user.verifytoken;
     emailToUser({
       user: user,
       subject: "Verify Your Email Address",
@@ -168,7 +164,7 @@ var SendVerifyEmail = function(req, res, user) {
 
 var SendResetEmail = function(req, res, user) {
   if (user) {
-    var link  = app.siteUrl + app.App.get('config').admin_path + "/#/pwchange/" + user.verifytoken;
+    var link  = app.siteUrl + app.App.get('config').fluff_path + "/admin/#/pwchange/" + user.verifytoken;
     emailToUser({
       user: user,
       subject: "Request to Reset Your Password",
@@ -181,7 +177,7 @@ var SendResetEmail = function(req, res, user) {
 
 var SendNewResetEmail = function(req, res, user) {
   if (user) {
-    var link  = app.siteUrl + app.App.get('config').admin_path + "/#/pwchange/" + user.verifytoken;
+    var link  = app.siteUrl + app.App.get('config').fluff_path + "/admin/#/pwchange/" + user.verifytoken;
     emailToUser({
       user: user,
       subject: "Your Account is Ready",

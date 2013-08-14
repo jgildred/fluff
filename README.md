@@ -11,7 +11,7 @@ INSTALL on local machine:
 4. type 'npm install'
 5. edit config.js: db uri should point to an empty Mongo DB, and set initialize to true
 6. type 'node app'
-7. open http://localhost:3000/admin in your browser
+7. open http://localhost:3000/fluff/admin in your browser
 8. login with 'admin@domain.com', password 'fluff'
 9. goto Site tab in admin and edit settings as needed
 
@@ -39,23 +39,26 @@ ADMIN GUIDE:
 - the Views tab manages view templates. Just drop {{content}} into any template, right where you want the page content to render. That is the extent of the page design tools. Let the multitude of Javascript UI toolkits do the rest; that's what they're there for.
 - the Vars tab manages custom variables. Vars are an easy way to manage strings you use often. Drop {{var.[name]}} into any page or view, where [name] is the name of the var.
 - the Users tab manages all users including admins. The 'Admin' role can access everything; the 'User' role cannot access the Admin app or pages with access restricted to admins.
-- the Site tab manages site-wide configuration. Some of these settings can be accessed form within a page. The following tags are available: {{site.name}}, {{site.url}}, {{site.domain}}, {{site.protocol}}, {{site.admin_path}}
+- the Site tab manages site-wide configuration. Some of these settings can be accessed form within a page. The following tags are available: {{site.name}}, {{site.url}}, {{site.domain}}, {{site.protocol}}, {{site.fluff_path}}
 
 REST API:
 
-See the [API_README.md](API_README.md) for a list of APIs.
+See the [README-API.md](README-API.md) for a list of APIs.
 
 TO DO:
 
-- list of redirected domains in site config
-- manage email templates
-- manage error pages
+- a collection manager like in django admin
+- a jslib for easy use of collections in cmspages
+- smarter config reloader (stop listening only on port change)
+- paging of results
+- paged display in admin
+- sort by clicking on column headings in admin
 
 WOULD BE NICE:
 
+- list of domains to redirect in site config (for cmspages)
+- manage email templates
+- manage error pages
 - page versioning
-- a model manager like in django admin
-- a jslib for easy model ui
 - move session timeout to be user specific
 - a plugin framework
-- multi-site (will need to rethink config loader)

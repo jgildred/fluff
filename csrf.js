@@ -16,42 +16,46 @@ function defaultValue(req) {
 var checkToken = function(req, res, next){
     var apikey = req.session.apikey;
     var token = req.session._csrf || (req.session._csrf = generateToken(24));
-    if ('GET' == req.method || 'HEAD' == req.method || 'OPTIONS' == req.method) { return next(); }
     var val = defaultValue(req);
-    console.log("REQ HEADERS: " + JSON.stringify(req.headers));
     console.log("REQ " + req.method + ": " + req.path);
     console.log("REQ BODY: " + JSON.stringify(req.body));
+    console.log("REQ HEADERS: " + JSON.stringify(req.headers));
     console.log("CSRF on server:   " + token);
     console.log("CSRF from client: " + val);
+    if ('GET' == req.method || 'HEAD' == req.method || 'OPTIONS' == req.method) { return next(); }
     // allow signup, verify, pwreset, pwchange, and login without csrf
     var bypass = false;
     if (
-      (req.method == 'GET')
-      || (
+      (
         (req.method == 'POST')
         && (
-          (req.path == (server.App.get('config').admin_path + '/api/users'))
-          || (req.path == (server.App.get('config').admin_path + '/api/auth'))
+          (req.path == (server.App.get('config').fluff_path + '/admin/api/users'))
+          || (req.path == (server.App.get('config').fluff_path + '/admin/api/auth'))
         )
       ) 
       || (
         (req.method == 'PUT')
-        && (/\/api\/verify/i.test(req.path))
+        && (/\/admin\/api\/verify/i.test(req.path))
       ) 
       || (
         (req.method == 'PUT')
-        && (/\/api\/pwreset/i.test(req.path))
+        && (/\/admin\/api\/pwreset/i.test(req.path))
       ) 
       || (
         (req.method == 'PUT')
-        && (/\/api\/pwchange/i.test(req.path))
+        && (/\/admin\/api\/pwchange/i.test(req.path))
       ) 
     ) {
       bypass = true;
       console.log("CSRF NOT REQUIRED");
     }
-    if ((val != token) && (!bypass)) return next({auth: false});
-    next();
+    if ((val != token) && (!bypass)) {
+      //return next({auth: false});
+      server.msgResponse(req, res, 400, "CSRF missing or incorrect.");
+    }
+    else {
+      next();
+    }
 }
 var newToken = function(req, res, next) {
   var token = req.session._csrf || (req.session._csrf = generateToken(24));
