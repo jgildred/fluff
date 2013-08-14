@@ -1,8 +1,8 @@
 
 var request = require('supertest'),
     app     = require('../app'),
-    mongoose   = require('mongoose'),
-    db_uri  = 'mongodb://localhost:27017/fluff-test3';
+    //mongoose = require('mongoose'),
+    db_uri  = 'mongodb://localhost:27017/fluff-test';
 
 before(function (done) {
 	var custom_config = {
