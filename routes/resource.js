@@ -47,6 +47,7 @@ exports.find = function(req, res, resource, filter, callback){
   });
 };
 
+// GET /resource/count
 exports.count = function(req, res, resource, filter, callback){
   // First check if the query has a filter, and if so, use it
   var query_filter = {};
@@ -137,7 +138,7 @@ exports.create = function(req, res, resource, callback){
         }
       }
       else {
-        app.msgResponse(req, res, 404, resource.modelName + ' not found.');
+        app.msgResponse(req, res, 404, resource.modelName + ' could not be created.');
       }
     }
     //console.log("CREATE:\n" + body);
@@ -183,3 +184,97 @@ exports.remove = function(req, res, resource, callback){
     }
   });
 };
+
+// Handler for POST /resource/import
+exports.import = function(req, res, resource, callback){
+  var fs = require('fs');
+  var importData = [];
+  var delimiter  = req.body.delimiter ? req.body.delimiter : ",";
+  var endofrow   = req.body.endofrow  ? req.body.endofrow  : "\n";
+  // If there is a file and it's 500MB or less then import it
+  if (req.files && req.files.file && (req.files.file.size <= 500000000))  {
+    console.log("IMPORTING FILE");
+    fs.readFile(req.files.file.path, function (err, data) {
+      importData = data.split(endofrow);
+      doImport(req, res, resource, importData, delimiter, callback);
+    });
+  }
+  else {
+    // Otherwise if there's a url then pull the data from there
+    if (req.body.url) {
+      console.log("IMPORTING FROM URL: " + req.body.url);
+      if (/^https:\/\//i.test(req.body.url)) {
+        var request = require('https');
+      }
+      else {
+        var request = require('http');
+      }
+      var data = "";
+      var datarequest = request.get(req.body.url, function(response) {
+        response.setEncoding('utf8');
+        response.on('data', function (chunk) {
+          data += chunk;
+        });
+        response.on('end', function(){
+          importData = data.split(endofrow);
+          doImport(req, res, resource, importData, delimiter, callback);
+        });
+      });
+    }
+    else {
+      app.msgResponse(req, res, 404, "No file or url specified.");
+    }
+  }
+};
+
+var doImport = function (req, res, resource, importData, delimiter, callback) {
+  var jsonData   = [];
+  var fieldSet   = [];
+  console.log("Parsing " + importData.length + " items for import...");
+  importData.forEach (function (item, i) {
+    console.log(item);
+    var itemData = item.trim("\r").trim().split(delimiter);
+    if (i == 0) {
+      if (req.body && req.body.fieldset) {
+        req.body.fieldset.split(",").foreEach (function (field, f) {
+          fieldSet[f] = field.trim().toLowerCase();
+        });
+      }
+      else {
+        itemData.forEach (function (field, f) {
+          fieldSet[f] = field.trim().toLowerCase();
+        });
+      }
+    }
+    else {
+      var itemObj = {};
+      itemData.forEach (function (field, f) {
+        itemObj[fieldSet[f]]   = field;
+        itemObj.creator_id     = req.session.user_id;
+        itemObj.lastupdater_id = req.session.user_id;
+        if (itemObj._id != undefined)        delete itemObj._id;
+        if (itemObj.creation != undefined)   delete itemObj.creation;
+        if (itemObj.lastupdate != undefined) delete itemObj.lastupdate;
+      })
+      console.log(itemObj);
+      jsonData.push(itemObj);
+    }
+  });
+  resource.create(jsonData, function (err, data) {
+    if (err) { 
+      app.msgResponse(req, res, 500, JSON.stringify(err));
+    }
+    else { 
+      if (data) { 
+        res.json(data);
+        if (callback) {
+          callback(req, res, data);
+        }
+      }
+      else {
+        app.msgResponse(req, res, 404, resource.modelName + ' could not be imported.');
+      }
+    }
+    //console.log("CREATE:\n" + body);
+  });
+}

@@ -18,6 +18,10 @@ a.navbar-brand {
   height: 35px;
 }
 
+.hiding {
+  display: none;
+}
+
 .pointer {
   cursor: pointer;
 }

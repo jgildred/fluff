@@ -719,7 +719,10 @@
   <script type="text/template" id="browse-model-template">
     <br/>
     <div class="col-12">
-      <button class="btn btn-default add-modelitem"><i class="glyphicon glyphicon-plus-sign icon-white"></i> Add <%= /[aAeEiIoOuU]/.test(model.get('name')[0]) ? 'an' : 'a' %> <%= model.get('name').singularize().capitalize() %></button>&nbsp;&nbsp;<button class="btn btn-primary arrange-columns"><i class="glyphicon glyphicon-list icon-white"></i> Columns</button>
+      <button class="btn btn-default add-modelitem"><i class="glyphicon glyphicon-plus-sign icon-white"></i> Add <%= /[aAeEiIoOuU]/.test(model.get('name')[0]) ? 'an' : 'a' %> <%= model.get('name').singularize().capitalize() %></button>&nbsp;&nbsp;
+      <button class="btn btn-danger delete-modelitems hiding"><i class="glyphicon glyphicon-delete icon-white"></i> Delete Selected</button>&nbsp;&nbsp;
+      <button class="btn btn-primary arrange-columns"><i class="glyphicon glyphicon-list icon-white"></i> Columns</button>&nbsp;&nbsp;
+      <button class="btn btn-link import"><i class="glyphicon glyphicon-cloud-upload"></i> Import</button>
     </div>
     <br/><br/><br/>
     <legend><%= model.get('name').capitalize() %></legend>
@@ -746,6 +749,30 @@
             <br/><br/><br/>
             <button type="submit" class="btn btn-default apply-columns">Apply</button>
             <button type="button" class="btn cancel-arrange">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    </div>
+    </div>
+  </script>
+
+  <script type="text/template" id="import-template">
+    <div id="import-modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="text-center" id="importModalLabel">Import Data</h3>
+      </div>
+      <div class="modal-body">
+        <form class="import-form">
+          <div class="form-group">
+            <label for="importFile">File import</label>
+            <input type="file" id="importFile" name="file">
+            <p class="help-block">Select a delimited text file to import.</p>
+            <br/><br/><br/>
+            <button type="submit" class="btn btn-default">Import</button>
+            <button type="button" class="btn cancel-import">Cancel</button>
           </div>
         </form>
       </div>

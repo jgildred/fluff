@@ -56,7 +56,8 @@ function log_events(event, model) {
 // prefilter for all ajax calls
 $.ajaxPrefilter( function( options, originalOptions, jqXHR ) {
   // Modify options, control originalOptions, store jqXHR, etc
-  options.url = options.url + "?apikey=" + encodeURIComponent(apikey);
+  options.headers = options.headers ? options.headers : {};
+  options.headers['X-API-Key'] = encodeURIComponent(apikey);
 });
 
 var metaSave = function(on, callback) {
@@ -726,9 +727,9 @@ var UserDetailView = Backbone.View.extend({
   el: '.page',
   events: {
     'submit .edit-user-form' : 'saveUser',
-    'click .delete-user'     : 'deleteUser',
-    'click .cancel'          : 'cancel',
-    'click .user-pwreset'    : 'requestReset'
+    'click  .delete-user'    : 'deleteUser',
+    'click  .cancel'         : 'cancel',
+    'click  .user-pwreset'   : 'requestReset'
   },
   saveUser: function (ev) {
     var userDetails = getFormData(ev.currentTarget);
@@ -1093,12 +1094,55 @@ var ModelDetailView = Backbone.View.extend({
 var ModelBrowseView = Backbone.View.extend({
   el: '.page',
   events: {
-    'click  .add-modelitem'   : 'addItem',
-    'click  .arrange-columns' : 'arrangeColumns'
+    'click  .add-modelitem'     : 'addItem',
+    'click  .delete-modelitems' : 'deleteItems',
+    'click  .arrange-columns'   : 'arrangeColumns',
+    'click  .import'            : 'import'
   },
   addItem: function () {
     this.modelItem = new this.ModelItem();
-    this.modelItems.add(this.modelItem);
+    var that = this;
+    this.modelItem.save(null, {
+      success: function () {
+        that.modelItems.add(that.modelItem);
+        var ht = that.$container.handsontable('getInstance');
+        //ht.loadData (that.modelItems);
+        //ht.alter('insert_row');
+        ht.forceFullRender = true;
+        ht.render();
+      },
+      error: function () {
+        console.log("Could not save the new model.");
+      }
+    });
+  },
+  deleteItems: function () {
+    var selections = [];
+    var ht         = this.$container.handsontable('getInstance');
+    var selection  = ht.getSelected();
+    console.log(selection);
+    var lowSelection  = (selection[0] <= selection[2]) ? selection[0] : selection[2];
+    var highSelection = (selection[0] <= selection[2]) ? selection[2] : selection[0];
+    var models = [];
+    for (var r = lowSelection; r <= highSelection; r++) {
+      var dataRow = ht.getCellMeta(r,0).row;
+      console.log("row " + r);
+      console.log("translated row " + dataRow);
+      models.push(ht.getData().models[dataRow]);
+    }
+    var that = this;
+    models.forEach( function (model, index) {
+      model.destroy({
+        success: function () {
+          if (index == models.length - 1) {
+            ht.render();
+          }
+        },
+        error: function (model) {
+          console.log("Could not destroy model " + model.id);
+        }
+      });
+    });
   },
   arrangeColumns: function () {
     var available_columns = [];
@@ -1115,6 +1159,9 @@ var ModelBrowseView = Backbone.View.extend({
     });
     available_columns = display_columns.concat(available_columns);
     arrangeColumnsView.render(available_columns, display_columns);
+  },
+  import: function () {
+    importView.render();
   },
   render: function (options) {
     // build the list of access options
@@ -1139,7 +1186,7 @@ var ModelBrowseView = Backbone.View.extend({
           that.ModelItems = Backbone.Collection.extend({
             url: adminbase.slice(0, adminbase.indexOf('admin') - 1) + '/api/' + model.get('name').toLowerCase(),
             model: that.ModelItem,
-            // Backbone.Collection doesn't support `splice`, yet! Easy to add.
+            // Backbone.Collection doesn't support splice yet.
             splice: hacked_splice
           });
           var noUpdateFields = [
@@ -1165,6 +1212,7 @@ var ModelBrowseView = Backbone.View.extend({
           that.modelItems.fetch({
             reset:   true,
             success: function (modelItems) {
+              console.log("startup size is "+modelItems.length);
               var template = _.template($('#browse-model-template').html(), {model: that.model});
               that.$el.html(template);
               var attr = function (attr) {
@@ -1214,6 +1262,7 @@ var ModelBrowseView = Backbone.View.extend({
                 columns:            columns,
                 colHeaders:         colHeaders,
                 colWidths:          that.colWidths,
+                outsideClickDeselects: false,
                 afterColumnMove:    function (oldIndex, newIndex) {
                   that.updateColumnOrder(oldIndex, newIndex);
                 },
@@ -1221,20 +1270,32 @@ var ModelBrowseView = Backbone.View.extend({
                   that.updateColumnSizes(index, size);
                 }
               });
+              var ht = that.$container.handsontable('getInstance');
+              // Add event listener to show delete button
+              ht.addHook('afterSelection', function () {
+                $('.delete-modelitems').show();
+              });
+              // Add event listener to hide delete button
+              ht.addHook('afterDeselect', function () {
+                ('.delete-modelitems').hide();
+              });
               // Add event listener for afterColumnSort
-              that.$container.handsontable('getInstance').addHook('afterColumnSort', function (index, order) {
-                  that.updateSortColumn(index, order);
-                });
+              ht.addHook('afterColumnSort', function (index, order) {
+                that.updateSortColumn(index, order);
+              });
               // Apply sort if sort_column is set in model
               if (that.sortColumn) {
-                that.$container.handsontable('getInstance').sort(that.sortColumn.number, that.sortColumn.order);
+                ht.sort(that.sortColumn.number, that.sortColumn.order);
               }
               that.modelItems
                 .on("add", function () {
-                  that.$container.handsontable("render");
+                  console.log("something added.");
+                  //that.$container.handsontable("render");
                 })
-                .on("remove", function () {
-                  that.$container.handsontable("render");
+                .on("remove", function (model, collection, options) {
+                  console.log("removed: " + model.id);
+                  //console.log("size is "+that.modelItems.length);
+                  //that.$container.handsontable("render");
                 })
             }
           });
@@ -1286,18 +1347,20 @@ var ModelBrowseView = Backbone.View.extend({
   },
   updateSortColumn: function (index, order) {
     var sort_column = {name: this.model.get('column_order')[index], order: order};
-    this.sortColumn = {number: index, order: order};
-    this.model.save({sort_column: sort_column}, {
-      patch: true,
-      success: function (model) {
-        console.log('model saved');
-      },
-      error: function (model, xhr) {
-        if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
-          alertView.render({label:"Save Model", msg: $.parseJSON(xhr.responseText).msg});
+    if ((this.model.get('sort_column').name != sort_column.name) || (this.model.get('sort_column').order != sort_column.order)) {
+      this.sortColumn = {number: index, order: order};
+      this.model.save({sort_column: sort_column}, {
+        patch: true,
+        success: function (model) {
+          console.log('model saved');
+        },
+        error: function (model, xhr) {
+          if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
+            alertView.render({label:"Save Model", msg: $.parseJSON(xhr.responseText).msg});
+          }
         }
-      }
-    });
+      });
+    }
   }
 });
 
@@ -1308,7 +1371,6 @@ var ArrangeColumnsView = Backbone.View.extend({
     'submit .arrange-columns-form' : 'applyColumns',
     'click  .cancel-arrange'       : 'cancel'
   },
-  // FIXME make sure to save columns respecting previous order, col widths, and sort
   applyColumns: function (ev) {
     var display_columns = getFormData(ev.currentTarget).display_columns;
     console.log(display_columns);
@@ -1336,6 +1398,42 @@ var ArrangeColumnsView = Backbone.View.extend({
     var template = _.template($('#arrange-columns-template').html(), {available_columns: available_columns, display_columns: display_columns});
     $('.popup').html(template);
     $('#arrange-columns-modal').modal('show');
+  }
+});
+
+// Setup the import view
+var ImportView = Backbone.View.extend({
+  el: '.popup',
+  events: {
+    'submit .import-form'   : 'import',
+    'click  .cancel-import' : 'cancel'
+  },
+  import: function (ev) {
+    var display_columns = getFormData(ev.currentTarget).display_columns;
+    var columns = [];
+    modelBrowseView.model.save({column_order: display_columns}, {
+      patch: true,
+      success: function (model) {
+        console.log('model saved');
+        modelBrowseView.render({id: model.id});
+        $('#import-modal').modal('hide');
+      },
+      error: function (model, xhr) {
+        console.log(xhr);
+        if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
+          alertView.render({label:"Save Model", msg: $.parseJSON(xhr.responseText).msg});
+        }
+      }
+    });
+    return false;
+  },
+  cancel: function () {
+    $('#import-modal').modal('hide');
+  },
+  render: function () {
+    var template = _.template($('#import-template').html());
+    $('.popup').html(template);
+    $('#import-modal').modal('show');
   }
 });
 
@@ -1466,6 +1564,7 @@ var modelListView        = new ModelListView();
 var modelDetailView      = new ModelDetailView();
 var modelBrowseView      = new ModelBrowseView();
 var arrangeColumnsView   = new ArrangeColumnsView();
+var importView           = new ImportView();
 var siteDetailView       = new SiteDetailView();
 
 // Map an event to each route

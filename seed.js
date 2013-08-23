@@ -49,7 +49,7 @@ exports.Data = {
   }],
   "views" : [{
     "name"         : "Basic",        // view names must be unique
-    "template"     : "<html>\n<head>\n<title>{{var.Title}}</title>\n<link rel=\"stylesheet\" href=\"/fluff/css/bootstrap.css\"/>\n<link rel=\"stylesheet\" href=\"/styles.css\"/>\n<script type=\"text/javascript\" src=\"/fluff/js/jquery.js\"></script>\n<script type=\"text/javascript\" src=\"/fluff/js/underscore.js\"></script>\n<script type=\"text/javascript\" src=\"/fluff/js/backbone.js\"></script>\n<script type=\"text/javascript\" src=\"/fluff/js/fluff.js\"></script>\n</head>\n<body>\n{{content}}\n</body>\n</html>",
+    "template"     : "<html>\n<head>\n<title>{{var.Title}}</title>\n<link rel=\"stylesheet\" href=\"/fluff/css/bootstrap.css\"/>\n<link rel=\"stylesheet\" href=\"/styles.css\"/>\n<script type=\"text/javascript\" src=\"/fluff/js/jquery.js\"></script>\n<script type=\"text/javascript\" src=\"/fluff/js/underscore.js\"></script>\n<script type=\"text/javascript\" src=\"/fluff/js/backbone.js\"></script>\n<script type=\"text/javascript\" src=\"/fluff/js/fluff.js\"></script>\n</head>\n<body>\n{{content}}\n<script>fluff.init()</script>\n</body>\n</html>",
     "content_type" : "text/html",
   },{
     "name"         : "CSS",          // view names must be unique

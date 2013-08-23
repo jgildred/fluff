@@ -166,7 +166,7 @@ var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Credentials', true); 
     res.header('Access-Control-Allow-Origin', req.headers.origin);
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS'); 
-    res.header('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'); 
+    res.header('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-API-Key'); 
     
     // intercept OPTIONS method
     if (req.method == 'OPTIONS') {
@@ -497,11 +497,11 @@ var requireApiKey = function(req, res, next) {
   if (/\/api\//i.test(req.path) && app.get('config').apikey.required) {
     var apikeys = app.get('config').apikey.keychain;
     console.log("API keys are " + app.get('config').apikey.keychain);
-    console.log("client API key is " + (req.query ? req.query.apikey : 'missing'));
+    console.log("client API key is " + (req.headers['x-api-key'] ? req.headers['x-api-key'] : 'missing'));
     if (Object.prototype.toString.call(apikeys) === '[object Array]') {
       var ok = false;
       apikeys.forEach(function(apikey) { 
-        if (req.query && req.query.apikey && (req.query.apikey == apikey)) {
+        if (req.headers['x-api-key'] && (req.headers['x-api-key'] == apikey)) {
           ok = true;
         }
       });
@@ -515,7 +515,7 @@ var requireApiKey = function(req, res, next) {
       }
     }
     else {
-      if (req.query && req.query.apikey && (req.query.apikey == apikeys)) {
+      if (req.headers['x-api-key'] && (req.headers['x-api-key'] == apikeys)) {
         console.log("API key OK.");
         next();
       }
@@ -549,7 +549,7 @@ var defaultAlertPage = function(message) {
       html += "</style>\n";
       html += "</head>\n";
       html += "<body>\n";
-      html += "<p><img src='/images/sad-fluffy.png' /></p>\n";
+      html += "<p><img src='/fluff/images/sad-fluffy.png' /></p>\n";
       html += "<p>" + message + "</p>\n";
       html += "</body>\n";
       html += "</html>";
@@ -557,7 +557,7 @@ var defaultAlertPage = function(message) {
 }
 
 var runAlertMode = function(text, callback) {
-  app.use ('/public', express.static(__dirname + '/public'));
+  app.use ('/fluff', express.static(__dirname + '/public'));
   app.all ('*', function(req, res) {
     res.status=500; 
     res.send(defaultAlertPage(text));
@@ -615,6 +615,9 @@ var modelRoutes = function () {
   });
   app.post  (base + '/:model',         function(req, res, next) {
     handleModelRequest(req, res, next, resource.create);
+  });
+  app.post  (base + '/:model/import',  function(req, res, next) {
+    handleModelRequest(req, res, next, resource.import);
   });
   app.put   (base + '/:model/:id',     function(req, res, next) {
     handleModelRequest(req, res, next, resource.update);

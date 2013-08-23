@@ -51,7 +51,7 @@ Models:
 - PUT /models/:id
 - DELETE /models/:id
 
-Model resources:
+Model Data:
 - GET /[model name]
 - GET /[model name]/:id
 - GET /[model name]/:id/count
