@@ -46,9 +46,7 @@
   </div>
 
   <script>
-    // make sure the api key is correct if required
-    var apikey  = '1234567890';
-    var version = '0.7';
+    // this is near the top in order to run as soon as possible
     var reg     = new RegExp("/$");
     var adminbase = window.location.pathname;
     if (!reg.test(window.location.pathname)) {
@@ -947,7 +945,6 @@
   <script type="text/javascript" src="../js/handsontable.js"></script>
   <script type="text/javascript" src="../js/inflection.js"></script>
   <script type="text/javascript" src="admin.js"></script>
-  <script>$(".attribution").html($(".attribution").html() + " " + version);</script>
 
 <!--
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>

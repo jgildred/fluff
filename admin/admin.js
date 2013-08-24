@@ -53,13 +53,6 @@ function log_events(event, model) {
     .scrollTop(0);
 }
 
-// prefilter for all ajax calls
-$.ajaxPrefilter( function( options, originalOptions, jqXHR ) {
-  // Modify options, control originalOptions, store jqXHR, etc
-  options.headers = options.headers ? options.headers : {};
-  options.headers['X-API-Key'] = encodeURIComponent(apikey);
-});
-
 var metaSave = function(on, callback) {
   if (on && callback) {
     $(window).bind('keydown',function(e){
@@ -177,8 +170,24 @@ function renderEditor(element_id, content, cursor, mode, view, fullscreen) {
   return editor;
 }
 
-// on page load
+// automatically run upon loading this js file
 function init () {
+
+  // make sure the api key is correct if required
+  var apikey  = '1234567890';
+  var version = '0.8';
+  
+  // display the version at the footer
+  $(".attribution").html($(".attribution").html() + " " + version);
+
+  // prefilter for all ajax calls
+  $.ajaxPrefilter( function( options, originalOptions, jqXHR ) {
+    // Modify options, control originalOptions, store jqXHR, etc
+    options.headers = options.headers ? options.headers : {};
+    options.headers['X-API-Key'] = encodeURIComponent(apikey);
+  });
+
+  // handle the various url cases where login is not forced
   switch (true) {
     case /#\/signup/i.test(window.location.href):
       loadnavbar();

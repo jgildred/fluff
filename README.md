@@ -48,10 +48,12 @@ See the [README-API.md](README-API.md) for a list of APIs.
 
 TO DO:
 
-- support for forms, ul, ol, selects in fluff.js
+- route for schemas
+- detect fluff_path in fluff.js
+- support for forms, selects in fluff.js
 - paging of results
 - paged display in admin
-- sort by clicking on column headings in admin
+- sort by clicking on column headings in admin list views
 
 WOULD BE NICE:
 
