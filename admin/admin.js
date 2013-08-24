@@ -1336,7 +1336,7 @@ var ModelBrowseView = Backbone.View.extend({
   },
   updateSortColumn: function (index, order) {
     var sort_column = {name: this.model.get('column_order')[index], order: order};
-    if ((this.model.get('sort_column').name != sort_column.name) || (this.model.get('sort_column').order != sort_column.order)) {
+    if ((this.model.get('sort_column') == undefined) || (this.model.get('sort_column').name != sort_column.name) || (this.model.get('sort_column').order != sort_column.order)) {
       this.sortColumn = {number: index, order: order};
       this.model.save({sort_column: sort_column}, {
         patch: true,
