@@ -765,15 +765,25 @@
         <h3 class="text-center" id="importModalLabel">Import Data</h3>
       </div>
       <div class="modal-body">
-        <form class="import-form">
-          <div class="form-group">
+        <form class="import-form form-horizontal">
+          <div class="form-group col-lg-12">
+            <label for="importUrl">File URL</label>
+            <input type="text" id="importUrl" size="50" name="url">
+            <p class="help-block">Enter the URL to a delimited text file.</p>
+          </div>
+          <div class="form-group col-lg-12">
             <label for="importFile">File import</label>
             <input type="file" id="importFile" name="file">
-            <p class="help-block">Select a delimited text file to import.</p>
-            <br/><br/><br/>
-            <button type="submit" class="btn btn-default">Import</button>
-            <button type="button" class="btn cancel-import">Cancel</button>
+            <p class="help-block">Or select a delimited text file to import.</p>
           </div>
+          <div class="form-group col-lg-12">
+            <label for="importDelimiter">Field delimiter</label>
+            <input type="text" id="importDelimiter" name="delimiter">
+            <p class="help-block">You can escape the delimiter with quotes.</p>
+          </div>
+          <br/><br/><br/>
+          <button type="button" class="btn btn-default btn-import">Import</button>
+          <button type="button" class="btn cancel-import">Cancel</button>
         </form>
       </div>
     </div>

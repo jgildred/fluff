@@ -187,16 +187,16 @@ exports.remove = function(req, res, resource, callback){
 
 // Handler for POST /resource/import
 exports.import = function(req, res, resource, callback){
-  var fs = require('fs');
-  var importData = [];
-  var delimiter  = req.body.delimiter ? req.body.delimiter : ",";
-  var endofrow   = req.body.endofrow  ? req.body.endofrow  : "\n";
+  var delimiter  = (req.body.delimiter && (req.body.delimiter != "")) ? req.body.delimiter : ",";
   // If there is a file and it's 500MB or less then import it
   if (req.files && req.files.file && (req.files.file.size <= 500000000))  {
-    console.log("IMPORTING FILE");
+    console.log("IMPORTING UPLOADED FILE");
+    var fs = require('fs');
     fs.readFile(req.files.file.path, function (err, data) {
-      importData = data.split(endofrow);
-      doImport(req, res, resource, importData, delimiter, callback);
+      if (err) {
+        app.msgResponse(req, res, 500, JSON.stringify(err));
+      }
+      doImport(req, res, resource, data.toString(), delimiter, callback);
     });
   }
   else {
@@ -216,7 +216,7 @@ exports.import = function(req, res, resource, callback){
           data += chunk;
         });
         response.on('end', function(){
-          importData = data.split(endofrow);
+          importData = data;
           doImport(req, res, resource, importData, delimiter, callback);
         });
       });
@@ -230,30 +230,31 @@ exports.import = function(req, res, resource, callback){
 var doImport = function (req, res, resource, importData, delimiter, callback) {
   var jsonData   = [];
   var fieldSet   = [];
-  console.log("Parsing " + importData.length + " items for import...");
+  console.log("Parsing items for import...");
+  importData = CsvToArray(importData, delimiter);
   importData.forEach (function (item, i) {
     console.log(item);
-    var itemData = item.trim("\r").trim().split(delimiter);
     if (i == 0) {
       if (req.body && req.body.fieldset) {
-        req.body.fieldset.split(",").foreEach (function (field, f) {
+        // str.split("(?<!\\\\)" + endofrow);
+        req.body.fieldset.split(delimiter).foreEach (function (field, f) {
           fieldSet[f] = field.trim().toLowerCase();
         });
       }
       else {
-        itemData.forEach (function (field, f) {
+        item.forEach (function (field, f) {
           fieldSet[f] = field.trim().toLowerCase();
         });
       }
     }
     else {
       var itemObj = {};
-      itemData.forEach (function (field, f) {
+      item.forEach (function (field, f) {
         itemObj[fieldSet[f]]   = field;
         itemObj.creator_id     = req.session.user_id;
         itemObj.lastupdater_id = req.session.user_id;
-        if (itemObj._id != undefined)        delete itemObj._id;
-        if (itemObj.creation != undefined)   delete itemObj.creation;
+        if (itemObj._id        != undefined) delete itemObj._id;
+        if (itemObj.creation   != undefined) delete itemObj.creation;
         if (itemObj.lastupdate != undefined) delete itemObj.lastupdate;
       })
       console.log(itemObj);
@@ -278,3 +279,85 @@ var doImport = function (req, res, resource, importData, delimiter, callback) {
     //console.log("CREATE:\n" + body);
   });
 }
+
+// This will parse a delimited string into an array of
+// arrays. The default delimiter is the comma, but this
+// can be overriden in the second argument.
+function CsvToArray( strData, strDelimiter ){
+  // Check to see if the delimiter is defined. If not,
+  // then default to comma.
+  strDelimiter = (strDelimiter || ",");
+
+  // Create a regular expression to parse the CSV values.
+  var objPattern = new RegExp(
+    (
+      // Delimiters.
+      "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+
+      // Quoted fields.
+      "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+
+      // Standard fields.
+      "([^\"\\" + strDelimiter + "\\r\\n]*))"
+    ),
+    "gi"
+    );
+
+  // Create an array to hold our data. Give the array
+  // a default empty first row.
+  var arrData = [[]];
+
+  // Create an array to hold our individual pattern
+  // matching groups.
+  var arrMatches = null;
+
+  // Keep looping over the regular expression matches
+  // until we can no longer find a match.
+  while (arrMatches = objPattern.exec( strData )){
+
+    // Get the delimiter that was found.
+    var strMatchedDelimiter = arrMatches[ 1 ];
+
+    // Check to see if the given delimiter has a length
+    // (is not the start of string) and if it matches
+    // field delimiter. If id does not, then we know
+    // that this delimiter is a row delimiter.
+    if (
+      strMatchedDelimiter.length &&
+      (strMatchedDelimiter != strDelimiter)
+      ){
+
+      // Since we have reached a new row of data,
+      // add an empty row to our data array.
+      arrData.push( [] );
+
+    }
+
+    // Now that we have our delimiter out of the way,
+    // let's check to see which kind of value we
+    // captured (quoted or unquoted).
+    if (arrMatches[ 2 ]){
+
+      // We found a quoted value. When we capture
+      // this value, unescape any double quotes.
+      var strMatchedValue = arrMatches[ 2 ].replace(
+        new RegExp( "\"\"", "g" ),
+        "\""
+        );
+
+    } else {
+
+      // We found a non-quoted value.
+      var strMatchedValue = arrMatches[ 3 ];
+
+    }
+
+    // Now that we have our value string, let's add
+    // it to the data array.
+    arrData[ arrData.length - 1 ].push( strMatchedValue );
+  }
+
+  // Return the parsed data.
+  return( arrData );
+}
+

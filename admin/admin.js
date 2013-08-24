@@ -547,7 +547,6 @@ var PageListView = Backbone.View.extend({
     return false;
   },
   render: function (keyword) {
-    console.log("fetching page list");
     // first get the list of views for the page list view
     this.views = new Views();
     var that = this;
@@ -1018,8 +1017,6 @@ var ModelDetailView = Backbone.View.extend({
     modelDetails.cursor      = this.editor.selection.getCursor();
     // Remove the model_id as you can't change it
     delete modelDetails.model_id;
-    console.log ("Model to save:");
-    console.log (modelDetails);
     if (!this.model) {
       this.model = new Model();
     }
@@ -1105,11 +1102,7 @@ var ModelBrowseView = Backbone.View.extend({
     this.modelItem.save(null, {
       success: function () {
         that.modelItems.add(that.modelItem);
-        var ht = that.$container.handsontable('getInstance');
-        //ht.loadData (that.modelItems);
-        //ht.alter('insert_row');
-        ht.forceFullRender = true;
-        ht.render();
+        that.render({id: that.model.id});
       },
       error: function () {
         console.log("Could not save the new model.");
@@ -1126,8 +1119,6 @@ var ModelBrowseView = Backbone.View.extend({
     var models = [];
     for (var r = lowSelection; r <= highSelection; r++) {
       var dataRow = ht.getCellMeta(r,0).row;
-      console.log("row " + r);
-      console.log("translated row " + dataRow);
       models.push(ht.getData().models[dataRow]);
     }
     var that = this;
@@ -1135,7 +1126,7 @@ var ModelBrowseView = Backbone.View.extend({
       model.destroy({
         success: function () {
           if (index == models.length - 1) {
-            ht.render();
+            that.render({id: that.model.id});
           }
         },
         error: function (model) {
@@ -1212,7 +1203,6 @@ var ModelBrowseView = Backbone.View.extend({
           that.modelItems.fetch({
             reset:   true,
             success: function (modelItems) {
-              console.log("startup size is "+modelItems.length);
               var template = _.template($('#browse-model-template').html(), {model: that.model});
               that.$el.html(template);
               var attr = function (attr) {
@@ -1287,16 +1277,6 @@ var ModelBrowseView = Backbone.View.extend({
               if (that.sortColumn) {
                 ht.sort(that.sortColumn.number, that.sortColumn.order);
               }
-              that.modelItems
-                .on("add", function () {
-                  console.log("something added.");
-                  //that.$container.handsontable("render");
-                })
-                .on("remove", function (model, collection, options) {
-                  console.log("removed: " + model.id);
-                  //console.log("size is "+that.modelItems.length);
-                  //that.$container.handsontable("render");
-                })
             }
           });
         }
@@ -1373,7 +1353,6 @@ var ArrangeColumnsView = Backbone.View.extend({
   },
   applyColumns: function (ev) {
     var display_columns = getFormData(ev.currentTarget).display_columns;
-    console.log(display_columns);
     var columns = [];
     modelBrowseView.model.save({column_order: display_columns}, {
       patch: true,
@@ -1405,23 +1384,45 @@ var ArrangeColumnsView = Backbone.View.extend({
 var ImportView = Backbone.View.extend({
   el: '.popup',
   events: {
-    'submit .import-form'   : 'import',
+    'click  .btn-import'    : 'import',
     'click  .cancel-import' : 'cancel'
   },
   import: function (ev) {
-    var display_columns = getFormData(ev.currentTarget).display_columns;
-    var columns = [];
-    modelBrowseView.model.save({column_order: display_columns}, {
-      patch: true,
-      success: function (model) {
-        console.log('model saved');
-        modelBrowseView.render({id: model.id});
+    var data, formData = getFormData($(ev.currentTarget).parents("form:first"));
+    var contentType = 'application/json';
+    var process  = false;
+    var file     = $('input[name=file]').toArray()[0].files[0];
+    if (file && (file.size > 0)) {
+      data = new FormData();
+      if (formData) {
+        for (item in formData) {
+          data.append(item, formData[item]);
+        }
+      }
+      data.append('file', file);
+      contentType = false;
+    }
+    else {
+      data = JSON.stringify(formData);
+    }
+    $.ajax({
+      data: data,
+      cache: false,
+      contentType: contentType,
+      processData: process,
+      type: "POST",
+      url: adminbase.slice(0, adminbase.indexOf('admin') - 1) + '/api/' + modelBrowseView.model.get('name').toLowerCase() + "/import",
+      success: function () {
+        modelBrowseView.modelItems.reset();
+        modelBrowseView.render({id: modelBrowseView.model.id});
         $('#import-modal').modal('hide');
+        alertView.render({label:"Import complete", msg: "Import was successful.", onclose: "models"});
       },
-      error: function (model, xhr) {
+      error: function (data, xhr) {
+        $('#import-modal').modal('hide');
         console.log(xhr);
         if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
-          alertView.render({label:"Save Model", msg: $.parseJSON(xhr.responseText).msg});
+          alertView.render({label:"Import problem", msg: $.parseJSON(xhr.responseText).msg});
         }
       }
     });
@@ -1538,6 +1539,9 @@ var AlertView = Backbone.View.extend({
     $('#alert-modal').modal('show');
     if (options && options.onclose) {
       this.onclose = options.onclose;
+      if (options && options.callbacck) {
+        callback();
+      }
     }
     if (options && options.cantclose) {
       $('#alert-modal .close').addClass('hidden');
@@ -1663,7 +1667,6 @@ router.on('route:verify-email', function(token) {
   }
 });
 router.on('route:list-pages', function() {
-  console.log("listpages");
   navselect("pages");
   // Render page list view
   pageListView.render();
