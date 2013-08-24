@@ -3,7 +3,7 @@ fluff REST API
 
 All API urls must be preceded by '[fluff path]/admin/api'.
 If API key is required, you must use X-API-Key header.
-POST, PUT, and DELETE requires X-CSRF-Token header.
+POST, PUT, and DELETE usually requires X-CSRF-Token header.
 
 Authentication:
 - GET /auth
