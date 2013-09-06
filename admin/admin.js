@@ -1,4 +1,65 @@
 
+// automatically run upon loading this js file
+function init () {
+
+  // make sure the api key is correct if required
+  var version = '0.8';
+  var apikey  = '1234567890';
+  
+  // display the version at the footer
+  $(".attribution").html($(".attribution").html() + " " + version);
+
+  // prefilter for all ajax calls
+  if (apikey && (apikey != '')) {
+    $.ajaxPrefilter( function( options, originalOptions, jqXHR ) {
+      // Modify options, control originalOptions, store jqXHR, etc
+      options.headers = options.headers ? options.headers : {};
+      options.headers['X-API-Key'] = encodeURIComponent(apikey);
+    });
+  }
+
+  // handle the various url cases where login is not forced
+  switch (true) {
+    case /#\/signup/i.test(window.location.href):
+      loadnavbar();
+      Backbone.history.start();
+      break;
+    case /#\/verify/i.test(window.location.href):
+      loadnavbar();
+      Backbone.history.start();
+      break;
+    case /#\/pwreset/i.test(window.location.href):
+      loadnavbar();
+      Backbone.history.start();
+      break;
+    case /#\/pwchange/i.test(window.location.href):
+      loadnavbar();
+      Backbone.history.start();
+      break;
+    default:
+      session.fetch({
+        success: function () {
+          if (!session.get('auth')) {
+            loginView.render(window.location.pathname);
+          }
+          else {
+            if (session.get('user') && (session.get('user').role != "Admin")) {
+              alertView.render({label:"Restricted", msg: "Sorry, you need to be an admin to access this.", cantclose: true});
+            }
+            else {
+              $('title').html((session.get('site').name ? session.get('site').name : 'Site') + ' Admin');
+            }
+          }
+          Backbone.history.start();
+        },
+        error: function () {
+          loginView.render();
+          Backbone.history.start();
+        }
+      });
+  }
+}
+
 // Helper functions
 function objectType(obj){
     return Object.prototype.toString.call(obj).slice(8, -1);
@@ -167,66 +228,8 @@ function renderEditor(element_id, content, cursor, mode, view, fullscreen) {
   }
   editor.focus();
   if (cursor) editor.moveCursorTo(cursor.row, cursor.column);
+  editor.clearSelection();
   return editor;
-}
-
-// automatically run upon loading this js file
-function init () {
-
-  // make sure the api key is correct if required
-  var apikey  = '1234567890';
-  var version = '0.8';
-  
-  // display the version at the footer
-  $(".attribution").html($(".attribution").html() + " " + version);
-
-  // prefilter for all ajax calls
-  $.ajaxPrefilter( function( options, originalOptions, jqXHR ) {
-    // Modify options, control originalOptions, store jqXHR, etc
-    options.headers = options.headers ? options.headers : {};
-    options.headers['X-API-Key'] = encodeURIComponent(apikey);
-  });
-
-  // handle the various url cases where login is not forced
-  switch (true) {
-    case /#\/signup/i.test(window.location.href):
-      loadnavbar();
-      Backbone.history.start();
-      break;
-    case /#\/verify/i.test(window.location.href):
-      loadnavbar();
-      Backbone.history.start();
-      break;
-    case /#\/pwreset/i.test(window.location.href):
-      loadnavbar();
-      Backbone.history.start();
-      break;
-    case /#\/pwchange/i.test(window.location.href):
-      loadnavbar();
-      Backbone.history.start();
-      break;
-    default:
-      session.fetch({
-        success: function () {
-          if (!session.get('auth')) {
-            loginView.render(window.location.pathname);
-          }
-          else {
-            if (session.get('user') && (session.get('user').role != "Admin")) {
-              alertView.render({label:"Restricted", msg: "Sorry, you need to be an admin to access this.", cantclose: true});
-            }
-            else {
-              $('title').html((session.get('site') ? session.get('site') : 'Site') + ' Admin');
-            }
-          }
-          Backbone.history.start();
-        },
-        error: function () {
-          loginView.render();
-          Backbone.history.start();
-        }
-      });
-  }
 }
 
 // Set the nav bar item active based on id=[type]-tab
@@ -1196,6 +1199,7 @@ var ModelBrowseView = Backbone.View.extend({
             'lastupdate',
             'creation'
           ];
+          // Get the schema
           var ObjectId = String,
               Buffer   = String,
               Mixed    = String;

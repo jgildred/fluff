@@ -1,0 +1,102 @@
+<html>
+<head>
+<title>Fluff.js Test</title>
+<link rel="stylesheet" href="/fluff/css/bootstrap.css"/>
+<link rel="stylesheet" href="/styles.css"/>
+<script type="text/javascript" src="/fluff/js/jquery.js"></script>
+<script type="text/javascript" src="/fluff/js/underscore.js"></script>
+<script type="text/javascript" src="/fluff/js/backbone.js"></script>
+<script type="text/javascript" src="/fluff/js/fluff.js"></script>
+</head>
+<body>
+
+<script>
+// build rules for all tags:
+// if [prepend] then insert children before others, else insert after
+// if tag[field] then fill them in
+// if tag[field-attr] then fill in the attr
+
+// build rules for table[model]:
+// *if no td[field] then build trs from schema
+// *if no th then build ths from tds or schema
+
+// build rules for table[model/id]:
+// if no td[field] then build 1 tr from schema
+// if [vertical] then build trs for each field with td for name and td for value
+
+// build rules for ul/ol[model]:
+// *if no li[field] then build lis from data with spans for each field
+
+// build rules for ul/ol[model/id]:
+// if no li[field] then build 1 li from schema
+// if [vertical] then build lis for each field with span for name and span for value
+
+// rules for span/div[model]:
+// if no tag[field] then build spans for span, divs for div
+
+// rules for span/div[model/id]:
+// if no tag[field] then build spans for span, divs for div
+// if span/div[model/id, field], then fill with field value removing existing contents
+
+// rules for form[model]:
+// if no input,textarea,select[field] then build labels and empty textboxes for each string/number/date field, checkbox for each bool, and selects for each string/number/date with enums, add button[type=button, submit=true] and linked event in the backbone view
+// if tag[field] checkboxes must be bool, selects must have enums
+
+// rules for form[model/id]:
+// if no input,textarea,select[field] then build labels and textboxes for each string/number/date field, checkboxes for each bool, and selects for each string/number/date with enums, add button[type=button, submit=true] and linked event in the backbone view
+// if tag[field] checkboxes must be bool, selects must have enums
+
+// rules for select[model]:
+// if select[model, field] then build options from data
+// if option[field] then build options from data
+
+// rules for select[model/id]:
+// if select[model/id,field] then build options from enums
+// if option[field] then build options from enums
+// if default set in schema, then set it as selected option
+
+// rules for form[auth]
+// if no input[name=email] then create it
+// if no input[name=password] then create it
+// if no button[submit] then create it with linked event in backbone view
+</script>
+
+<table model="things">
+	<tr><th>My Colors</th><th>The Names</th></tr>
+	<tr><td field="color"></td><td field="name"></td></tr>
+</table><br/>
+
+<table model="things">
+</table><br/>
+
+<table model="things/5218787cbb6faba717000001" vertical></table><br/>
+
+<ul model="things">
+	<span field="name"></span>
+</ul><br/>
+
+<ul model="things"></ul><br/>
+
+<ul model="things/5218787cbb6faba717000001"></ul><br/>
+
+<ol model="things"></ol><br/>
+
+<ol model="things/5218787cbb6faba717000001"></ol><br/>
+
+<span model="things" fill="prepend"></span><br/>
+
+<span model="things/5218787cbb6faba717000001" field="name"></span><br/>
+
+<form model="things"></form><br/>
+
+<form model="things/5218787cbb6faba717000001"></form><br/>
+
+<form auth></form>
+
+<script>
+	fluff.init({
+		//ready: fluff.checkSession
+	});
+</script>
+</body>
+</html>

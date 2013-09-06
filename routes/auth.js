@@ -8,10 +8,16 @@ exports.check = function(req, res){
   if (req.session.auth) {
     console.log("AUTH OK.");
     var body = {
-      auth     : req.session.auth,
-      _id      : req.session.id,
-      _csrf    : req.session._csrf,
-      site     : app.App.get('config').name,
+      auth  : req.session.auth,
+      _id   : req.session.id,
+      _csrf : req.session._csrf,
+      site  : {
+        name       : app.App.get('config').name,
+        fluff_path : app.App.get('config').fluff_path,
+        apikey    : {
+          required : app.App.get('config').apikey.required
+        }
+      },
       user: {
         _id    : req.session.user_id,
         email  : req.session.email,
@@ -55,7 +61,13 @@ exports.attach = function(req, res){
             req.session.role    = user.role;
             req.session.name    = user.displayname;
             req.session.status  = user.status;
-            req.session.site    = app.App.get('config').name;
+            req.session.site    = {
+              name       : app.App.get('config').name,
+              fluff_path : app.App.get('config').fluff_path,
+              apikey    : {
+                required : app.App.get('config').apikey.required
+              }
+            };
             var body = {
               auth     : req.session.auth,
               _id      : req.session.id,

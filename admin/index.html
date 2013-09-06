@@ -47,7 +47,7 @@
 
   <script>
     // this is near the top in order to run as soon as possible
-    var reg     = new RegExp("/$");
+    var reg = new RegExp("/$");
     var adminbase = window.location.pathname;
     if (!reg.test(window.location.pathname)) {
       var apibase = adminbase + '/api';
@@ -514,7 +514,7 @@
       <div class="col-6">
         <fieldset>
           <label>
-          <span class="text-muted">Content</span><a class="fullscreen-page pull-right">Full Screen</a></label>
+          <span class="text-muted">Content</span>&nbsp;&nbsp;&nbsp;&nbsp;<a class="fullscreen-page pull-right">Edit Full Screen</a></label>
           <div id="editor" name="content" class="col-4 small-editor"></div>
           <br/><br/>
         </fieldset>

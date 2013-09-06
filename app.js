@@ -575,6 +575,12 @@ var handleModelRequest = function (req, res, next, callback) {
           case resource.find:
             var access = model.access.view;
             break;
+          case getModelSchema:
+            var access = model.access.view;
+            break;
+          case resource.count:
+            var access = model.access.view;
+            break;
           case resource.findone:
             var access = model.access.view;
             break;
@@ -592,12 +598,40 @@ var handleModelRequest = function (req, res, next, callback) {
         }
         match = true;
         console.log("Processing request for " + model.name);
-        doIfHasAccess(req, res, access, Models[model.name], callback);
+        if (callback == getModelSchema) {
+          doIfHasAccess(req, res, access, Models[model.name], function (req, res, resourceScope) {
+            getModelSchema(req, res, model.name);
+          });
+        }
+        else {
+          doIfHasAccess(req, res, access, Models[model.name], callback);
+        }
       }
     });
     if (!match) {
       next();
     }
+  }
+}
+
+var getModelSchema = function (req, res, modelName) {
+  if (modelName) {
+    Model.where('name', modelName).exec(function (err, data) {
+      if (err) { 
+        msgResponse(req, res, 500, JSON.stringify(err));
+      }
+      else { 
+        if (data) {
+          res.json(data[0].schema_data);
+        }
+        else {
+          msgResponse(req, res, 404, modelName + ' not found.');
+        }
+      }
+    });
+  }
+  else {
+    msgResponse(req, res, 500, "Cannot provide the schema for " + modelName + ".");
   }
 }
 
@@ -607,7 +641,10 @@ var modelRoutes = function () {
   app.get   (base + '/:model',         function(req, res, next) {
     handleModelRequest(req, res, next, resource.find);
   });
-  app.get   (base + '/:model/count', function(req, res, next) {
+  app.get   (base + '/:model/schema',  function(req, res, next) {
+    handleModelRequest(req, res, next, getModelSchema);
+  });
+  app.get   (base + '/:model/count',   function(req, res, next) {
     handleModelRequest(req, res, next, resource.count);
   });
   app.get   (base + '/:model/:id',     function(req, res, next) {
