@@ -191,27 +191,28 @@ fluff.autoRenderFields = function (model, elementType, dividerHtml) {
 	return html;
 }
 
-fluff.harvestLists = function () {
-	var lists = $("ul[model], ol[model]");
-  lists.each(function (l) {
-  	var list = $(this);
+fluff.harvestElements = function () {
+	var tags  = ["div", "span", "ul", "ol"];
+	var elements = $(tags.join("[model], ") + "[model]");
+  elements.each(function (e) {
+  	var element = $(this);
   	var type = this.nodeName.toLowerCase();
-  	var modelNameInList = list.attr('model');
-  	var modelName = modelNameInList.toLowerCase();
+  	var modelNameInElement = element.attr('model');
+  	var modelName = modelNameInElement.split("/")[0].toLowerCase();
   	var Model = fluff.addModel(modelName);
-		var Collection = Backbone.Collection.extend({
-  		model: Model,
-  		url: fluff.path + '/api/' + modelName
-		});
-		var collection = new Collection();
-		if (list.attr('filter')) {
+		if (element.attr('filter')) {
 			// tbd
 		}
+		var Collection = Backbone.Collection.extend({
+  		model: Model,
+  		url: fluff.path + '/api/' + modelNameInElement.toLowerCase()
+		});
+		var collection = new Collection();
 		fluff.collections.push(collection);
 		console.log("Added a collection of " + modelName + " to fluff." );
 		var View = Backbone.View.extend({
 			collection: collection,
-			el: list,
+			el: element,
 			template: null,
 			initialize: function() {
 				var that = this;
@@ -225,20 +226,25 @@ fluff.harvestLists = function () {
 				var elementObj = $(this.$el);
 				// If there is at least one li then use the first one as a template
 				var rowTemplate = null;
-				var lis = elementObj.find('li');
-				if (lis.toArray().length > 0) {
-					// FIXME need to allow li attributes to remain in template
-					var rowTemplate = "<li>"+elementObj.find('li').first().html()+"</li>";
-					elementObj.find('li').remove();
+				var filltag = type + '[template]';
+				if ((type == 'ul') || (type == 'ol')) {
+					filltag = 'li';
 				}
-				// Build the list items
+				console.log("filling a:");
+				console.log(type + " with " + filltag);
+				var fts = elementObj.find(filltag);
+				if (fts.toArray().length > 0) {
+					var rowTemplate = fts.first().get(0).outerHTML;
+					fts.first().remove();
+				}
+				// Build the set of children
 				var bodyHtml = "";
 				this.collection.forEach(function(model) {
 					if (rowTemplate) {
-						bodyHtml += "<li>" + fluff.renderFields(model, rowTemplate) + "</li>\n";
+						bodyHtml += fluff.renderFields(model, rowTemplate) + "\n";
 					}
 					else {
-						bodyHtml += "<li>" + fluff.autoRenderFields(model, 'span', ', ') + "</li>\n";
+						bodyHtml += "<" + filltag.split('[')[0] + ">" + fluff.autoRenderFields(model, 'span', ', ') + "</" + filltag.split('[')[0] + ">\n";
 					}
 				});
 				elementObj.append(bodyHtml);
@@ -325,10 +331,6 @@ fluff.harvestTables = function () {
 		var view = new View();
     fluff.views.push(view);
   });
-}
-
-fluff.harvestDivsSpans = function () {
-	// tbd
 }
 
 fluff.harvestForms = function () {
@@ -555,9 +557,8 @@ fluff.init = function (options) {
 	    options.headers['X-API-Key'] = encodeURIComponent(fluff.apikey);
 	  });
 	}
+	this.harvestElements();
 	this.harvestTables();
-	this.harvestLists();
-	this.harvestDivsSpans();
 	this.harvestForms();
 	this.harvestSelects();
 	this.harvestLogins();

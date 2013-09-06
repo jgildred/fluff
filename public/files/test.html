@@ -12,7 +12,9 @@
 
 <script>
 // build rules for all tags:
-// if [prepend] then insert children before others, else insert after
+// if [fill=prepend] then insert children before others, else insert after
+// if [fill=replace] then insert children replacing others, else insert after
+// if [fill=append] then insert children after others, same as no [fill]
 // if tag[field] then fill them in
 // if tag[field-attr] then fill in the attr
 
@@ -33,9 +35,11 @@
 
 // rules for span/div[model]:
 // if no tag[field] then build spans for span, divs for div
+// if child[template] then use as template
 
 // rules for span/div[model/id]:
 // if no tag[field] then build spans for span, divs for div
+// if child[template] then use as template
 // if span/div[model/id, field], then fill with field value removing existing contents
 
 // rules for form[model]:
@@ -72,7 +76,7 @@
 <table model="things/5218787cbb6faba717000001" vertical></table><br/>
 
 <ul model="things">
-	<span field="name"></span>
+	<li><span field="name"></span>, <span field="color"></span></li>
 </ul><br/>
 
 <ul model="things"></ul><br/>
@@ -83,11 +87,15 @@
 
 <ol model="things/5218787cbb6faba717000001"></ol><br/>
 
-<span model="things" fill="prepend"></span><br/>
+<span model="things" fill="prepend">
+	<span template><strong field="name"></strong><span field="color"></span></span>
+</span><br/>
 
-<span model="things/5218787cbb6faba717000001" field="name"></span><br/>
+<div model="things" fill="prepend"></div><br/><br/>
 
-<form model="things"></form><br/>
+<span model="things/5218787cbb6faba717000001" field="name"></span><br/><br/>
+
+<form model="things"></form><br/><br/>
 
 <form model="things/5218787cbb6faba717000001"></form><br/>
 

@@ -78,16 +78,16 @@ exports.update = function (req, res) {
         app.msgResponse(req, res, 400, 'Sorry, you can\'t change the model id through the API.');
       }
       else {
-        if (req.body.name && (req.body.name.toLowerCase() != app.get('models')[index].name.toLowerCase())) {
+        if (req.body.name && (req.body.name.toLowerCase() != app.App.get('models')[index].name.toLowerCase())) {
           // Make sure the new name is not stepping on another one
           if (modelIndexFromName(req.body.name) != null) {
             app.msgResponse(req, res, 400, 'Sorry, there\'s already a model named ' + req.body.name + '.');
           }
           // Put the mongoose model under the new name
           else {
-            app.Models[req.body.name] = app.Models[app.get('models')[index].name];
-            delete app.Models[app.get('models')[index].name];
-            app.get('models').splice(index, 1);
+            app.Models[req.body.name] = app.Models[app.App.get('models')[index].name];
+            delete app.Models[app.App.get('models')[index].name];
+            app.App.get('models').splice(index, 1);
             checkSchemaAndUpdate(req, res);
           }
         }
@@ -104,7 +104,7 @@ exports.remove = function (req, res) {
   app.doIfHasAccess(req, res, 'Admins', app.Model, function () {
     app.Model.findById(req.params.id).exec(function(err, model) {
       if (!err && model) {
-        // Remove from Models, app.get('models'), db collection and routes
+        // Remove from Models, app.App.get('models'), db collection and routes
         var regex = new RegExp("\/" + app.App.get('config').fluff_path + "\/api\/" + model.name.toLowerCase(), "gi");
         app.removeRoutes(regex);
         app.App.get('models').splice([modelIndexFromId(model._id)], 1);
