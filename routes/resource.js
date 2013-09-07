@@ -123,8 +123,11 @@ exports.findone = function(req, res, resource, filter, callback){
 exports.create = function(req, res, resource, callback){
   if (req.body.id)  { delete req.body.id; }
   if (req.body._id) { delete req.body._id; }
+  var rightNow = new Date;
   req.body.creator_id     = req.session.user_id;
   req.body.lastupdater_id = req.session.user_id;
+  req.body.creation       = rightNow;
+  req.body.lastupdate     = rightNow;
   console.log("INSERTING: "+ JSON.stringify(req.body));
   resource.create(req.body, function (err, data) {
     if (err) { 

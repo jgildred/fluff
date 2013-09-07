@@ -67,7 +67,20 @@ exports.Data = {
     "name"     : "Things",           // model names must be unique, should be plural
     "model_id" : "things",           // model_id must be unique, should be plural and lower case
     "schema_data"  : "{\nname: String,\ncolor: String\n}", // defines the fields of the model
-    "column_order" : ["name", "color", "_id"],             // sets the preferred order of display
+    "display_columns" : [{
+      "name"  : "name",
+      "title" : "Name",
+      "size"  : 100
+    }, {
+      "name"  : "color",
+      "title" : "Color",
+      "size"  : 100
+    }, {
+      "name"  : "_id",
+      "title" : "ID",
+      "size"  : 100
+    }],
+    "column_order" : ["name", "color", "_id"], // this is replaced by display_columns
     "sort_column"  : {
       "name"  : "name",              // the name of the column by which to sort
       "order" : true                 // the direction of the sort (true = ascending)

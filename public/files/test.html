@@ -65,6 +65,12 @@
 // if no button[submit] then create it with linked event in backbone view
 </script>
 
+<form auth></form><br/>
+
+<form model="things"></form><br/><br/>
+
+<form model="things/5218787cbb6faba717000001"></form><br/>
+
 <table model="things">
 	<tr><th>My Colors</th><th>The Names</th></tr>
 	<tr><td field="color"></td><td field="name"></td></tr>
@@ -93,18 +99,13 @@
 
 <div model="things" fill="prepend"></div><br/><br/>
 
-<span model="things/5218787cbb6faba717000001" field="name"></span><br/><br/>
-
-<form model="things"></form><br/><br/>
-
-<form model="things/5218787cbb6faba717000001"></form><br/>
-
-<form auth></form>
+<span model="things/5218787cbb6faba717000001" field="name"></span>
 
 <script>
 	fluff.init({
 		//ready: fluff.checkSession
 	});
 </script>
+
 </body>
 </html>

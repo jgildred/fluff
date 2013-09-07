@@ -119,10 +119,15 @@ exports.model = {
     update       : { type: String, enum: enums.access_level, default: "Users",  required: true },
     remove       : { type: String, enum: enums.access_level, default: "Users",  required: true }
   },
-  browse_cursor: {
+  browse_cursor : {
     item_id      : mongoose.Schema.Types.ObjectId,
     attribute    : String
   },
+  display_columns : [ {
+    name  : String,
+    title : String,
+    size  : Number
+  } ],
   column_order   : [ String ],
   column_sizes   : [ Number ],
   sort_column    : {
