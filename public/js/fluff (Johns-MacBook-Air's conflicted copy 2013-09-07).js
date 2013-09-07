@@ -176,16 +176,6 @@ fluff.addSchema = function (name, callback) {
 	}
 }
 
-fluff.addView = function (type, element, View) {
-	var view = new View();
-	var viewName = type + "[model=" + element.attr('model') + "]";
-	if (element.attr('id')) {
-			viewName = type + "#" + element.attr('id');
-		}
-	// FIXME careful not to overwrite existing views
-  fluff.views[viewName] = view;
-}
-
 fluff.drawTableHeader = function (schema) {
 	var html = "";
 	schema = fluff.lowerCaseObject(schema);
@@ -244,18 +234,14 @@ fluff.harvestElements = function () {
   	var type = this.nodeName.toLowerCase();
   	var modelName = element.attr('model');
   	var modelId   = null;
-  	var filter    = null;
   	if (modelName.split("/").length > 1) {
   		modelId   = modelName.split("/")[1];
   		modelName = modelName.split("/")[0].toLowerCase();
   	}
-		if (element.attr('filter')) {
-			filter = element.attr('filter');
-		}
-		var collection = fluff.addCollection({
+		var collection = addCollection({
 			modelName : modelName,
 			id        : modelId,
-			filter    : filter
+			filter    : element.attr('filter')
 		});
 		var View = Backbone.View.extend({
 			el: element,
@@ -296,7 +282,8 @@ fluff.harvestElements = function () {
 				elementObj.append(bodyHtml);
 			}
 		});
-		fluff.addView(type, element, View);
+		var view = new View();
+    fluff.views.push(view);
 	});
 }
 
@@ -306,18 +293,14 @@ fluff.harvestTables = function () {
   	var table = $(this);
   	var modelName = table.attr('model');
   	var modelId   = null;
-  	var filter    = null;
   	if (modelName.split("/").length > 1) {
   		modelId   = modelName.split("/")[1];
   		modelName = modelName.split("/")[0].toLowerCase();
   	}
-		if (table.attr('filter')) {
-			filter = table.attr('filter');
-		}
-		var collection = fluff.addCollection({
+		var collection = addCollection({
 			modelName : modelName,
 			id        : modelId,
-			filter    : filter
+			filter    : table.attr('filter')
 		});
 		var View = Backbone.View.extend({
 			el: table,
@@ -333,7 +316,7 @@ fluff.harvestTables = function () {
 			  });
 			},
 			render: function() {
-				var elementObj = $(this.el);
+				var elementObj = $(this.$el);
 				// Build the header if none
 				var ths = elementObj.find('tr th');
 				if (ths.toArray().length == 0) {
@@ -376,7 +359,8 @@ fluff.harvestTables = function () {
 				elementObj.find('tbody').first().append(bodyHtml + "\n");
 			}
 		});
-		fluff.addView("table", table, View);
+		var view = new View();
+    fluff.views.push(view);
   });
 }
 
@@ -390,11 +374,15 @@ fluff.harvestForms = function () {
   		modelId   = modelName.split("/")[1];
   		modelName = modelName.split("/")[0].toLowerCase();
   	}
-  	var Model = Backbone.Model.extend({
-			urlRoot: fluff.path + '/api/' + modelName
+		var collection = addCollection({
+			modelName : modelName,
+			id        : modelId,
+			filter    : form.attr('filter')
 		});
+		var reg  = new RegExp(modelNameInForm, "gi");
 		var View = Backbone.View.extend({
 			el: form,
+			template: null,
   		events: {
   			'change [type=checkbox]' : 'changeCheckbox',
     		'click  .submit'         : 'submit'
@@ -448,7 +436,7 @@ fluff.harvestForms = function () {
 				});
 			},
 			render: function () {
-				var elementObj = $(this.el);
+				var elementObj = $(this.$el);
 				var schema = fluff.lowerCaseObject(fluff.schemas[modelName]);
 				var html = '';
 				for (field in schema) {
@@ -482,7 +470,8 @@ fluff.harvestForms = function () {
  				});
 			}
 		});
-		fluff.addView("form", form, View);
+		var view = new View();
+    fluff.views.push(view);
 	});
 }
 
@@ -572,7 +561,7 @@ fluff.harvestLogins = function () {
 				});
 			},
 			render: function () {
-				var elementObj = $(this.el);
+				var elementObj = $(this.$el);
 				var html = '<input type="text" name="email" value="" placeholder="Email" />\n';
 				html += '<input type="password" name="password" value="" placeholder="Password" />\n';
 				html += '<button type="button" class="submit">Login</button>';
@@ -585,7 +574,8 @@ fluff.harvestLogins = function () {
  				});
 			}
 		});
-		fluff.addView("form", form, View);
+		var view = new View();
+    fluff.views.push(view);
 	});
 }
 
