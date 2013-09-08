@@ -741,7 +741,7 @@
           <div class="form-group">
             <select multiple name="display_columns" class="form-control column-picker" id="inputColumns">
               <% _(available_columns).each(function(option) { %>
-              <option value="<%= option %>"<%= (display_columns && (display_columns.indexOf(option) != - 1)) ? ' selected' : ''%>><%= option.humanize() != '' ? option.humanize() : 'ID' %></option>
+              <option value="<%= option.name %>"<%= (display_columns && (display_columns.indexOf(option.name) != - 1)) ? ' selected' : ''%>><%= option.name.humanize() != '' ? option.name.humanize() : 'ID' %></option>
               <% }); %>
             </select>
             <br/><br/><br/>

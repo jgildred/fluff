@@ -57,6 +57,7 @@ Model Data:
 - GET /[model name]
 - GET /[model name]/:id
 - GET /[model name]/:id/count
+- GET /[model name]/:id/info
 - POST /[model name]
 - PUT /[model name]/:id
 - DELETE /[model name]/:id

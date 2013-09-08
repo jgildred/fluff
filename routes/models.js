@@ -38,19 +38,23 @@ exports.create = function (req, res) {
             req.body.model_id = req.body.model_id.toLowerCase();
           }
           app.Models[req.body.name] = app.toModel({
-            model_id:    req.body.model_id, 
-            schema_data: req.body.schema_data
+            model_id    : req.body.model_id, 
+            schema_data : req.body.schema_data
           });
           if (app.Models[req.body.name]) {
-            // Set the column_order if not provided
-            if (!req.body.column_order) {
+            // Set the display_columns if not provided
+            if (!req.body.display_columns) {
               eval("var obj = " + req.body.schema_data);
               obj = app.lowerCaseObject(obj);
-              var column_order = [];
+              var display_columns = [];
               for (attribute in obj) {
-                column_order.push(attribute);
+                column_order.push({
+                  name  : attribute,
+                  title : attribute.humanize(),
+                  size  : 100
+                });
               }
-              req.body.column_order = column_order;
+              req.body.display_columns = display_columns;
             }
             resource.create(req, res, app.Model, function (req, res, model) {
               app.loadOneModel(req, res, model);

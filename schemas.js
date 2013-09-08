@@ -128,8 +128,6 @@ exports.model = {
     title : String,
     size  : Number
   } ],
-  column_order   : [ String ],
-  column_sizes   : [ Number ],
   sort_column    : {
     name      : String,
     order     : Boolean

@@ -3,7 +3,7 @@
 var fluff = {
 	version     : "0.8",
 	session     : {},
-	schemas     : {},
+	models      : {},
 	collections : {},
 	views       : {},
 	path        : "/fluff",    // This must match the fluff site configuration.
@@ -153,17 +153,21 @@ fluff.addCollection = function (options) {
 	return collection;
 }
 
-fluff.addSchema = function (name, callback) {
-	if (fluff.schemas[name] == undefined) {
+fluff.addModel = function (name, callback) {
+	if (fluff.models[name] == undefined) {
 		$.ajax({
 			type: 'GET',
-			url: fluff.path + '/api/' + name + '/schema',
+			url: fluff.path + '/api/' + name + '/info',
 			dataType: 'json',
 			success : function (data, status, xhr) {
-				if (data && (fluff.schemas[name] == undefined)) {
-					var Schema = fluff.dataToSchema(data);
-					fluff.schemas[name] = Schema;
-			  	fluff.log("Added a schema to fluff: " + name);
+				if (data && (fluff.models[name] == undefined)) {
+					var Schema = fluff.dataToSchema(data.schema_data);
+					fluff.models[name] = {
+						schema          : Schema,
+						display_columns : data.display_columns,
+						column_sort     : data.column_sort
+					};
+			  	fluff.log("Added a model to fluff: " + name);
 				}
 				if (callback) {
 					callback();
@@ -186,12 +190,11 @@ fluff.addView = function (type, element, View) {
   fluff.views[viewName] = view;
 }
 
-fluff.drawTableHeader = function (schema) {
+fluff.drawTableHeader = function (modelInfo) {
 	var html = "";
-	schema = fluff.lowerCaseObject(schema);
-	for (field in schema) {
-		html += "<th>" + field + "</th>";
-	}
+	modelInfo.display_columns.forEach(function (column) {
+		html += "<th>" + column.title + "</th>";
+	});
 	return html;
 }
 
@@ -213,26 +216,25 @@ fluff.renderFields = function (model, template) {
 	}
 }
 
-fluff.autoRenderFields = function (model, schema, elementType, dividerHtml) {
+fluff.autoRenderFields = function (model, modelInfo, elementType, dividerHtml) {
 	dividerHtml = dividerHtml ? dividerHtml : '';
 	var modelData = model.toJSON();
-	schema = fluff.lowerCaseObject(schema);
 	var html = "";
 	var count = 0;
 	var second = false;
-	for (field in schema) {
+	modelInfo.display_columns.forEach(function (field) {
 		count++;
 		if ((count > 1) && dividerHtml) {
 			html += dividerHtml;
 		}
 		switch (elementType) {
 		case 'img':
-			html += "<" + elementType + " field='" + field + "' src='" + modelData[field] + "'/>";
+			html += "<" + elementType + " field='" + field.name + "' src='" + modelData[field.name] + "'/>";
 			break;
 		default:
-			html += "<" + elementType + " field='" + field + "'>" + modelData[field] + "</" + elementType + ">";
+			html += "<" + elementType + " field='" + field.name + "'>" + modelData[field.name] + "</" + elementType + ">";
 		}
-	}
+	});
 	return html;
 }
 
@@ -263,7 +265,7 @@ fluff.harvestElements = function () {
 				var that = this;
 			  collection.fetch({
 			  	success: function () {
-			  		fluff.addSchema(modelName, function () {
+			  		fluff.addModel(modelName, function () {
 			  			that.render();
 			  		});
 			  	}
@@ -290,7 +292,7 @@ fluff.harvestElements = function () {
 					}
 					else {
 						var tag = filltag.split('[')[0];
-						bodyHtml += "<" + tag + ">" + fluff.autoRenderFields(model, fluff.schemas[modelName], 'span', ', ') + "</" + tag + ">\n";
+						bodyHtml += "<" + tag + ">" + fluff.autoRenderFields(model, fluff.models[modelName], 'span', ', ') + "</" + tag + ">\n";
 					}
 				});
 				elementObj.append(bodyHtml);
@@ -326,7 +328,7 @@ fluff.harvestTables = function () {
 				var that = this;
 				collection.fetch({
 			  	success: function () {
-			  		fluff.addSchema(modelName, function () {
+			  		fluff.addModel(modelName, function () {
 			  			that.render();
 			  		});
 			  	}
@@ -337,7 +339,7 @@ fluff.harvestTables = function () {
 				// Build the header if none
 				var ths = elementObj.find('tr th');
 				if (ths.toArray().length == 0) {
-					var headHtml = "<tr>" + fluff.drawTableHeader(fluff.schemas[modelName]) + "</tr>";
+					var headHtml = "<tr>" + fluff.drawTableHeader(fluff.models[modelName]) + "</tr>";
 				}
 				else {
 					var headHtml = ths.first().parent().get(0).outerHTML;
@@ -370,7 +372,7 @@ fluff.harvestTables = function () {
 						bodyHtml += fluff.renderFields(model, rowTemplate) + "\n";
 					}
 					else {
-						bodyHtml += "<tr>" + fluff.autoRenderFields(model, fluff.schemas[modelName], 'td') + "</tr>\n";
+						bodyHtml += "<tr>" + fluff.autoRenderFields(model, fluff.models[modelName], 'td') + "</tr>\n";
 					}
 				});
 				elementObj.find('tbody').first().append(bodyHtml + "\n");
@@ -407,14 +409,14 @@ fluff.harvestForms = function () {
 					});
 					that.model.fetch({
 				  	success: function () {
-				  		fluff.addSchema(modelName, function () {
+				  		fluff.addModel(modelName, function () {
 			  				that.render();
 			  			});
 				  	}
 				  });
 				}
 				else {
-					fluff.addSchema(modelName, function () {
+					fluff.addModel(modelName, function () {
 			  		that.render();
 			  	});
 				}
@@ -449,29 +451,30 @@ fluff.harvestForms = function () {
 			},
 			render: function () {
 				var elementObj = $(this.el);
-				var schema = fluff.lowerCaseObject(fluff.schemas[modelName]);
+				var modelInfo = fluff.models[modelName];
+				var schema = fluff.lowerCaseObject(modelInfo.schema);
 				var html = '';
-				for (field in schema) {
-					switch (schema[field].name) {
+				modelInfo.display_columns.forEach(function (field) {
+					switch (schema[field.name].name) {
 						case 'String':
-							html += '<input type="text" name="' + field + '" value="' + ((this.model && this.model.get(field)) ? this.model.get(field) : '') + '" placeholder="' + field + '" />\n';
+							html += '<input type="text" name="' + field.name + '" value="' + ((this.model && this.model.get(field.name)) ? this.model.get(field.name) : '') + '" placeholder="' + field.title + '" />\n';
 							break;
 						case 'Number':
-							html += '<input type="number" name="' + field + '" value="' + ((this.model && this.model.get(field)) ? this.model.get(field) : '') + '" placeholder="' + field + '" />\n';
+							html += '<input type="number" name="' + field.name + '" value="' + ((this.model && this.model.get(field.name)) ? this.model.get(field.name) : '') + '" placeholder="' + field.title + '" />\n';
 							break;
 						case 'Date':
-							html += '<input type="datetime" name="' + field + '" value="' + ((this.model && this.model.get(field)) ? this.model.get(field) : '') + '" placeholder="' + field + '" />\n';
+							html += '<input type="datetime" name="' + field.name + '" value="' + ((this.model && this.model.get(field.name)) ? this.model.get(field.name) : '') + '" placeholder="' + field.title + '" />\n';
 							break;
 						case 'Boolean':
-							html += '<input type="checkbox" name="' + field + '" value="' + ((this.model && this.model.get(field)) ? this.model.get(field) : 'false') + '"' + ((this.model && this.model.get(field)) ? ' checked' : '') + ' /> <label>' + field + '</label>\n';
+							html += '<input type="checkbox" name="' + field.name + '" value="' + ((this.model && this.model.get(field.name)) ? this.model.get(field.name) : 'false') + '"' + ((this.model && this.model.get(field.name)) ? ' checked' : '') + ' /> <label>' + field.title + '</label>\n';
 							break;
 						case 'Array':
-							html += '<input type="text" name="' + field + '" value="' + ((this.model && (this.model.get(field).length > 0)) ? this.model.get(field).join(',') : '') + '" placeholder="' + field + '" />\n';
+							html += '<input type="text" name="' + field.name + '" value="' + ((this.model && (this.model.get(field.name).length > 0)) ? this.model.get(field.name).join(',') : '') + '" placeholder="' + field.title + '" />\n';
 							break;
 						default:
 							break;
 					}
-				}
+				});
 				html += '<button type="button" class="submit">Submit</button>';
 				elementObj.append(html + "\n");
 				// Hitting enter key while in the form will submit.

@@ -61,11 +61,18 @@ function init () {
 }
 
 // Helper functions
-function objectType(obj){
-    return Object.prototype.toString.call(obj).slice(8, -1);
+function objectType(obj) {
+  return Object.prototype.toString.call(obj).slice(8, -1);
 }
-function htmlEncode(value){
+function htmlEncode(value) {
   return $('<div/>').text(value).html();
+}
+function flattenArray(objectArray, key) {
+  var array = [];
+  objectArray.forEach(function (object) {
+    array.push(object[key]);
+  });
+  return array;
 }
 // Useful when comparing schema attributes
 var lowerCaseObject = function (obj) {
@@ -509,8 +516,8 @@ var PwchangeView = Backbone.View.extend({
             msg:     "Your password has been changed,<br/>and you can login with the new password.", 
             cantclose: true});
         },
-        error: function (data) {
-          $('.alert-msg').html($.parseJSON(data.responseText).msg);
+        error: function (xhr) {
+          $('.alert-msg').html($.parseJSON(xhr.responseText).msg);
           $('.pwchange-fail').show();
         }
       });
@@ -726,7 +733,7 @@ var ModelListView = Backbone.View.extend({
           that.$el.html(template);
         }
       },
-      error: function (xhr) {
+      error: function (data, xhr) {
         alertView.render({label:"Sorry", msg: $.parseJSON(xhr.responseText).msg});
       }
     })
@@ -1148,20 +1155,22 @@ var ModelBrowseView = Backbone.View.extend({
     });
   },
   arrangeColumns: function () {
-    var available_columns = [];
-    var display_columns   = [];
+    var availableColumns = [];
     for (attribute in this.schema) {
-      available_columns.push(attribute);
+      availableColumns.push({
+        name  : attribute,
+        title : attribute.humanize(),
+        size  : 100
+      });
     }
-    this.model.get('column_order').forEach(function (column, index) {
-      var matchIndex = available_columns.indexOf(column);
+    this.displayColumns.forEach(function (column, index) {
+      var matchIndex = flattenArray(availableColumns, 'name').indexOf(column.name);
       if (matchIndex != -1) {
-        available_columns.splice(matchIndex, 1);
+        availableColumns.splice(matchIndex, 1);
       }
-      display_columns.push(column);
     });
-    available_columns = display_columns.concat(available_columns);
-    arrangeColumnsView.render(available_columns, display_columns);
+    availableColumns = this.displayColumns.concat(availableColumns);
+    arrangeColumnsView.render(availableColumns, flattenArray(this.displayColumns, 'name'));
   },
   import: function () {
     importView.render();
@@ -1233,25 +1242,18 @@ var ModelBrowseView = Backbone.View.extend({
                   readOnly: (noUpdateFields.indexOf(attr) == -1) ? false : true
                 };
               };
-              var columns     = [];
-              var colHeaders  = [];
-              that.colWidths  = [];
-              that.sortColumn = that.model.get('sort_column');
-              // FIXME need to make sure column_order is set on model create
-              that.model.get('column_order').forEach(function (attribute, index) {
-                if (Object.prototype.hasOwnProperty.call(that.schema, attribute)) {
-                  if (that.model.get('column_sizes') && that.model.get('column_sizes')[index]) {
-                    that.colWidths.push(that.model.get('column_sizes')[index]);
-                  }
-                  else {
-                    that.colWidths.push($("#model-data-grid").width()/Object.keys(that.schema).length);
-                  }
-                  // Add the index to the sortColumn so that the sort can be applied
-                  if (that.model.get('sort_column') && (that.model.get('sort_column').name == attribute)) {
-                    that.sortColumn.number = index;
-                  }
-                  columns.push(attr(attribute));
-                  colHeaders.push(attribute.humanize() != '' ? attribute.humanize() : 'ID');
+              var columns    = [];
+              var colHeaders = [];
+              var colWidths  = [];
+              // If no display_columns in model, then display ID column only
+              that.displayColumns = (that.model.get('display_columns') && that.model.get('display_columns').length > 0) ? that.model.get('display_columns') : [{name:'_id', title:'ID', size:100}];
+              // If no sort_column in model, then sort by first display column 
+              that.sortColumn = that.model.get('sort_column') ? that.model.get('sort_column') : {name: that.displayColumns[0].name, order: true};
+              that.displayColumns.forEach(function (displayColumn, index) {
+                if (Object.prototype.hasOwnProperty.call(that.schema, displayColumn.name)) {
+                  columns.push(attr(displayColumn.name));
+                  colHeaders.push(displayColumn.title ? displayColumn.title : displayColumn.name);
+                  colWidths.push(displayColumn.size ? displayColumn.size : $("#model-data-grid").width()/Object.keys(that.schema).length);
                 }
               });
               that.$container = $("#model-data-grid");
@@ -1264,7 +1266,7 @@ var ModelBrowseView = Backbone.View.extend({
                 columnSorting:      true,
                 columns:            columns,
                 colHeaders:         colHeaders,
-                colWidths:          that.colWidths,
+                colWidths:          colWidths,
                 outsideClickDeselects: false,
                 afterColumnMove:    function (oldIndex, newIndex) {
                   that.updateColumnOrder(oldIndex, newIndex);
@@ -1286,10 +1288,12 @@ var ModelBrowseView = Backbone.View.extend({
               ht.addHook('afterColumnSort', function (index, order) {
                 that.updateSortColumn(index, order);
               });
-              // Apply sort if sort_column is set in model
-              if (that.sortColumn) {
-                ht.sort(that.sortColumn.number, that.sortColumn.order);
-              }
+              // Apply sort
+              that.displayColumns.forEach(function (displayColumn, index) {
+                if (displayColumn.name == that.sortColumn.name) {
+                  ht.sort(index, that.sortColumn.order);
+                }
+              });
             }
           });
         }
@@ -1297,25 +1301,20 @@ var ModelBrowseView = Backbone.View.extend({
     }
   },
   updateColumnOrder: function (oldIndex, newIndex) {
-    var display_columns = this.model.get('column_order');
-    var movedColumn     = this.model.get('column_order')[oldIndex];
-    var movedColumnSize = this.colWidths[oldIndex];
+    var displayColumns = this.model.get('display_columns');
+    var movedColumn    = this.model.get('display_columns')[oldIndex];
     if (oldIndex > newIndex) {
-      display_columns.splice(oldIndex, 1);
-      display_columns.splice(newIndex, 0, movedColumn);
-      this.colWidths.splice(oldIndex, 1);
-      this.colWidths.splice(newIndex, 0, movedColumnSize);
+      displayColumns.splice(oldIndex, 1);
+      displayColumns.splice(newIndex, 0, movedColumn);
     }
     else {
-      display_columns.splice(newIndex, 0, movedColumn);
-      display_columns.splice(oldIndex, 1);
-      this.colWidths.splice(newIndex, 0, movedColumnSize);
-      this.colWidths.splice(oldIndex, 1);
-    }
-    this.model.save({column_order: display_columns, column_sizes: this.colWidths}, {
+      displayColumns.splice(newIndex, 0, movedColumn);
+      displayColumns.splice(oldIndex, 1);
+    }  
+    this.model.save({display_columns: displayColumns}, {
       patch: true,
       success: function (model) {
-        console.log('model saved');
+        console.log('column order saved');
       },
       error: function (model, xhr) {
         if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
@@ -1325,11 +1324,11 @@ var ModelBrowseView = Backbone.View.extend({
     });
   },
   updateColumnSizes: function (index, size) {
-    this.colWidths[index] = size;
-    this.model.save({column_sizes: this.colWidths}, {
+    this.displayColumns[index].size = size;
+    this.model.save({display_columns: this.displayColumns}, {
       patch: true,
       success: function (model) {
-        console.log('model saved');
+        console.log('column size saved');
       },
       error: function (model, xhr) {
         if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
@@ -1339,21 +1338,18 @@ var ModelBrowseView = Backbone.View.extend({
     });
   },
   updateSortColumn: function (index, order) {
-    var sort_column = {name: this.model.get('column_order')[index], order: order};
-    if ((this.model.get('sort_column') == undefined) || (this.model.get('sort_column').name != sort_column.name) || (this.model.get('sort_column').order != sort_column.order)) {
-      this.sortColumn = {number: index, order: order};
-      this.model.save({sort_column: sort_column}, {
-        patch: true,
-        success: function (model) {
-          console.log('model saved');
-        },
-        error: function (model, xhr) {
-          if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
-            alertView.render({label:"Save Model", msg: $.parseJSON(xhr.responseText).msg});
-          }
+    this.sortColumn = {name: this.displayColumns[index].name, order: order};
+    this.model.save({sort_column: this.sortColumn}, {
+      patch: true,
+      success: function (model) {
+        console.log('column sort saved');
+      },
+      error: function (model, xhr) {
+        if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
+          alertView.render({label:"Save Model", msg: $.parseJSON(xhr.responseText).msg});
         }
-      });
-    }
+      }
+    });
   }
 });
 
@@ -1365,12 +1361,28 @@ var ArrangeColumnsView = Backbone.View.extend({
     'click  .cancel-arrange'       : 'cancel'
   },
   applyColumns: function (ev) {
-    var display_columns = getFormData(ev.currentTarget).display_columns;
-    var columns = [];
-    modelBrowseView.model.save({column_order: display_columns}, {
+    var newColumnNames = getFormData(ev.currentTarget).display_columns;
+    var oldColumnNames = flattenArray(modelBrowseView.displayColumns, 'name');
+    // Build the new display columns
+    var displayColumns = [];
+    newColumnNames.forEach(function (columnName) {
+      var matchIndex = oldColumnNames.indexOf(columnName);
+      if (matchIndex != -1) {
+        displayColumns.push(modelBrowseView.displayColumns[matchIndex]);
+      }
+      else {
+        displayColumns.push({
+          name  : columnName,
+          title : columnName.humanize(),
+          size  : 100
+        });
+      }
+    });
+    modelBrowseView.displayColumns = displayColumns;
+    modelBrowseView.model.save({display_columns: modelBrowseView.displayColumns}, {
       patch: true,
       success: function (model) {
-        console.log('model saved');
+        console.log('display columns saved');
         modelBrowseView.render({id: model.id});
         $('#arrange-columns-modal').modal('hide');
       },
@@ -1386,8 +1398,8 @@ var ArrangeColumnsView = Backbone.View.extend({
   cancel: function () {
     $('#arrange-columns-modal').modal('hide');
   },
-  render: function (available_columns, display_columns) {
-    var template = _.template($('#arrange-columns-template').html(), {available_columns: available_columns, display_columns: display_columns});
+  render: function (availableColumns, displayColumns) {
+    var template = _.template($('#arrange-columns-template').html(), {available_columns: availableColumns, display_columns: displayColumns});
     $('.popup').html(template);
     $('#arrange-columns-modal').modal('show');
   }
