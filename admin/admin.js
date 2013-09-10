@@ -1239,6 +1239,7 @@ var ModelBrowseView = Backbone.View.extend({
                       modelItem.save();
                     }
                   },
+                  type: (that.schema[attr].name == 'Boolean') ? 'checkbox' : null, // FIXME more types
                   readOnly: (noUpdateFields.indexOf(attr) == -1) ? false : true
                 };
               };
@@ -1252,7 +1253,7 @@ var ModelBrowseView = Backbone.View.extend({
               that.displayColumns.forEach(function (displayColumn, index) {
                 if (Object.prototype.hasOwnProperty.call(that.schema, displayColumn.name)) {
                   columns.push(attr(displayColumn.name));
-                  colHeaders.push(displayColumn.title ? displayColumn.title : displayColumn.name);
+                  colHeaders.push((Object.prototype.hasOwnProperty.call(displayColumn, 'title')) ? displayColumn.title : displayColumn.name);
                   colWidths.push(displayColumn.size ? displayColumn.size : $("#model-data-grid").width()/Object.keys(that.schema).length);
                 }
               });
@@ -1361,6 +1362,7 @@ var ArrangeColumnsView = Backbone.View.extend({
     'click  .cancel-arrange'       : 'cancel'
   },
   applyColumns: function (ev) {
+    console.log(modelBrowseView.displayColumns);
     var newColumnNames = getFormData(ev.currentTarget).display_columns;
     var oldColumnNames = flattenArray(modelBrowseView.displayColumns, 'name');
     // Build the new display columns
@@ -1373,7 +1375,7 @@ var ArrangeColumnsView = Backbone.View.extend({
       else {
         displayColumns.push({
           name  : columnName,
-          title : columnName.humanize(),
+          title : (columnName.humanize() == "") ? "ID" : columnName.humanize(),
           size  : 100
         });
       }

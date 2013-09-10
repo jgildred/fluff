@@ -37,13 +37,13 @@ exports.Data = {
   "pages" : [{
     "name"         : "Home",
     "path"         : "/",            // page paths must be unique
-    "content"      : "<h1 class=\"text-center\">{{var.Greeting}}</h1>",
+    "content"      : "<h1 class=\"text-center example\">{{var.Greeting}}</h1>",
     "status"       : "Published",    // 'Published' or 'Unpublished'
     "access"       : "Public"        // 'Public', 'Users' or 'Admins'
   },{
     "name"         : "Styles",
     "path"         : "/styles.css",  // page paths must be unique
-    "content"      : "h1 {\n\tmargin-top: 100px;\n}",
+    "content"      : ".example {\n\tmargin-left: auto;\n\tmargin-right: auto;\n}\nh1.example {\n\tmargin-top: 100px;\n\tmargin-bottom: 100px;\n}\ntable.example th,td {\n\tfont-size: 20px;\n\tpadding: 10px;\n}",
     "status"       : "Published",    // 'Published' or 'Unpublished'
     "access"       : "Public"        // 'Public', 'Users' or 'Admins'
   }],
@@ -66,7 +66,7 @@ exports.Data = {
   "models"  : [{
     "name"     : "Things",           // model names must be unique, should be plural
     "model_id" : "things",           // model_id must be unique, should be plural and lower case
-    "schema_data"  : "{\nname: String,\ncolor: String\n}", // defines the fields of the model
+    "schema_data"  : "{\nname: String,\ncolor: String,\ngood: Boolean\n}", // defines the fields of the model
     "display_columns" : [{
       "name"  : "name",
       "title" : "Name",
@@ -76,11 +76,11 @@ exports.Data = {
       "title" : "Color",
       "size"  : 100
     }, {
-      "name"  : "_id",
-      "title" : "ID",
-      "size"  : 100
+      "name"  : "good",
+      "title" : "Good",
+      "size"  : 50
     }],
-    "column_order" : ["name", "color", "_id"], // this is replaced by display_columns
+    "column_order" : ["name", "color", "good"], // this is replaced by display_columns
     "sort_column"  : {
       "name"  : "name",              // the name of the column by which to sort
       "order" : true                 // the direction of the sort (true = ascending)

@@ -345,28 +345,28 @@ var initDb = function (req, res, callback) {
         console.log("Creating a site...");
         if (err) return handleError(err);
 
-        var firstuser = seed.Data.users[0];
         seed.Data.users.forEach(function (user) { 
           user.salt           = randomString();
           user.pwhash         = users.saltyHash(user.password, user.salt);
           user.verifytoken    = users.makeToken();
-          user.creator_id     = firstuser._id;
-          user.lastupdater_id = firstuser._id;
         });
-        User.create(seed.Data.users, function (err) {
+        User.create(seed.Data.users, function (err, firstuser) {
           console.log("Creating an admin user...");
           if (err) return handleError(err);
 
+          firstuser.creator_id     = firstuser._id;
+          firstuser.lastupdater_id = firstuser._id;
+          firstuser.save();
           seed.Data.views.forEach(function (view) {
             view.creator_id     = firstuser._id;
             view.lastupdater_id = firstuser._id;
           });
-          View.create(seed.Data.views, function (err, view) {
+          View.create(seed.Data.views, function (err, htmlview, cssview) {
             console.log("Creating views...");
             if (err) return handleError(err);
             
             seed.Data.pages.forEach(function (page) {
-              page.view_id        = view._id;
+              page.view_id        = /\.css/i.test(page.path) ? cssview._id : htmlview._id;
               page.creator_id     = firstuser._id;
               page.lastupdater_id = firstuser._id;
             });
@@ -412,7 +412,7 @@ var initDb = function (req, res, callback) {
         console.log("DB init error: " + err);
       }
       console.log("Wipe DB and restart Fluff, or set 'initialize' to false in config.js.");
-      runAlertMode("Not feeling fluffy.<br/>Fluff DB already initialized.", callback);
+      runAlertMode("Not feeling fluffy.<br/>Fluff DB already initialized.");
     }
   });
 }
@@ -468,7 +468,7 @@ var loadConfig = function (req, res, callback) {
         console.log("DB load error: " + err);
       }
       console.log("Point to another DB and restart Fluff, or set 'initialize' to true in config.js.");
-      runAlertMode("Not feeling fluffy.<br/>Fluff DB is not initialized.", callback);
+      runAlertMode("Not feeling fluffy.<br/>Fluff DB is not initialized.");
     }
   });
 }
