@@ -446,7 +446,7 @@ var loadConfig = function (req, res, callback) {
       var active_config = app.get('config');
       var stored_config = data.toJSON();
       app.set('config', mergeConfig(active_config, stored_config));
-      console.log("Loaded complete config.";
+      console.log("Loaded complete config.");
       if (callback) {
         callback(req, res);
       }
