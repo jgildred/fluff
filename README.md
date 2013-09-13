@@ -3,9 +3,11 @@ Fluff
 
 The CMS that stays out of your way.
 
+
 REQUIREMENTS: 
 
-- Node.js and MongoDB
+- Node.js
+- MongoDB
 
 INSTALL on local machine:
 
@@ -20,21 +22,23 @@ INSTALL on local machine:
 
 INSTALL on Heroku:
 
-1. steps 2 and 3 above
-2. edit config.js: app_service is 'Heroku', db_service is 'MongoLab', initialize is true
-3. create a new app on Heroku and get the MongoLab addon
-4. push to Heroku (type 'git push heroku master')
-5. open the Heroku app url in your browser
-6. step 8 above
+1. clone this repo or download the [zip package](https://github.com/jgildred/fluff/archive/master.zip)
+2. cd to the root dir of the app
+3. edit config.js: app_service is 'Heroku', db_service is 'MongoLab', initialize is true
+4. create a new app on Heroku and get the MongoLab addon
+5. push to Heroku (type 'git push heroku master')
+6. open the Heroku app url in your browser
+7. login with 'admin@domain.com', password 'fluff'
 
 INSTALL on AppFog:
 
-1. steps 2 and 3 above
-2. edit config.js: app_service is 'AppFog', db_service is 'MongoDB', initialize is true
-3. create a new app on AppFog and bind the MongoDB service
-4. push to AppFog (type 'af update [name of app]')
-5. open the AppFog app url in your browser
-6. step 8 above
+1. clone this repo or download the [zip package](https://github.com/jgildred/fluff/archive/master.zip)
+2. cd to the root dir of the app
+3. edit config.js: app_service is 'AppFog', db_service is 'MongoDB', initialize is true
+4. create a new app on AppFog and bind the MongoDB service
+5. push to AppFog (type 'af update [name of app]')
+6. open the AppFog app url in your browser
+7. login with 'admin@domain.com', password 'fluff'
 
 ADMIN GUIDE:
 
