@@ -199,7 +199,15 @@ exports.import = function(req, res, resource, callback){
       if (err) {
         app.msgResponse(req, res, 500, JSON.stringify(err));
       }
-      doImport(req, res, resource, data.toString(), delimiter, callback);
+      var importData = data.toString();
+      importData = CsvToArray(importData, delimiter);
+      // If this is called from POST /models, then finish creation
+      if (/\/admin\/api\/models/i.test(req.path)) {
+        callback(req, res, resource, importData);
+      }
+      else {
+        doImport(req, res, resource, importData, null, callback);
+      }
     });
   }
   else {
@@ -219,8 +227,15 @@ exports.import = function(req, res, resource, callback){
           data += chunk;
         });
         response.on('end', function(){
-          importData = data;
-          doImport(req, res, resource, importData, delimiter, callback);
+          var importData = data;
+          importData = CsvToArray(importData, delimiter);
+          // If this is called from POST /models, then finish creation
+          if (/\/admin\/api\/models/i.test(req.path)) {
+            callback(req, res, resource, importData);
+          }
+          else {
+            doImport(req, res, resource, importData, null, callback);
+          }
         });
       });
     }
@@ -230,17 +245,15 @@ exports.import = function(req, res, resource, callback){
   }
 };
 
-var doImport = function (req, res, resource, importData, delimiter, callback) {
+var doImport = function (req, res, resource, importData, model, callback) {
   var jsonData   = [];
   var fieldSet   = [];
   console.log("Parsing items for import...");
-  importData = CsvToArray(importData, delimiter);
   importData.forEach (function (item, i) {
     console.log(item);
     if (i == 0) {
       if (req.body && req.body.fieldset) {
-        // str.split("(?<!\\\\)" + endofrow);
-        req.body.fieldset.split(delimiter).foreEach (function (field, f) {
+        req.body.fieldset.foreEach (function (field, f) {
           fieldSet[f] = field.trim().toLowerCase();
         });
       }
@@ -268,25 +281,30 @@ var doImport = function (req, res, resource, importData, delimiter, callback) {
     if (err) { 
       app.msgResponse(req, res, 500, JSON.stringify(err));
     }
-    else { 
-      if (data) { 
-        res.json(data);
-        if (callback) {
-          callback(req, res, data);
-        }
+    else {
+      if (model) {
+        res.json(model);
       }
       else {
-        app.msgResponse(req, res, 404, resource.modelName + ' could not be imported.');
+        if (data) {
+          res.json(data);
+          if (callback) {
+            callback(req, res, data);
+          }
+        }
+        else {
+          app.msgResponse(req, res, 404, resource.modelName + ' could not be imported.');
+        }
       }
     }
-    //console.log("CREATE:\n" + body);
   });
 }
+exports.doImport = doImport;
 
 // This will parse a delimited string into an array of
 // arrays. The default delimiter is the comma, but this
 // can be overriden in the second argument.
-function CsvToArray( strData, strDelimiter ){
+function CsvToArray (strData, strDelimiter){
   // Check to see if the delimiter is defined. If not,
   // then default to comma.
   strDelimiter = (strDelimiter || ",");

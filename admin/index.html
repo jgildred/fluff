@@ -404,7 +404,8 @@
   <script type="text/template" id="model-list-template">
     <br/>
     <div class="col-12">
-      <a href="#/models/new" class="btn btn-default"><i class="glyphicon glyphicon-plus-sign icon-white"></i> Add a Model</a>
+      <button href="#/models/new" class="btn btn-default"><i class="glyphicon glyphicon-plus-sign icon-white"></i> Add a Model</button>&nbsp;&nbsp;
+      <button class="btn btn-link import-new"><i class="glyphicon glyphicon-cloud-upload"></i> Import</button>
     </div>
     <br/><br/><br/>
     <table class="table striped">
@@ -718,8 +719,9 @@
     <br/>
     <div class="col-12">
       <button class="btn btn-default add-modelitem"><i class="glyphicon glyphicon-plus-sign icon-white"></i> Add <%= /[aAeEiIoOuU]/.test(model.get('name')[0]) ? 'an' : 'a' %> <%= model.get('name').singularize().capitalize() %></button>&nbsp;&nbsp;
-      <button class="btn btn-danger delete-modelitems hiding"><i class="glyphicon glyphicon-delete icon-white"></i> Delete Selected</button>&nbsp;&nbsp;
+      <button class="btn btn-primary model-edit-view"><i class="glyphicon glyphicon-edit icon-white"></i> Modify</button>&nbsp;&nbsp;
       <button class="btn btn-primary arrange-columns"><i class="glyphicon glyphicon-list icon-white"></i> Columns</button>&nbsp;&nbsp;
+      <button class="btn btn-danger delete-modelitems hiding"><i class="glyphicon glyphicon-delete icon-white"></i> Delete Selected</button>&nbsp;&nbsp;
       <button class="btn btn-link import"><i class="glyphicon glyphicon-cloud-upload"></i> Import</button>
     </div>
     <br/><br/><br/>
@@ -764,6 +766,11 @@
       </div>
       <div class="modal-body">
         <form class="import-form form-horizontal">
+          <div class="form-group col-lg-12">
+            <label for="modelName">Name</label>
+            <input type="text" id="modelName" size="50" name="name">
+            <p class="help-block">Enter the name of your new model.</p>
+          </div>
           <div class="form-group col-lg-12">
             <label for="importUrl">File URL</label>
             <input type="text" id="importUrl" size="50" name="url">

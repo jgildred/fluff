@@ -13,6 +13,7 @@
     "express": "*",
     "mongoose": "*",
     "mime": "*",
-    "nodemailer": "*"
+    "nodemailer": "*",
+    "inflection": "*"
   }
 }

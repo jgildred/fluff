@@ -107,9 +107,6 @@ var connectDb = function (req, res, callback) {
   userSchema.methods.pwMatch = function (password) {
     var crypto = require('crypto');
     var hash   = crypto.createHash('md5').update(password + this.salt).digest("hex");
-    //console.log("PW: " + password);
-    //console.log("SALT: " + this.salt);
-    //console.log("CHECKING: HASH " + hash + " WITH PWHASH " + this.pwhash);
     return (this.pwhash == hash) ?
       true : false;
   }
@@ -153,10 +150,9 @@ var toModel = function (model, callback) {
   obj.lastupdater_id = ObjectId;
   obj.creation       = { type: Date, default: Date.now };
   obj.lastupdate     = { type: Date, default: Date.now };
-  //console.log("Schema data is: " + model.schema_data);
   var schema = new mongoose.Schema(obj);
   var newModel = mongoose.model(randomString(), schema, model.model_id.toLowerCase());
-  return newModel
+  return newModel;
 }
 exports.toModel = toModel;
 
@@ -418,8 +414,6 @@ var initDb = function (req, res, callback) {
 }
 
 var mergeConfig = function (app_config, site_config) {
-  console.log("App config: "  + JSON.stringify(app_config));
-  console.log("Site config: " + JSON.stringify(site_config));
   for (item in site_config) {
     if ((Object.prototype.toString.call(site_config[item]) === '[object Object]') && (Object.keys(site_config[item]).length > 0)) {
       if (!app_config.hasOwnProperty(item)){
@@ -452,7 +446,7 @@ var loadConfig = function (req, res, callback) {
       var active_config = app.get('config');
       var stored_config = data.toJSON();
       app.set('config', mergeConfig(active_config, stored_config));
-      console.log("Loaded complete config: " + JSON.stringify(app.get('config')));
+      console.log("Loaded complete config.";
       if (callback) {
         callback(req, res);
       }
@@ -569,7 +563,6 @@ var handleModelRequest = function (req, res, next, callback) {
   if (app.get('models')) {
     var match = false;
     app.get('models').forEach(function (model) {
-      console.log("Comparing: " + model.name.toLowerCase() + " to " + req.params.model.toLowerCase());
       if (callback && (model.name.toLowerCase() == req.params.model.toLowerCase())) {
         switch (callback) {
           case resource.find:
@@ -889,6 +882,11 @@ var removeIfNotLast = function (req, res, resourceScope) {
     }
   });
 }
+
+var toSchemaData = function (array) {
+  return "{\n\t" + array.join(": String,\n\t") + ": String\n}";
+}
+exports.toSchemaData = toSchemaData;
 
 var startup = function (req, res) {
   console.log("Starting Fluff...");

@@ -26,47 +26,77 @@ exports.create = function (req, res) {
         app.msgResponse(req, res, 400, 'Sorry, there\'s already a model named ' + req.body.name + '.');
       }
       else {
-        if (!req.body.schema_data) {
-          app.msgResponse(req, res, 400, 'The model must have a schema.');
-        }
         // Make sure the model_id is lower case
+        if (!req.body.model_id) {
+          req.body.model_id = req.body.name.toLowerCase();
+        }
         else {
-          if (!req.body.model_id) {
-            req.body.model_id = req.body.name.toLowerCase();
-          }
-          else {
-            req.body.model_id = req.body.model_id.toLowerCase();
-          }
+          req.body.model_id = req.body.model_id.toLowerCase();
+        }
+        // If there is a schema in the request use it
+        if (!req.body.schema_data && req.body.fieldset) {
+          req.body.schema_data = app.toSchemaData(req.body.fieldset);
+        }
+        if (req.body.schema_data) {
           app.Models[req.body.name] = app.toModel({
             model_id    : req.body.model_id, 
             schema_data : req.body.schema_data
           });
-          if (app.Models[req.body.name]) {
-            // Set the display_columns if not provided
-            if (!req.body.display_columns) {
-              eval("var obj = " + req.body.schema_data);
-              obj = app.lowerCaseObject(obj);
-              var display_columns = [];
-              for (attribute in obj) {
-                column_order.push({
-                  name  : attribute,
-                  title : attribute.humanize(),
-                  size  : 100
-                });
-              }
-              req.body.display_columns = display_columns;
+        }
+        // If there is import data, use the first line as the schema
+        if (req.body.url || req.files) {
+          resource.import(req, res, null, function (req, res, resource, importData) {
+            if (!app.Models[req.body.name]) {
+              req.body.schema_data = app.toSchemaData(importData[0]);
+              app.Models[req.body.name] = app.toModel({
+                model_id    : req.body.model_id, 
+                schema_data : req.body.schema_data
+              });
             }
-            resource.create(req, res, app.Model, function (req, res, model) {
-              app.loadOneModel(req, res, model);
-            });
+            doCreate(req, res, importData);
+          });
+        }
+        else {
+          if (app.Models[req.body.name]) {
+            doCreate(req, res);
           }
           else {
-            app.msgResponse(req, res, 400, 'The model name conflicts or the schema has issues.');
+            app.msgResponse(req, res, 400, 'The model must have a schema.');
           }
         }
       }
     }
   });
+}
+
+var doCreate = function (req, res, importData) {
+  if (app.Models[req.body.name]) {
+    // Set the display_columns if not provided
+    if (!req.body.display_columns) {
+      var inflection = require("inflection");
+      eval("var obj = " + req.body.schema_data);
+      obj = app.lowerCaseObject(obj);
+      var display_columns = [];
+      for (attribute in obj) {
+        display_columns.push({
+          name  : attribute,
+          title : inflection.humanize(attribute),
+          size  : 100
+        });
+      }
+      req.body.display_columns = display_columns;
+    }
+    resource.create(req, res, app.Model, function (req, res, model) {
+      app.loadOneModel(model);
+      // Import data if it was included in the POST
+      if (importData) {
+        resource.doImport(req, res, app.Models[req.body.name], importData, model);
+      }
+    });
+  }
+  else {
+    app.msgResponse(req, res, 400, 'The model name conflicts or the schema has issues.');
+  }
 }
 
 // Preprocessor for PUT /models/:id

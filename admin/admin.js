@@ -700,6 +700,12 @@ var VarAddView = Backbone.View.extend({
 // Setup the model list view
 var ModelListView = Backbone.View.extend({
   el: '.page',
+  events: {
+    'click .import-new' : 'importNewModel',
+  },
+  importNewModel: function () {
+    importView.render(true);
+  },
   render: function (keyword) {
     this.models = new Models();
     var that = this;
@@ -1112,6 +1118,7 @@ var ModelBrowseView = Backbone.View.extend({
   events: {
     'click  .add-modelitem'     : 'addItem',
     'click  .delete-modelitems' : 'deleteItems',
+    'click  .model-edit-view'   : 'editView',
     'click  .arrange-columns'   : 'arrangeColumns',
     'click  .import'            : 'import'
   },
@@ -1153,6 +1160,9 @@ var ModelBrowseView = Backbone.View.extend({
         }
       });
     });
+  },
+  editView: function () {
+    router.navigate('models/' + this.model.id, {trigger: true});
   },
   arrangeColumns: function () {
     var availableColumns = [];
@@ -1411,11 +1421,24 @@ var ArrangeColumnsView = Backbone.View.extend({
 var ImportView = Backbone.View.extend({
   el: '.popup',
   events: {
-    'click  .btn-import'    : 'import',
-    'click  .cancel-import' : 'cancel'
+    'click  .btn-pick-source'    : 'pickSource',
+    'click  .btn-show-delemiter' : 'showDelimiter',
+    'click  .btn-show-fieldset'  : 'showFieldset',
+    'click  .btn-import'         : 'import',
+    'click  .cancel-import'      : 'cancel'
+  },
+  pickSource: function () {
+
+  },
+  showDelimiter: function () {
+
+  },
+  showFieldset: function () {
+
   },
   import: function (ev) {
-    var data, formData = getFormData($(ev.currentTarget).parents("form:first"));
+    var data,
+        formData = getFormData($(ev.currentTarget).parents("form:first"));
     var contentType = 'application/json';
     var process  = false;
     var file     = $('input[name=file]').toArray()[0].files[0];
@@ -1432,18 +1455,35 @@ var ImportView = Backbone.View.extend({
     else {
       data = JSON.stringify(formData);
     }
+    // If this is for creating a new model, then POST to /models
+    // Otherwise POST to the specific models resource
+    if (($('input[name=name]').length > 0) && ($('input[name=name]').val() != "")) {
+      var url = adminbase + 'api/models';
+      var onclose  = "models";
+      var forModel = true;
+    }
+    else {
+      var url = adminbase.slice(0, adminbase.indexOf('admin') - 1) + '/api/' + modelBrowseView.model.get('name').toLowerCase() + "/import";
+      var onclose  = "models/" + modelBrowseView.model.id + "/browse";
+      var forModel = false;
+    }
     $.ajax({
       data: data,
       cache: false,
       contentType: contentType,
       processData: process,
       type: "POST",
-      url: adminbase.slice(0, adminbase.indexOf('admin') - 1) + '/api/' + modelBrowseView.model.get('name').toLowerCase() + "/import",
+      url: url,
       success: function () {
-        modelBrowseView.modelItems.reset();
-        modelBrowseView.render({id: modelBrowseView.model.id});
+        if (forModel) {
+          modelListView.render();
+        }
+        else {
+          modelBrowseView.modelItems.reset();
+          modelBrowseView.render({id: modelBrowseView.model.id});
+        }
         $('#import-modal').modal('hide');
-        alertView.render({label:"Import complete", msg: "Import was successful.", onclose: "models"});
+        alertView.render({label:"Import complete", msg: "Import was successful.", onclose: onclose});
       },
       error: function (data, xhr) {
         $('#import-modal').modal('hide');
@@ -1458,9 +1498,12 @@ var ImportView = Backbone.View.extend({
   cancel: function () {
     $('#import-modal').modal('hide');
   },
-  render: function () {
+  render: function (createModel) {
     var template = _.template($('#import-template').html());
     $('.popup').html(template);
+    if (createModel) {
+      $('#import-modal input[name=name]').show();
+    }
     $('#import-modal').modal('show');
   }
 });
