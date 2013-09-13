@@ -43,7 +43,7 @@ INSTALL on AppFog:
 ADMIN GUIDE:
 
 - PAGES tab manages pages. Each page must use a view template. When editing a page (or view), you can hit Esc to toggle full screen edit view.
-- VIEWS tab manages view templates. Just drop {{content}} into any template, right where you want the page content to render. That is the extent of the page design tools. Let the multitude of Javascript UI toolkits do the rest; that's what they're there for.
+- VIEWS tab manages templates for page layout. Just drop {{content}} into a view's template, right where you want your page content to render, then assign that view to your page. That is the extent of the page design tools. Let the multitude of Javascript UI toolkits do the rest; that's what they're there for.
 - VARS tab manages custom variables. Vars are an easy way to manage strings you use often. Drop {{var.[name]}} into any page or view, where [name] is the name of the var.
 - MODELS tab manages database models you create for your app. Each model is a collection in the Mongo database, and each model is accessible via REST-style resource route at [fluff_path]/api/[model name]. See [README-API.md](README-API.md) for more. A model's schema format looks like: { name: String, color: String, size: Number }. See Mongoose schema types for a list of allowed types and options.
 - USERS tab manages all users including admins. The 'Admin' role can access everything; the 'User' role cannot access the Admin app or pages with access restricted to admins.
