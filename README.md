@@ -13,7 +13,6 @@ INSTALL on local machine:
 6. type 'node launch'
 7. open http://localhost:3000/fluff/admin in your browser
 8. login with 'admin@domain.com', password 'fluff'
-9. goto Site tab in admin and edit settings as needed
 
 INSTALL on Heroku:
 
@@ -22,7 +21,7 @@ INSTALL on Heroku:
 3. create a new app on Heroku and get the MongoLab addon
 4. push to Heroku (type 'git push heroku master')
 5. open the Heroku app url in your browser
-6. steps 8 and 9 above
+6. step 8 above
 
 INSTALL on AppFog:
 
@@ -31,20 +30,20 @@ INSTALL on AppFog:
 3. create a new app on AppFog and bind the MongoDB service
 4. push to AppFog (type 'af update [name of app]')
 5. open the AppFog app url in your browser
-6. steps 8 and 9 above
+6. step 8 above
 
 ADMIN GUIDE:
 
 - PAGES tab manages pages. Each page must use a view template. When editing a page (or view), you can hit Esc to toggle full screen edit view.
 - VIEWS tab manages view templates. Just drop {{content}} into any template, right where you want the page content to render. That is the extent of the page design tools. Let the multitude of Javascript UI toolkits do the rest; that's what they're there for.
 - VARS tab manages custom variables. Vars are an easy way to manage strings you use often. Drop {{var.[name]}} into any page or view, where [name] is the name of the var.
-- MODELS tab manages database models you create for you app. The schema format looks like: { name: String, color: String, size: Number }. See Mongoose schema types for a list of allowed types and options.
+- MODELS tab manages database models you create for your app. The schema format looks like: { name: String, color: String, size: Number }. See Mongoose schema types for a list of allowed types and options.
 - USERS tab manages all users including admins. The 'Admin' role can access everything; the 'User' role cannot access the Admin app or pages with access restricted to admins.
-- SITE tab manages site-wide configuration. Some of these settings can be accessed form within a page. The following tags are available: {{site.name}}, {{site.url}}, {{site.domain}}, {{site.protocol}}, {{site.fluff_path}}
+- SITE tab manages site-wide configuration. Some of these settings can be accessed from within a page. The following tags are available: {{site.name}}, {{site.url}}, {{site.domain}}, {{site.protocol}}, {{site.fluff_path}}
 
 FLUFF.JS:
 
-The fluff.js library can be used in pages to provide automatic scaffolding of data into your pages. By simply adding model=[model name] attribute to elements like tables, you can auto-populate the table with data from that model.
+The fluff.js library can be used in pages to provide automatic scaffolding of data into your pages. By simply adding model=[model name] attribute to elements like tables, you can auto-populate the table with data from that model. There is an example page created upon initialization which includes the fluff.js library. It requires jQuery and Backbone.js which are also included for convenience.
 
 REST API:
 
