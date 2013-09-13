@@ -30,11 +30,16 @@ var lowerCaseObject = function (obj) {
   var newobj={};
   while (n--) {
     key = keys[n];
-    newobj[key.toLowerCase()] = obj[key];
+    newobj[dehumanize(key)] = obj[key];
   }
   return newobj;
 }
 exports.lowerCaseObject = lowerCaseObject;
+
+var dehumanize = function (string) {
+  return string.replace(" ", "_").toLowerCase();
+}
+exports.dehumanize = dehumanize;
 
 // Load the default config
 var loadDefaults = function (custom_config) {
@@ -137,7 +142,7 @@ var connectDb = function (req, res, callback) {
 
 // Useful for direct manipulation of DB collections
 var mongooseCollection = function (model) {
-  return mongoose.connection.collections[model.model_id.toLowerCase()];
+  return mongoose.connection.collections[dehumanize(model.model_id)];
 }
 exports.mongooseCollection = mongooseCollection;
 
@@ -151,7 +156,7 @@ var toModel = function (model, callback) {
   obj.creation       = { type: Date, default: Date.now };
   obj.lastupdate     = { type: Date, default: Date.now };
   var schema = new mongoose.Schema(obj);
-  var newModel = mongoose.model(randomString(), schema, model.model_id.toLowerCase());
+  var newModel = mongoose.model(randomString(), schema, dehumanize(model.model_id));
   return newModel;
 }
 exports.toModel = toModel;
@@ -563,7 +568,7 @@ var handleModelRequest = function (req, res, next, callback) {
   if (app.get('models')) {
     var match = false;
     app.get('models').forEach(function (model) {
-      if (callback && (model.name.toLowerCase() == req.params.model.toLowerCase())) {
+      if (callback && (dehumanize(model.name) == dehumanize(req.params.model))) {
         switch (callback) {
           case resource.find:
             var access = model.access.view;

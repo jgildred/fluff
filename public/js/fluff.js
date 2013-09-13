@@ -608,7 +608,7 @@ fluff.init = function (options) {
 	this.harvestSelects();
 	this.harvestLogins();
 	// Run the ready state callback
-  if (options.ready) {
+  if (options && options.ready) {
     options.ready();
   }
 }

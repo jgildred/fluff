@@ -28,10 +28,10 @@ exports.create = function (req, res) {
       else {
         // Make sure the model_id is lower case
         if (!req.body.model_id) {
-          req.body.model_id = req.body.name.toLowerCase();
+          req.body.model_id = app.dehumanize(req.body.name);
         }
         else {
-          req.body.model_id = req.body.model_id.toLowerCase();
+          req.body.model_id = app.dehumanize(req.body.model_id);
         }
         // If there is a schema in the request use it
         if (!req.body.schema_data && req.body.fieldset) {
@@ -112,7 +112,7 @@ exports.update = function (req, res) {
         app.msgResponse(req, res, 400, 'Sorry, you can\'t change the model id through the API.');
       }
       else {
-        if (req.body.name && (req.body.name.toLowerCase() != app.App.get('models')[index].name.toLowerCase())) {
+        if (req.body.name && (app.dehumanize(req.body.name) != app.dehumanize(app.App.get('models')[index].name))) {
           // Make sure the new name is not stepping on another one
           if (modelIndexFromName(req.body.name) != null) {
             app.msgResponse(req, res, 400, 'Sorry, there\'s already a model named ' + req.body.name + '.');
@@ -139,7 +139,7 @@ exports.remove = function (req, res) {
     app.Model.findById(req.params.id).exec(function(err, model) {
       if (!err && model) {
         // Remove from Models, app.App.get('models'), db collection and routes
-        var regex = new RegExp("\/" + app.App.get('config').fluff_path + "\/api\/" + model.name.toLowerCase(), "gi");
+        var regex = new RegExp("\/" + app.App.get('config').fluff_path + "\/api\/" + app.dehumanize(model.name), "gi");
         app.removeRoutes(regex);
         app.App.get('models').splice([modelIndexFromId(model._id)], 1);
         console.log("collections:");

@@ -74,6 +74,9 @@ function flattenArray(objectArray, key) {
   });
   return array;
 }
+var dehumanize = function (string) {
+  return string.replace(" ", "_").toLowerCase();
+}
 // Useful when comparing schema attributes
 var lowerCaseObject = function (obj) {
   var key,
@@ -82,7 +85,7 @@ var lowerCaseObject = function (obj) {
   var newobj={};
   while (n--) {
     key = keys[n];
-    newobj[key.toLowerCase()] = obj[key];
+    newobj[dehumanize(key)] = obj[key];
   }
   return newobj;
 }
@@ -717,7 +720,7 @@ var ModelListView = Backbone.View.extend({
             $.ajax({
               type: "GET",
               dataType: "json",
-              url: adminbase.slice(0,adminbase.indexOf('admin')-1) + '/api/' + model.get('name').toLowerCase() + '/count',
+              url: adminbase.slice(0,adminbase.indexOf('admin')-1) + '/api/' + dehumanize(model.get('name')) + '/count',
               data: null,
               success: function (data) {
                 if (data) {
@@ -1195,7 +1198,7 @@ var ModelBrowseView = Backbone.View.extend({
       this.model.fetch({
         success: function (model) {
           that.ModelItem = Backbone.Model.extend({
-            urlRoot: adminbase.slice(0, adminbase.indexOf('admin') - 1) + '/api/' + model.get('name').toLowerCase(),
+            urlRoot: adminbase.slice(0, adminbase.indexOf('admin') - 1) + '/api/' + dehumanize(model.get('name')),
             initialize: function () {
               this.on("change", function (model, options) {
                 if (options && options.save === false) return;
@@ -1206,7 +1209,7 @@ var ModelBrowseView = Backbone.View.extend({
             }
           });
           that.ModelItems = Backbone.Collection.extend({
-            url: adminbase.slice(0, adminbase.indexOf('admin') - 1) + '/api/' + model.get('name').toLowerCase(),
+            url: adminbase.slice(0, adminbase.indexOf('admin') - 1) + '/api/' + dehumanize(model.get('name')),
             model: that.ModelItem,
             // Backbone.Collection doesn't support splice yet.
             splice: hacked_splice
@@ -1463,7 +1466,7 @@ var ImportView = Backbone.View.extend({
       var forModel = true;
     }
     else {
-      var url = adminbase.slice(0, adminbase.indexOf('admin') - 1) + '/api/' + modelBrowseView.model.get('name').toLowerCase() + "/import";
+      var url = adminbase.slice(0, adminbase.indexOf('admin') - 1) + '/api/' + dehumanize(modelBrowseView.model.get('name')) + "/import";
       var onclose  = "models/" + modelBrowseView.model.id + "/browse";
       var forModel = false;
     }
