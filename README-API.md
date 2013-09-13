@@ -53,11 +53,12 @@ Models:
 - PUT /models/:id
 - DELETE /models/:id
 
-Model Data:
+Models you create:
 - GET /[model name]
 - GET /[model name]/:id
-- GET /[model name]/:id/count
-- GET /[model name]/:id/info
+- GET /[model name]/info
+- GET /[model name]/count
 - POST /[model name]
+- POST /[model name]/import
 - PUT /[model name]/:id
 - DELETE /[model name]/:id
