@@ -35,12 +35,16 @@ INSTALL on AppFog:
 
 ADMIN GUIDE:
 
-- the Pages tab manages pages. Each page must use a view template. When editing a page (or view), you can hit Esc to toggle full screen edit view.
-- the Views tab manages view templates. Just drop {{content}} into any template, right where you want the page content to render. That is the extent of the page design tools. Let the multitude of Javascript UI toolkits do the rest; that's what they're there for.
-- the Vars tab manages custom variables. Vars are an easy way to manage strings you use often. Drop {{var.[name]}} into any page or view, where [name] is the name of the var.
-- the Models tab manages database models you create for you app. The schema format looks like: { name: String, color: String, size: Number }. See Mongoose schema types for a list of allowed types and options.
-- the Users tab manages all users including admins. The 'Admin' role can access everything; the 'User' role cannot access the Admin app or pages with access restricted to admins.
-- the Site tab manages site-wide configuration. Some of these settings can be accessed form within a page. The following tags are available: {{site.name}}, {{site.url}}, {{site.domain}}, {{site.protocol}}, {{site.fluff_path}}
+- PAGES tab manages pages. Each page must use a view template. When editing a page (or view), you can hit Esc to toggle full screen edit view.
+- VIEWS tab manages view templates. Just drop {{content}} into any template, right where you want the page content to render. That is the extent of the page design tools. Let the multitude of Javascript UI toolkits do the rest; that's what they're there for.
+- VARS tab manages custom variables. Vars are an easy way to manage strings you use often. Drop {{var.[name]}} into any page or view, where [name] is the name of the var.
+- MODELS tab manages database models you create for you app. The schema format looks like: { name: String, color: String, size: Number }. See Mongoose schema types for a list of allowed types and options.
+- USERS tab manages all users including admins. The 'Admin' role can access everything; the 'User' role cannot access the Admin app or pages with access restricted to admins.
+- SITE tab manages site-wide configuration. Some of these settings can be accessed form within a page. The following tags are available: {{site.name}}, {{site.url}}, {{site.domain}}, {{site.protocol}}, {{site.fluff_path}}
+
+FLUFF.JS:
+
+The fluff.js library can be used in pages to provide automatic scaffolding of data into your pages. By simply adding model=[model name] attribute to elements like tables, you can auto-populate the table with data from that model.
 
 REST API:
 
@@ -48,12 +52,11 @@ See the [README-API.md](README-API.md) for a list of APIs.
 
 TO DO:
 
-- route for schemas
-- detect fluff_path in fluff.js
-- support for forms, selects in fluff.js
+- support for selects in fluff.js
 - paging of results
 - paged display in admin
-- sort by clicking on column headings in admin list views
+- sort in admin list views
+- search users
 
 WOULD BE NICE:
 
@@ -62,4 +65,5 @@ WOULD BE NICE:
 - manage error pages
 - page versioning
 - move session timeout to be user specific
+- meteor-style auto client updates
 - a plugin framework
