@@ -123,7 +123,7 @@
               <label class="control-label col-lg-4" for="inputPassword">Confirm</label>
               <div class="col-lg-6">
                 <input type="password" class="form-control" id="inputPassword" placeholder="required" required /><br/>
-                <button type="submit" class="btn btn-default signup">Sign Up</button>
+                <button type="submit" class="btn btn-primary signup">Sign Up</button>
               </div>
             </div>
           </form>
@@ -162,7 +162,7 @@
             <label class="control-label col-lg-4" for="inputPassword">Password</label>
             <div class="col-lg-6">
               <input type="password" class="form-control" id="inputPassword" name="password" placeholder="" required /><br/>
-              <button type="submit" class="btn btn-default login">Login</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#/pwreset">I forgot</a>
+              <button type="submit" class="btn btn-primary login">Login</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#/pwreset">I forgot</a>
             </div>
           </div>
         </form>
@@ -189,7 +189,7 @@
             <div class="col-lg-6">
               <input type="email" class="form-control col-lg-4" id="inputEmail" name="email" value="<%= email ? htmlEncode(email) : '' %>" placeholder="" required />
               <br/><br/><br/>
-              <button type="submit" class="btn btn-default pwreset">Request reset</button>
+              <button type="submit" class="btn btn-primary pwreset">Request reset</button>
               <button type="button" class="btn cancel">Cancel</button>
             </div>
           </div>
@@ -231,7 +231,7 @@
               <input type="text" class="form-control" id="inputToken" name="token" placeholder="" />
           <% } %>
               <br/>
-              <button type="submit" class="btn btn-default pwchange">Save and login</button>
+              <button type="submit" class="btn btn-primary pwchange">Save and login</button>
             </div>
           </div>
         </form>
@@ -259,7 +259,7 @@
 
   <script type="text/template" id="editor-controlbar-template">
     <div class="col-lg-6">
-      <h4 class="label-fse">Fullscreen Editor</h4>
+      <h4 class="label-fse">Full Screen Editor</h4>
     </div>
     <div class="col-lg-2 pull-right">
       <button class="btn btn-primary btn-mini btn-fse save-fullscreen-editor">Save</button>
@@ -270,7 +270,7 @@
   <script type="text/template" id="page-list-template">
     <br/>
     <div class="col-7">
-      <a href="#/pages/new" class="btn btn-default"><i class="glyphicon glyphicon-plus-sign icon-white"></i> Add a Page</a>
+      <a href="#/pages/new" class="btn btn-primary"><i class="glyphicon glyphicon-plus-sign icon-white"></i> Add a Page</a>
     </div>
     <div class="pull-right col-5">
       <form class="search-pages-form form-search">
@@ -366,7 +366,7 @@
         <div class="col-lg-6">
           <br/>
           <fieldset>
-            <button type="submit" class="btn btn-default"><%= page ? 'Update' : 'Add' %></button>
+            <button type="submit" class="btn btn-primary"><%= page ? 'Update' : 'Add' %></button>
             <button type="button" class="btn cancel">Cancel</button>
           <% if (page) { %>
             <input type="hidden" name="id" value="<%= page.id %>" />
@@ -392,7 +392,7 @@
   <script type="text/template" id="view-list-template">
     <br/>
     <div class="col-12">
-      <a href="#/views/new" class="btn btn-default"><i class="glyphicon glyphicon-plus-sign icon-white"></i> Add a View</a>
+      <a href="#/views/new" class="btn btn-primary"><i class="glyphicon glyphicon-plus-sign icon-white"></i> Add a View</a>
     </div>
     <br/><br/><br/>
     <table class="table striped">
@@ -450,7 +450,7 @@
         <div class="col-lg-6">
           <br/>
           <fieldset>
-            <button type="submit" class="btn btn-default"><%= view ? 'Update' : 'Add' %></button>
+            <button type="submit" class="btn btn-primary"><%= view ? 'Update' : 'Add' %></button>
             <button type="button" class="btn cancel">Cancel</button>
             <% if (view) { %>
             <input type="hidden" name="id" value="<%= view.id %>" />
@@ -475,7 +475,7 @@
   <script type="text/template" id="var-list-template">
     <br/>
     <div class="col-12">
-      <a href="#/vars/new" class="btn btn-default"><i class="glyphicon glyphicon-plus-sign icon-white"></i> Add a Var</a>
+      <a href="#/vars/new" class="btn btn-primary"><i class="glyphicon glyphicon-plus-sign icon-white"></i> Add a Var</a>
     </div>
     <br/><br/><br/><br/>
     <% _.each(vars, function(vari) { %>
@@ -509,7 +509,7 @@
                 <input name="name" class="add-var-name form-control" type="text" value="" placeholder="name" required />
               </div>
               <br/><br/><br/>
-              <button type="submit" class="btn btn-default">Add</button>
+              <button type="submit" class="btn btn-primary">Add</button>
               <button type="button" class="btn cancel">Cancel</button>
             </form>
           </div>
@@ -521,7 +521,7 @@
   <script type="text/template" id="model-list-template">
     <br/>
     <div class="col-12">
-      <button href="#/models/new" class="btn btn-default"><i class="glyphicon glyphicon-plus-sign icon-white"></i> Add a Model</button>&nbsp;&nbsp;
+      <button href="#/models/new" class="btn btn-primary"><i class="glyphicon glyphicon-plus-sign icon-white"></i> Add a Model</button>&nbsp;&nbsp;
       <button class="btn btn-link import-new"><i class="glyphicon glyphicon-cloud-upload"></i> Import</button>
     </div>
     <br/><br/><br/>
@@ -621,7 +621,7 @@
         <div class="col-lg-6">
           <br/>
           <fieldset>
-            <button type="submit" class="btn btn-default"><%= model ? 'Update' : 'Add' %></button>
+            <button type="submit" class="btn btn-primary"><%= model ? 'Update' : 'Add' %></button>
             <button type="button" class="btn cancel">Cancel</button>
         <% if (model) { %>
             <input type="hidden" name="id" value="<%= model.id %>" />
@@ -644,10 +644,10 @@
   <script type="text/template" id="browse-model-template">
     <br/>
     <div class="col-12">
-      <button class="btn btn-default add-modelitem"><i class="glyphicon glyphicon-plus-sign icon-white"></i> Add <%= /[aAeEiIoOuU]/.test(model.get('name')[0]) ? 'an' : 'a' %> <%= model.get('name').singularize().capitalize() %></button>&nbsp;&nbsp;
-      <button class="btn btn-primary model-edit-view"><i class="glyphicon glyphicon-edit icon-white"></i> Modify</button>&nbsp;&nbsp;
-      <button class="btn btn-primary arrange-columns"><i class="glyphicon glyphicon-list icon-white"></i> Columns</button>&nbsp;&nbsp;
-      <button class="btn btn-danger delete-modelitems hiding"><i class="glyphicon glyphicon-delete icon-white"></i> Delete Selected</button>&nbsp;&nbsp;
+      <button class="btn btn-primary add-modelitem"><i class="glyphicon glyphicon-plus-sign icon-white"></i> Add <%= /[aAeEiIoOuU]/.test(model.get('name')[0]) ? 'an' : 'a' %> <%= model.get('name').singularize().capitalize() %></button>
+      <button class="btn model-edit-view"><i class="glyphicon glyphicon-edit"></i> Modify</button>
+      <button class="btn arrange-columns"><i class="glyphicon glyphicon-list"></i> Columns</button>
+      <button class="btn btn-danger delete-modelitems hiding"><i class="glyphicon glyphicon-delete icon-white"></i> Delete Selected</button>
       <button class="btn btn-link import"><i class="glyphicon glyphicon-cloud-upload"></i> Import</button>
     </div>
     <br/><br/><br/>
@@ -673,7 +673,7 @@
               <% }); %>
             </select>
             <br/><br/><br/>
-            <button type="submit" class="btn btn-default apply-columns">Apply</button>
+            <button type="submit" class="btn btn-primary apply-columns">Apply</button>
             <button type="button" class="btn cancel-arrange">Cancel</button>
           </div>
         </form>
@@ -692,28 +692,50 @@
       </div>
       <div class="modal-body">
         <form class="import-form form-horizontal">
-          <div class="form-group col-lg-12">
+          <div class="form-group col-lg-12 hiding model-name">
             <label for="modelName">Name</label>
-            <input type="text" id="modelName" size="50" name="name">
+            <input type="text" class="form-control" id="modelName" size="50" name="name">
             <p class="help-block">Enter the name of your new model.</p>
           </div>
-          <div class="form-group col-lg-12">
+          <div class="radio col-lg-12">
+            <label>
+              <input type="radio" name="ignore" id="optionsRadios1" class="import-file" value="option1" checked>
+              Upload a file
+            </label>
+          </div>
+          <div class="radio col-lg-12">
+            <label>
+              <input type="radio" name="ignore" id="optionsRadios2" class="import-url" value="option2">
+              Enter a file URL
+            </label>
+            <br/><br/>
+          </div>
+          <div class="form-group col-lg-12 import-file">
+            <input type="file" id="importFile" name="file">
+            <p class="help-block">Select a delimited text file to import.</p>
+          </div>
+          <div class="form-group col-lg-12 hiding import-url">
             <label for="importUrl">File URL</label>
-            <input type="text" id="importUrl" size="50" name="url">
+            <input type="text" class="form-control" id="importUrl" size="50" name="url">
             <p class="help-block">Enter the URL to a delimited text file.</p>
           </div>
-          <div class="form-group col-lg-12">
-            <label for="importFile">File import</label>
-            <input type="file" id="importFile" name="file">
-            <p class="help-block">Or select a delimited text file to import.</p>
+          <div class="checkbox col-lg-12">
+            <label>
+              <input type="checkbox" class="show-options"> More options
+            </label><br/><br/>
           </div>
-          <div class="form-group col-lg-12">
+          <div class="form-group col-lg-12 hiding import-delimiter">
             <label for="importDelimiter">Field delimiter</label>
-            <input type="text" id="importDelimiter" name="delimiter">
-            <p class="help-block">You can escape the delimiter with quotes.</p>
+            <input type="text" class="form-control" id="importDelimiter" name="delimiter">
+            <p class="help-block">If you leave this blank, a comma (",") delimiter is assumed. Note that you can escape the delimiter with quotes in the data.</p>
           </div>
-          <br/><br/><br/>
-          <button type="button" class="btn btn-default btn-import">Import</button>
+          <div class="form-group col-lg-12 hiding import-fieldset">
+            <label for="importDelimiter">Field set</label>
+            <input type="text" class="form-control" id="importFieldset" name="fieldset">
+            <p class="help-block">Enter a comma separated list of field names. If you leave this blank, the first row in the data file will be used as the field set. Note that field names will be forced to lowercase and spaces will be replaced with an underscore ("_").</p>
+            <br/>
+          </div>
+          <button type="button" class="btn btn-primary btn-import">Import</button>
           <button type="button" class="btn cancel-import">Cancel</button>
         </form>
       </div>
@@ -725,7 +747,7 @@
   <script type="text/template" id="user-list-template">
     <br/>
     <div class="col-12">
-      <a href="#/users/new" class="btn btn-default"><i class="glyphicon glyphicon-plus-sign icon-white"></i> Add a User</a>
+      <a href="#/users/new" class="btn btn-primary"><i class="glyphicon glyphicon-plus-sign icon-white"></i> Add a User</a>
     </div>
     <br/><br/><br/>
     <table class="table striped">
@@ -808,7 +830,7 @@
       <hr />
       <div class="col-lg-12">
         <div class="col-lg-6">
-          <button type="submit" class="btn btn-default"><%= user ? 'Update' : 'Add' %></button>
+          <button type="submit" class="btn btn-primary"><%= user ? 'Update' : 'Add' %></button>
           <button type="button" class="btn cancel">Cancel</button>
         <% if (user) { %>
           <input type="hidden" name="id" value="<%= user.id %>" />
@@ -965,7 +987,7 @@
       <div class="col-lg-12">
         <fieldset>
           <hr />
-          <button type="submit" class="btn btn-default">Update</button>
+          <button type="submit" class="btn btn-primary">Update</button>
           <button type="button" class="btn cancel">Cancel</button>
           <% if (site) { %>
           <input type="hidden" name="id" value="<%= site.id %>" />

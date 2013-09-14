@@ -178,7 +178,7 @@ var getFormData = function(form) {
   }
 }
 
-function toggleFullscreen(editor) {
+function toggleFullscreen(editor, name) {
   var e   = $('#editor');
   var fse = $('#fullscreen-editor-container');
   if (fse.hasClass('hidden')) {
@@ -221,7 +221,7 @@ function renderEditor(element_id, content, cursor, mode, view, fullscreen) {
     name: 'toggleFullscreen',
     bindKey: {win: 'Esc',  mac: 'Esc'},
     exec: function(editor) {
-      toggleFullscreen(editor);
+      toggleFullscreen(editor, ddd);
     }
   });
   if (view) {
@@ -915,6 +915,7 @@ var PageDetailView = Backbone.View.extend({
               that.$el.html(template);
               that.editor = renderEditor('editor', that.page.get('content'), that.page.get('cursor'), null, that);
               $('#fullscreen-editor-controlbar').html($('#editor-controlbar-template').html());
+              $('.label-fse').html(that.page.get('name') + ' Content');
               $('.save-fullscreen-editor').click(that.submitForm);
               $('.close-fullscreen-editor').click(function() {
                 toggleFullscreen(that.editor);
@@ -927,6 +928,7 @@ var PageDetailView = Backbone.View.extend({
           that.$el.html(template);
           that.editor = renderEditor('editor', null, { row: 0, column: 0 }, null, that);
           $('#fullscreen-editor-controlbar').html($('#editor-controlbar-template').html());
+          $('.label-fse').html('Page Content');
           $('.save-fullscreen-editor').click(that.submitForm);
           $('.close-fullscreen-editor').click(function() {
             toggleFullscreen(that.editor);
@@ -1004,6 +1006,7 @@ var ViewDetailView = Backbone.View.extend({
           that.$el.html(template);
           that.editor = renderEditor('editor', that.view.get('template'), that.view.get('cursor'), null, that);
           $('#fullscreen-editor-controlbar').html($('#editor-controlbar-template').html());
+          $('.label-fse').html(that.view.get('name') + ' Template');
           $('.save-fullscreen-editor').click(that.submitForm);
           $('.close-fullscreen-editor').click(function() {
             toggleFullscreen(that.editor);
@@ -1016,6 +1019,7 @@ var ViewDetailView = Backbone.View.extend({
       this.$el.html(template);
       this.editor = renderEditor('editor', null, { row: 0, column: 0 }, null, that);
       $('#fullscreen-editor-controlbar').html($('#editor-controlbar-template').html());
+      $('.label-fse').html('View Template');
       $('.save-fullscreen-editor').click(that.submitForm);
       $('.close-fullscreen-editor').click(function() {
         toggleFullscreen(that.editor);
@@ -1095,6 +1099,7 @@ var ModelDetailView = Backbone.View.extend({
           that.$el.html(template);
           that.editor = renderEditor('editor', that.model.get('schema_data'), that.model.get('cursor'), 'ace/mode/javascript', that);
           $('#fullscreen-editor-controlbar').html($('#editor-controlbar-template').html());
+          $('.label-fse').html(that.model.get('name') + ' Schema');
           $('.save-fullscreen-editor').click(that.submitForm);
           $('.close-fullscreen-editor').click(function() {
             toggleFullscreen(that.editor);
@@ -1107,6 +1112,7 @@ var ModelDetailView = Backbone.View.extend({
       that.$el.html(template);
       that.editor = renderEditor('editor', null, { row: 0, column: 0 }, 'ace/mode/javascript', that);
       $('#fullscreen-editor-controlbar').html($('#editor-controlbar-template').html());
+      $('.label-fse').html('Model Schema');
       $('.save-fullscreen-editor').click(that.submitForm);
       $('.close-fullscreen-editor').click(function() {
         toggleFullscreen(that.editor);
@@ -1398,7 +1404,9 @@ var ArrangeColumnsView = Backbone.View.extend({
       patch: true,
       success: function (model) {
         console.log('display columns saved');
-        modelBrowseView.render({id: model.id});
+        window.location.reload();
+        //FIXME column move not working after return to model browse view
+        //modelBrowseView.render({id: model.id});
         $('#arrange-columns-modal').modal('hide');
       },
       error: function (model, xhr) {
@@ -1424,24 +1432,38 @@ var ArrangeColumnsView = Backbone.View.extend({
 var ImportView = Backbone.View.extend({
   el: '.popup',
   events: {
-    'click  .btn-pick-source'    : 'pickSource',
-    'click  .btn-show-delemiter' : 'showDelimiter',
-    'click  .btn-show-fieldset'  : 'showFieldset',
+    'click  input[type=radio]'   : 'pickSource',
+    'change .show-options'       : 'showOptions',
     'click  .btn-import'         : 'import',
     'click  .cancel-import'      : 'cancel'
   },
-  pickSource: function () {
-
+  pickSource: function (ev) {
+    switch (true) {
+      case $(ev.currentTarget).hasClass('import-file'):
+        $('div.import-file').show();
+        $('div.import-url').hide();
+        break;
+      case $(ev.currentTarget).hasClass('import-url'):
+        $('div.import-url').show();
+        $('div.import-file').hide();
+        break;
+      default:
+    }
   },
-  showDelimiter: function () {
-
-  },
-  showFieldset: function () {
-
+  showOptions: function (ev) {
+    if (ev.currentTarget.checked) {
+      $('div.import-delimiter').show();
+      $('div.import-fieldset').show();
+    }
+    else {
+      $('div.import-delimiter').hide();
+      $('div.import-fieldset').hide();
+    }
   },
   import: function (ev) {
     var data,
         formData = getFormData($(ev.currentTarget).parents("form:first"));
+    delete formData['ignore'];
     var contentType = 'application/json';
     var process  = false;
     var file     = $('input[name=file]').toArray()[0].files[0];
@@ -1482,6 +1504,8 @@ var ImportView = Backbone.View.extend({
           modelListView.render();
         }
         else {
+          //FIXME column move not working after return to model browse view
+          //window.location.reload();
           modelBrowseView.modelItems.reset();
           modelBrowseView.render({id: modelBrowseView.model.id});
         }
@@ -1505,7 +1529,7 @@ var ImportView = Backbone.View.extend({
     var template = _.template($('#import-template').html());
     $('.popup').html(template);
     if (createModel) {
-      $('#import-modal input[name=name]').show();
+      $('.import-form .model-name').show();
     }
     $('#import-modal').modal('show');
   }

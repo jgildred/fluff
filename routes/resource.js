@@ -190,7 +190,7 @@ exports.remove = function(req, res, resource, callback){
 
 // Handler for POST /resource/import
 exports.import = function(req, res, resource, callback){
-  var delimiter  = (req.body.delimiter && (req.body.delimiter != "")) ? req.body.delimiter : ",";
+  var delimiter  = (req.body && req.body.delimiter && (req.body.delimiter != "")) ? req.body.delimiter : ",";
   // If there is a file and it's 500MB or less then import it
   if (req.files && req.files.file && (req.files.file.size <= 500000000))  {
     console.log("IMPORTING UPLOADED FILE");
@@ -252,14 +252,14 @@ var doImport = function (req, res, resource, importData, model, callback) {
   importData.forEach (function (item, i) {
     console.log(item);
     if (i == 0) {
-      if (req.body && req.body.fieldset) {
+      if (req.body && req.body.fieldset && (req.body.fieldset != "")) {
         req.body.fieldset.foreEach (function (field, f) {
-          fieldSet[f] = field.trim().toLowerCase();
+          fieldSet[f] = app.dehumanize(field.trim());
         });
       }
       else {
         item.forEach (function (field, f) {
-          fieldSet[f] = field.trim().toLowerCase();
+          fieldSet[f] = app.dehumanize(field.trim());
         });
       }
     }
