@@ -4,11 +4,9 @@
 <head>
 
   <title>Site Admin</title>
-
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
   <meta name="viewport"              content="width=device-width, initial-scale=1.0"/>
-
   <link href="../images/favicon.ico"           rel="shortcut icon"/>
   <link href="../css/bootstrap.css"            rel="stylesheet" media="screen"/>
   <link href="../css/bootstrap-glyphicons.css" rel="stylesheet" media="screen"/>
@@ -268,33 +266,6 @@
       <button class="btn btn-mini btn-fse close-fullscreen-editor">Close</button>
     </div>
   </script>
-  
-  <script type="text/template" id="user-list-template">
-    <br/>
-    <div class="col-12">
-      <a href="#/users/new" class="btn btn-default"><i class="glyphicon glyphicon-plus-sign icon-white"></i> Add a User</a>
-    </div>
-    <br/><br/><br/>
-    <table class="table striped">
-      <thead>
-        <tr>
-          <th></th><th>First Name</th><th>Last Name</th><th>Email</th><th>Role</th><th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% _.each(users, function(user) { %>
-          <tr>
-            <td><i class="glyphicon glyphicon-user"></i></a>&nbsp;&nbsp;&nbsp;<a title="Edit" href="#/users/<%= user.id %>"><i class="glyphicon glyphicon-edit"></i></a></td>
-            <td><%= htmlEncode(user.get('firstname')) %></td>
-            <td><%= htmlEncode(user.get('lastname')) %></td>
-            <td><%= htmlEncode(user.get('email')) %></td>
-            <td><%= htmlEncode(user.get('role')) %></td>
-            <td><%= htmlEncode(user.get('status')) %></td>
-          </tr>
-        <% }); %>
-      </tbody>
-    </table>
-  </script>
 
   <script type="text/template" id="page-list-template">
     <br/>
@@ -330,6 +301,94 @@
     </table>
   </script>
 
+  <script type="text/template" id="edit-page-template">
+    <form class="edit-page-form form-horizontal">
+      <legend><%= page ? 'Edit' : 'New' %> Page</legend>
+      <div class="col-lg-6">
+        <fieldset>
+          <label><a title="Full screen editor" class="fullscreen-page"><i class="glyphicon glyphicon-fullscreen"></i></a>&nbsp;&nbsp;&nbsp;<span class="text-muted">Content</span></label>
+          <div id="editor" name="content" class="col-lg-4 small-editor"></div>
+        </fieldset>
+      </div>
+      <div class="col-lg-1">
+      </div>
+      <div class="col-lg-5">
+        <fieldset>
+          <div class="form-group">
+            <label class="control-label" for="inputName">Name</label>
+            <div class="controls">
+              <input type="text" class="form-control" id="inputName" name="name" value="<%= page ? page.get('name') : '' %>" placeholder="" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label" for="inputPath">Path &nbsp;&nbsp;&nbsp;<a title="View page in new window" href="<%= page ? page.get('path') : '' %>" target="_blank"><i class="glyphicon glyphicon-share-alt"></i></a></label>
+            <div class="controls">
+              <div class="input-append">
+                <input type="text" class="form-control" id="inputPath" name="path" value="<%= page ? page.get('path') : '' %>" placeholder="/unique/path/here" required />
+              </div>
+            </div>
+          </div>
+          <br/><br/>
+          <div class="form-group">
+            <label class="control-label col-lg-3" for="inputView">View</label>
+            <div class="controls col-lg-9">
+              <select name="view_id" class="form-control" id="inputView">
+                <% views.each(function(option) { %>
+                <option value="<%= option.id %>"<%= (page && (option.id == page.get('view_id'))) ? ' selected' : ''%>><%= option.get('name') %></option>
+                <% }); %>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-lg-3" for="inputAccess">Access</label>
+            <div class="controls col-lg-9">
+              <select name="access" class="form-control" id="inputAccess">
+                <% _(access_options).each(function(option) { %>
+                <option value="<%= option %>"<%= (page && (option == page.get('access'))) ? ' selected' : ''%>><%= option %></option>
+                <% }); %>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-lg-3" for="inputStatus">Status</label>
+            <div class="controls col-lg-9">
+              <select name="status" class="form-control" id="inputStatus">
+                <% _(status_options).each(function(option) { %>
+                <option value="<%= option %>"<%= (page && (option == page.get('status'))) ? ' selected' : ''%>><%= option %></option>
+                <% }); %>
+              </select>
+            </div>
+          </div>
+          <br/>
+        </fieldset>
+      </div>
+      <div class="col-lg-12">
+        <div class="col-lg-6">
+          <br/>
+          <fieldset>
+            <button type="submit" class="btn btn-default"><%= page ? 'Update' : 'Add' %></button>
+            <button type="button" class="btn cancel">Cancel</button>
+          <% if (page) { %>
+            <input type="hidden" name="id" value="<%= page.id %>" />
+            <button type="button" data-page-id="<%= page.id %>" class="btn btn-danger delete-page">Delete Page</button>
+          </fieldset>
+        </div>
+        <div class="col-lg-6">
+          <br/><br/>
+          <table class="text-muted stats-table">
+            <tr><td>Page ID </td><td><%= page.id %></td></tr>
+            <tr><td>Published </td><td><%= page.get('publication') %></td></tr>
+            <tr><td>Created </td><td><%= page.get('creation') %> by <%= page.get('creator_id') ? page.get('creator_id') : '?' %></td></tr>
+            <tr><td>Last updated </td><td><%= page.get('lastupdate') %> by <%= page.get('lastupdater_id') ? page.get('lastupdater_id') : '?' %></td></tr>
+          </table>
+          <% } else { %>
+          </fieldset>
+          <% } %>
+        </div>
+      </div>
+    </form>
+  </script>
+
   <script type="text/template" id="view-list-template">
     <br/>
     <div class="col-12">
@@ -355,12 +414,70 @@
     </table>
   </script>
 
+  <script type="text/template" id="edit-view-template">
+    <form class="edit-view-form form-horizontal">
+      <legend><%= view ? 'Edit' : 'New' %> View</legend>
+      <div class="col-lg-6">
+        <fieldset>
+          <label><a title="Full screen editor" class="fullscreen-page"><i class="glyphicon glyphicon-fullscreen"></i></a>&nbsp;&nbsp;&nbsp;<span class="text-muted">Template</span></label>
+          <div id="editor" name="template" class="col-4 base-editor small-editor"></div>
+        </fieldset>
+      </div>
+      <div class="col-lg-1">
+      </div>
+      <div class="col-lg-5">
+        <fieldset>
+          <div class="form-group">
+            <label class="control-label" for="inputName">Name</label>
+            <div class="controls">
+              <input type="text" class="form-control" id="inputName" name="name" value="<%= view ? view.get('name') : '' %>" placeholder="must be unique" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label" for="inputContentType">Content Type</label>
+            <div class="controls">
+              <select name="content_type" class="form-control" id="inputContentType">
+                <% for (o = 0; o < content_types.length; o++) { %>
+                <option value="<%= content_types[o] %>"<%= ((view && (content_types[o] == view.get('content_type'))) || (!view && (content_types[o] == 'text/html'))) ? ' selected' : ''%>><%= content_types[o] %></option>
+                <% } %>
+              </select>
+            </div>
+          </div>
+          <br/>
+        </fieldset>
+      </div>
+      <div class="col-lg-12">
+        <div class="col-lg-6">
+          <br/>
+          <fieldset>
+            <button type="submit" class="btn btn-default"><%= view ? 'Update' : 'Add' %></button>
+            <button type="button" class="btn cancel">Cancel</button>
+            <% if (view) { %>
+            <input type="hidden" name="id" value="<%= view.id %>" />
+            <button type="button" data-view-id="<%= view.id %>" class="btn btn-danger delete-view">Delete View</button>
+          </fieldset>
+        </div>
+        <div class="col-lg-6">
+          <br/><br/>
+          <table class="pull-right text-muted stats-table">
+            <tr><td>View ID </td><td><%= view.id %></td></tr>
+            <tr><td>Created </td><td><%= view.get('creation') %> by <%= view.get('creator_id') ? view.get('creator_id') : '?' %></td></tr>
+            <tr><td>Last updated </td><td><%= view.get('lastupdate') %> by <%= view.get('lastupdater_id') ? view.get('lastupdater_id') : '?' %></td></tr>
+          </table>
+          <% } else { %>
+          </fieldset>
+          <% } %>
+        </div>
+      </div>
+    </form>
+  </script>
+
   <script type="text/template" id="var-list-template">
     <br/>
     <div class="col-12">
       <a href="#/vars/new" class="btn btn-default"><i class="glyphicon glyphicon-plus-sign icon-white"></i> Add a Var</a>
     </div>
-    <br/><br/><br/>
+    <br/><br/><br/><br/>
     <% _.each(vars, function(vari) { %>
       <form class="edit-var-quickform">
         <div class="col-lg-9">
@@ -436,218 +553,18 @@
     </table>
   </script>
 
-  <script type="text/template" id="edit-user-template">
-    <form class="edit-user-form form-horizontal">
-      <legend><%= user ? 'Edit' : 'New' %> User</legend>
-      <div class="form-group">
-        <label class="control-label col-lg-3 col-sm-3 col-12" for="inputFirstname">Name</label>
-        <div class="col-lg-2 col-sm-2 col-6">
-          <input type="text" id="inputFirstname" class="form-control" name="firstname" value="<%= user ? user.get('firstname') : '' %>" placeholder="first" />
-        </div>
-        <div class="col-lg-3 col-sm-4 col-6">
-          <input type="text" id="inputLastname" class="form-control" name="lastname" value="<%= user ? user.get('lastname') : '' %>" placeholder="last" />
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-lg-3 col-sm-3" for="inputEmail">Email</label>
-        <div class="col-lg-5 col-sm-6">
-          <input type="email" id="inputEmail" class="form-control" name="email" value="<%= user ? user.get('email') : '' %>" placeholder="required" required />
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-lg-3 col-sm-3" for="inputOrgname">Organization</label>
-        <div class="col-lg-5 col-sm-6">
-          <input type="text" id="inputOrgname" class="col-4 form-control" name="orgname" value="<%= user ? user.get('orgname') : '' %>" placeholder="" />
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-lg-3 col-sm-3" for="inputPhone">Phone</label>
-        <div class="col-lg-5 col-sm-6">
-          <input type="text" id="inputPhone" class="form-control" name="phone" value="<%= user ? user.get('phone') : '' %>" placeholder="" />
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-lg-3 col-sm-3" for="inputRole">Role</label>
-        <div class="col-lg-5 col-sm-6">
-          <select name="role" class="form-control" id="inputRole">
-            <% _(role_options).each(function(option) { %>
-            <option value="<%= option %>"<%= (user && (option == user.get('role'))) ? ' selected' : ''%>><%= option %></option>
-            <% }); %>
-          </select>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-lg-3 col-sm-3" for="inputStatus">Status</label>
-        <div class="col-lg-5 col-sm-6">
-          <select name="status" class="form-control" id="inputStatus">
-            <% _(status_options).each(function(option) { %>
-            <option value="<%= option %>"<%= (user && (option == user.get('status'))) ? ' selected' : ''%>><%= option %></option>
-            <% }); %>
-          </select>
-        </div>
-      </div>
-        <div class="form-group">
-          <label class="control-label col-lg-3 col-sm-3" for="inputNotes">Notes</label>
-          <div class="col-lg-5 col-sm-6">
-            <textarea id="inputNotes" class="form-control" name="notes" placeholder=""><%= user ? user.get('notes') : '' %></textarea>
-          </div>
-        </div>
-      <hr />
-      <button type="submit" class="btn btn-default"><%= user ? 'Update' : 'Add' %></button>
-      <button type="button" class="btn cancel">Cancel</button>
-      <% if (user) { %>
-      <input type="hidden" name="id" value="<%= user.id %>" />
-      <button type="button" data-user-email="<%= user.get('email') %>" class="btn user-pwreset">Reset Password</button>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button type="button" data-user-id="<%= user.id %>" class="btn btn-danger delete-user">Delete User</button><br/><br/>
-      <table class="pull-right text-muted stats-table">
-        <tr><td>user id </td><td><%= user.id %></td></tr>
-        <tr><td>created </td><td><%= user.get('creation') %> by <%= user.get('creator_id') ? user.get('creator_id') : '?' %></td></tr>
-            <tr><td>last updated </td><td><%= user.get('lastupdate') %> by <%= user.get('lastupdater_id') ? user.get('lastupdater_id') : '?' %></td></tr>
-      </table>
-      <% } %>
-    </form>
-  </script>
-
-  <script type="text/template" id="edit-page-template">
-    <form class="edit-page-form form-horizontal">
-      <legend><%= page ? 'Edit' : 'New' %> Page</legend>
-      <div class="col-6">
-        <fieldset>
-          <label>
-          <span class="text-muted">Content</span>&nbsp;&nbsp;&nbsp;&nbsp;<a class="fullscreen-page pull-right">Edit Full Screen</a></label>
-          <div id="editor" name="content" class="col-4 small-editor"></div>
-          <br/><br/>
-        </fieldset>
-      </div>
-      <div class="col-5">
-        <fieldset>
-          <div class="form-group">
-            <label class="control-label" for="inputName">Name</label>
-            <div class="controls">
-              <input type="text" class="form-control" id="inputName" name="name" value="<%= page ? page.get('name') : '' %>" placeholder="" />
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label" for="inputPath">Path</label>
-            <div class="controls">
-              <div class="input-append">
-              <input type="text" class="form-control" id="inputPath" name="path" value="<%= page ? page.get('path') : '' %>" placeholder="/unique/path/here" required />
-              <a class="add-on" href="<%= page ? page.get('path') : '' %>" target="_blank">Go</a>
-              </div>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label" for="inputView">View</label>
-            <div class="controls">
-              <select name="view_id" class="form-control" id="inputView">
-                <% views.each(function(option) { %>
-                <option value="<%= option.id %>"<%= (page && (option.id == page.get('view_id'))) ? ' selected' : ''%>><%= option.get('name') %></option>
-                <% }); %>
-              </select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label" for="inputAccess">Access</label>
-            <div class="controls">
-              <select name="access" class="form-control" id="inputAccess">
-                <% _(access_options).each(function(option) { %>
-                <option value="<%= option %>"<%= (page && (option == page.get('access'))) ? ' selected' : ''%>><%= option %></option>
-                <% }); %>
-              </select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label" for="inputStatus">Status</label>
-            <div class="controls">
-              <select name="status" class="form-control" id="inputStatus">
-                <% _(status_options).each(function(option) { %>
-                <option value="<%= option %>"<%= (page && (option == page.get('status'))) ? ' selected' : ''%>><%= option %></option>
-                <% }); %>
-              </select>
-            </div>
-          </div>
-          <br/>
-          <button type="submit" class="btn btn-default"><%= page ? 'Update' : 'Add' %></button>
-          <button type="button" class="btn cancel">Cancel</button>
-          <% if (page) { %>
-          <input type="hidden" name="id" value="<%= page.id %>" />
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <button type="button" data-page-id="<%= page.id %>" class="btn btn-danger delete-page">Delete Page</button>
-          <br/><br/>
-          <table class="text-muted stats-table">
-            <tr><td>page id </td><td><%= page.id %></td></tr>
-            <tr><td>published </td><td><%= page.get('publication') %></td></tr>
-            <tr><td>created </td><td><%= page.get('creation') %> by <%= page.get('creator_id') ? page.get('creator_id') : '?' %></td></tr>
-            <tr><td>last updated </td><td><%= page.get('lastupdate') %> by <%= page.get('lastupdater_id') ? page.get('lastupdater_id') : '?' %></td></tr>
-          </table>
-          <br/>
-          <% } %>
-        </fieldset>
-      </div>
-    </form>
-  </script>
-
-  <script type="text/template" id="edit-view-template">
-    <form class="edit-view-form form-horizontal">
-      <legend><%= view ? 'Edit' : 'New' %> View</legend>
-      <div class="col-6">
-        <fieldset>
-          <label>
-          <span class="text-muted">Content</span><a class="fullscreen-view pull-right">Full Screen</a></label>
-          <div id="editor" name="template" class="col-4 base-editor small-editor"></div>
-          <br/><br/>
-        </fieldset>
-      </div>
-      <div class="col-5">
-        <fieldset>
-          <div class="form-group">
-            <label class="control-label" for="inputName">Name</label>
-            <div class="controls">
-              <input type="text" class="form-control" id="inputName" name="name" value="<%= view ? view.get('name') : '' %>" placeholder="must be unique" required />
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label" for="inputContentType">Content Type</label>
-            <div class="controls">
-              <select name="content_type" class="form-control" id="inputContentType">
-                <% for (o = 0; o < content_types.length; o++) { %>
-                <option value="<%= content_types[o] %>"<%= ((view && (content_types[o] == view.get('content_type'))) || (!view && (content_types[o] == 'text/html'))) ? ' selected' : ''%>><%= content_types[o] %></option>
-                <% } %>
-              </select>
-            </div>
-          </div>
-          <br/>
-          <button type="submit" class="btn btn-default"><%= view ? 'Update' : 'Add' %></button>
-          <button type="button" class="btn cancel">Cancel</button>
-          <% if (view) { %>
-          <input type="hidden" name="id" value="<%= view.id %>" />
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <button type="button" data-view-id="<%= view.id %>" class="btn btn-danger delete-view">Delete View</button><br/><br/>
-          <table class="pull-right text-muted stats-table">
-            <tr><td>view id </td><td><%= view.id %></td></tr>
-            <tr><td>created </td><td><%= view.get('creation') %> by <%= view.get('creator_id') ? view.get('creator_id') : '?' %></td></tr>
-            <tr><td>last updated </td><td><%= view.get('lastupdate') %> by <%= view.get('lastupdater_id') ? view.get('lastupdater_id') : '?' %></td></tr>
-          </table>
-          <% } %>
-        </fieldset>
-      </div>
-    </form>
-  </script>
-
   <script type="text/template" id="edit-model-template">
     <form class="edit-model-form form-horizontal">
       <legend><%= model ? 'Edit' : 'New' %> Model</legend>
-      <div class="col-6">
+      <div class="col-lg-6">
         <fieldset>
-          <label>
-            <span class="text-muted">Schema</span><a class="fullscreen-model pull-right">Full Screen</a>
-          </label>
+          <label><a title="Full screen editor" class="fullscreen-page"><i class="glyphicon glyphicon-fullscreen"></i></a>&nbsp;&nbsp;&nbsp;<span class="text-muted">Schema</span></label>
           <div id="editor" name="schema_data" class="col-4 base-editor small-editor"></div>
-          <br/><br/>
         </fieldset>
       </div>
-      <div class="col-5">
+      <div class="col-lg-1">
+      </div>
+      <div class="col-lg-5">
         <fieldset>
           <div class="form-group">
             <label class="control-label" for="inputName">Name</label>
@@ -655,62 +572,71 @@
               <input type="text" class="form-control" id="inputName" name="name" value="<%= model ? model.get('name') : '' %>" placeholder="" />
             </div>
           </div>
-          <div class="form-group">
-            <label class="control-label col-lg-2" for="inputAccess">View</label>
-            <div class="col-lg-4">
-              <select name="access.view" class="form-control" id="inputAccess">
-                <% _(access_options).each(function(option) { %>
-                <option value="<%= option %>"<%= (model && (option == model.get('access').view)) ? ' selected' : ''%>><%= option %></option>
-                <% }); %>
-              </select>
+          <label class="control-label" for="inputName">Access</label>
+          <div class="well controls">
+            <div class="form-group">
+              <label class="control-label col-lg-3" for="inputAccess">View</label>
+              <div class="controls col-lg-9">
+                <select name="access.view" class="form-control" id="inputAccess">
+                  <% _(access_options).each(function(option) { %>
+                  <option value="<%= option %>"<%= (model && (option == model.get('access').view)) ? ' selected' : ''%>><%= option %></option>
+                  <% }); %>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-lg-3" for="inputAccess">Create</label>
+              <div class="controls col-lg-9">
+                <select name="access.create" class="form-control" id="inputAccess">
+                  <% _(access_options).each(function(option) { %>
+                  <option value="<%= option %>"<%= (model && (option == model.get('access').create)) ? ' selected' : ''%>><%= option %></option>
+                  <% }); %>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-lg-3" for="inputAccess">Update</label>
+              <div class="controls col-lg-9">
+                <select name="access.update" class="form-control" id="inputAccess">
+                  <% _(access_options).each(function(option) { %>
+                  <option value="<%= option %>"<%= (model && (option == model.get('access').update)) ? ' selected' : ''%>><%= option %></option>
+                  <% }); %>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-lg-3" for="inputAccess">Remove</label>
+              <div class="controls col-lg-9">
+                <select name="access.remove" class="form-control" id="inputAccess">
+                  <% _(access_options).each(function(option) { %>
+                  <option value="<%= option %>"<%= (model && (option == model.get('access').remove)) ? ' selected' : ''%>><%= option %></option>
+                  <% }); %>
+                </select>
+              </div>
             </div>
           </div>
-          <div class="form-group">
-            <label class="control-label col-lg-2" for="inputAccess">Create</label>
-            <div class="col-lg-4">
-              <select name="access.create" class="form-control" id="inputAccess">
-                <% _(access_options).each(function(option) { %>
-                <option value="<%= option %>"<%= (model && (option == model.get('access').create)) ? ' selected' : ''%>><%= option %></option>
-                <% }); %>
-              </select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label col-lg-2" for="inputAccess">Update</label>
-            <div class="col-lg-4">
-              <select name="access.update" class="form-control" id="inputAccess">
-                <% _(access_options).each(function(option) { %>
-                <option value="<%= option %>"<%= (model && (option == model.get('access').update)) ? ' selected' : ''%>><%= option %></option>
-                <% }); %>
-              </select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label col-lg-2" for="inputAccess">Remove</label>
-            <div class="col-lg-4">
-              <select name="access.remove" class="form-control" id="inputAccess">
-                <% _(access_options).each(function(option) { %>
-                <option value="<%= option %>"<%= (model && (option == model.get('access').remove)) ? ' selected' : ''%>><%= option %></option>
-                <% }); %>
-              </select>
-            </div>
-          </div>
-          <br/>
-          <button type="submit" class="btn btn-default"><%= model ? 'Update' : 'Add' %></button>
-          <button type="button" class="btn cancel">Cancel</button>
-          <% if (model) { %>
-          <input type="hidden" name="id" value="<%= model.id %>" />
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <button type="button" data-model-id="<%= model.id %>" class="btn btn-danger delete-model">Delete Model</button>
-          <br/><br/>
-          <table class="text-muted stats-table">
-            <tr><td>model id </td><td><%= model.id %></td></tr>
-            <tr><td>created </td><td><%= model.get('creation') %> by <%= model.get('creator_id') ? model.get('creator_id') : '?' %></td></tr>
-            <tr><td>last updated </td><td><%= model.get('lastupdate') %> by <%= model.get('lastupdater_id') ? model.get('lastupdater_id') : '?' %></td></tr>
-          </table>
-          <br/>
-          <% } %>
         </fieldset>
+      </div>
+      <div class="col-lg-12">
+        <div class="col-lg-6">
+          <br/>
+          <fieldset>
+            <button type="submit" class="btn btn-default"><%= model ? 'Update' : 'Add' %></button>
+            <button type="button" class="btn cancel">Cancel</button>
+        <% if (model) { %>
+            <input type="hidden" name="id" value="<%= model.id %>" />
+            <button type="button" data-model-id="<%= model.id %>" class="btn btn-danger delete-model">Delete Model</button>
+          </div>
+          <div class="col-lg-6">
+            <br/><br/>
+            <table class="pull-right text-muted stats-table">
+              <tr><td>model id </td><td><%= model.id %></td></tr>
+              <tr><td>created </td><td><%= model.get('creation') %> by <%= model.get('creator_id') ? model.get('creator_id') : '?' %></td></tr>
+              <tr><td>last updated </td><td><%= model.get('lastupdate') %> by <%= model.get('lastupdater_id') ? model.get('lastupdater_id') : '?' %></td></tr>
+            </table>
+          <% } %>
+          </fieldset>
+        </div>
       </div>
     </form>
   </script>
@@ -794,6 +720,111 @@
     </div>
     </div>
     </div>
+  </script>
+
+  <script type="text/template" id="user-list-template">
+    <br/>
+    <div class="col-12">
+      <a href="#/users/new" class="btn btn-default"><i class="glyphicon glyphicon-plus-sign icon-white"></i> Add a User</a>
+    </div>
+    <br/><br/><br/>
+    <table class="table striped">
+      <thead>
+        <tr>
+          <th></th><th>First Name</th><th>Last Name</th><th>Email</th><th>Role</th><th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% _.each(users, function(user) { %>
+          <tr>
+            <td><i class="glyphicon glyphicon-user"></i></a>&nbsp;&nbsp;&nbsp;<a title="Edit" href="#/users/<%= user.id %>"><i class="glyphicon glyphicon-edit"></i></a></td>
+            <td><%= htmlEncode(user.get('firstname')) %></td>
+            <td><%= htmlEncode(user.get('lastname')) %></td>
+            <td><%= htmlEncode(user.get('email')) %></td>
+            <td><%= htmlEncode(user.get('role')) %></td>
+            <td><%= htmlEncode(user.get('status')) %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </script>
+
+  <script type="text/template" id="edit-user-template">
+    <form class="edit-user-form form-horizontal">
+      <legend><%= user ? 'Edit' : 'New' %> User</legend>
+      <div class="form-group">
+        <label class="control-label col-lg-3 col-sm-3 col-12" for="inputFirstname">Name</label>
+        <div class="col-lg-2 col-sm-2 col-6">
+          <input type="text" id="inputFirstname" class="form-control" name="firstname" value="<%= user ? user.get('firstname') : '' %>" placeholder="first" />
+        </div>
+        <div class="col-lg-3 col-sm-4 col-6">
+          <input type="text" id="inputLastname" class="form-control" name="lastname" value="<%= user ? user.get('lastname') : '' %>" placeholder="last" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-lg-3 col-sm-3" for="inputEmail">Email</label>
+        <div class="col-lg-5 col-sm-6">
+          <input type="email" id="inputEmail" class="form-control" name="email" value="<%= user ? user.get('email') : '' %>" placeholder="required" required />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-lg-3 col-sm-3" for="inputOrgname">Organization</label>
+        <div class="col-lg-5 col-sm-6">
+          <input type="text" id="inputOrgname" class="col-4 form-control" name="orgname" value="<%= user ? user.get('orgname') : '' %>" placeholder="" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-lg-3 col-sm-3" for="inputPhone">Phone</label>
+        <div class="col-lg-5 col-sm-6">
+          <input type="text" id="inputPhone" class="form-control" name="phone" value="<%= user ? user.get('phone') : '' %>" placeholder="" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-lg-3 col-sm-3" for="inputRole">Role</label>
+        <div class="col-lg-5 col-sm-6">
+          <select name="role" class="form-control" id="inputRole">
+            <% _(role_options).each(function(option) { %>
+            <option value="<%= option %>"<%= (user && (option == user.get('role'))) ? ' selected' : ''%>><%= option %></option>
+            <% }); %>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-lg-3 col-sm-3" for="inputStatus">Status</label>
+        <div class="col-lg-5 col-sm-6">
+          <select name="status" class="form-control" id="inputStatus">
+            <% _(status_options).each(function(option) { %>
+            <option value="<%= option %>"<%= (user && (option == user.get('status'))) ? ' selected' : ''%>><%= option %></option>
+            <% }); %>
+          </select>
+        </div>
+      </div>
+        <div class="form-group">
+          <label class="control-label col-lg-3 col-sm-3" for="inputNotes">Notes</label>
+          <div class="col-lg-5 col-sm-6">
+            <textarea id="inputNotes" class="form-control" name="notes" placeholder=""><%= user ? user.get('notes') : '' %></textarea>
+          </div>
+        </div>
+      <hr />
+      <div class="col-lg-12">
+        <div class="col-lg-6">
+          <button type="submit" class="btn btn-default"><%= user ? 'Update' : 'Add' %></button>
+          <button type="button" class="btn cancel">Cancel</button>
+        <% if (user) { %>
+          <input type="hidden" name="id" value="<%= user.id %>" />
+          <button type="button" data-user-email="<%= user.get('email') %>" class="btn user-pwreset">Reset Password</button>
+          <button type="button" data-user-id="<%= user.id %>" class="btn btn-danger delete-user">Delete User</button><br/><br/>
+        </div>
+        <div class="col-lg-6">
+          <table class="pull-right text-muted stats-table">
+            <tr><td>user id </td><td><%= user.id %></td></tr>
+            <tr><td>created </td><td><%= user.get('creation') %> by <%= user.get('creator_id') ? user.get('creator_id') : '?' %></td></tr>
+                <tr><td>last updated </td><td><%= user.get('lastupdate') %> by <%= user.get('lastupdater_id') ? user.get('lastupdater_id') : '?' %></td></tr>
+          </table>
+        <% }%>
+        </div>
+      </div>
+    </form>
   </script>
 
   <script type="text/template" id="edit-site-template">
@@ -931,7 +962,7 @@
         </div>
         </fieldset>
       </div>
-      <div class="col-12">
+      <div class="col-lg-12">
         <fieldset>
           <hr />
           <button type="submit" class="btn btn-default">Update</button>

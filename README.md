@@ -3,7 +3,6 @@ Fluff
 
 The CMS that stays out of your way.
 
-
 REQUIREMENTS: 
 
 - Node.js
