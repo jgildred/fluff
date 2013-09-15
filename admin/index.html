@@ -81,7 +81,7 @@
       <span class="icon-bar"></span>
     </button>
     <a class="navbar-brand pull-left" href="#/"><img class="brand" src="../images/fluff-logo.png" /></a>
-    <!-- Everything you want hidden at 480px or less, place within here -->
+    <!-- Everything hidden at 480px or less is placed within here -->
     <div class="nav-collapse collapse navbar-responsive-collapse">
       <ul class="nav navbar-nav">
         <% if(auth && admin) { %>
@@ -93,7 +93,6 @@
           <li id="site-tab"><a href="#/site">Site</a></li>
         <% } %>
       </ul>
-      <!-- .nav, .navbar-search, .navbar-form, etc -->
     </div>
   </script>
 
@@ -287,7 +286,11 @@
       <tbody>
         <% _.each(pages, function(page) { %>
           <tr>
-            <td><a title="View" href="<%= htmlEncode(page.get('path')) %>" target="_blank"><i class="glyphicon glyphicon-file"></i></a>&nbsp;&nbsp;&nbsp;<a title="Edit" href="#/pages/<%= htmlEncode(page.id) %>"><i class="glyphicon glyphicon-edit"></i></a></td>
+            <td>
+              <a title="View" href="<%= htmlEncode(page.get('path')) %>" target="_blank"><i class="glyphicon glyphicon-file"></i></a>&nbsp;&nbsp;&nbsp;
+              <a title="Edit" href="#/pages/<%= htmlEncode(page.id) %>/edit"><i class="glyphicon glyphicon-edit"></i></a>&nbsp;&nbsp;&nbsp;
+              <a title="Info" href="#/pages/<%= htmlEncode(page.id) %>"><i class="glyphicon glyphicon-info-sign"></i></a>
+            </td>
             <td><%= htmlEncode(page.get('name')) %></td>
             <td><%= htmlEncode(page.get('path')) %></td>
             <td><%= htmlEncode(views.get(page.get('view_id')).get('name')) %></td>
@@ -301,8 +304,8 @@
     </table>
   </script>
 
-  <script type="text/template" id="edit-page-template">
-    <form class="edit-page-form form-horizontal">
+  <script type="text/template" id="info-page-template">
+    <form class="info-page-form form-horizontal">
       <legend><%= page ? 'Edit' : 'New' %> Page</legend>
       <div class="col-lg-6">
         <fieldset>
@@ -404,7 +407,11 @@
       <tbody>
         <% _.each(views, function(view) { %>
           <tr>
-            <td><i class="glyphicon glyphicon-list-alt"></i></a>&nbsp;&nbsp;&nbsp;<a title="Edit" href="#/views/<%= view.id %>"><i class="glyphicon glyphicon-edit"></i></a></td>
+            <td>
+              <i class="glyphicon glyphicon-list-alt"></i></a>&nbsp;&nbsp;&nbsp;
+              <a title="Edit" href="#/views/<%= htmlEncode(view.id) %>/edit"><i class="glyphicon glyphicon-edit"></i></a>&nbsp;&nbsp;&nbsp;
+              <a title="Info" href="#/views/<%= htmlEncode(view.id) %>"><i class="glyphicon glyphicon-info-sign"></i></a>
+            </td>
             <td><%= htmlEncode(view.get('name')) %></td>
             <td><%= htmlEncode(view.get('content_type')) %></td>
             <td><%= htmlEncode(view.get('lastupdate')) %></td>
@@ -414,12 +421,12 @@
     </table>
   </script>
 
-  <script type="text/template" id="edit-view-template">
-    <form class="edit-view-form form-horizontal">
+  <script type="text/template" id="info-view-template">
+    <form class="info-view-form form-horizontal">
       <legend><%= view ? 'Edit' : 'New' %> View</legend>
       <div class="col-lg-6">
         <fieldset>
-          <label><a title="Full screen editor" class="fullscreen-page"><i class="glyphicon glyphicon-fullscreen"></i></a>&nbsp;&nbsp;&nbsp;<span class="text-muted">Template</span></label>
+          <label><a title="Full screen editor" class="fullscreen-view"><i class="glyphicon glyphicon-fullscreen"></i></a>&nbsp;&nbsp;&nbsp;<span class="text-muted">Template</span></label>
           <div id="editor" name="template" class="col-4 base-editor small-editor"></div>
         </fieldset>
       </div>

@@ -178,7 +178,7 @@ var getFormData = function(form) {
   }
 }
 
-function toggleFullscreen(editor, name) {
+function toggleFullscreen(editor) {
   var e   = $('#editor');
   var fse = $('#fullscreen-editor-container');
   if (fse.hasClass('hidden')) {
@@ -217,13 +217,15 @@ function renderEditor(element_id, content, cursor, mode, view, fullscreen) {
   document.getElementById(element_id).style.fontSize='14px';
   editor.getSession().setUseWrapMode(true);
   editor.setValue(content);
-  editor.commands.addCommand({
-    name: 'toggleFullscreen',
-    bindKey: {win: 'Esc',  mac: 'Esc'},
-    exec: function(editor) {
-      toggleFullscreen(editor, ddd);
-    }
-  });
+  if (!view.isEditView) {
+    editor.commands.addCommand({
+      name: 'toggleFullscreen',
+      bindKey: {win: 'Esc',  mac: 'Esc'},
+      exec: function(editor) {
+        toggleFullscreen(editor);
+      }
+    });
+  }
   if (view) {
     editor.targetView = view;
     if (fullscreen) {
@@ -844,16 +846,16 @@ var UserDetailView = Backbone.View.extend({
 var PageDetailView = Backbone.View.extend({
   el: '.page',
   events: {
-    'submit .edit-page-form'  : 'savePage',
+    'submit .info-page-form'  : 'savePage',
     'click  .delete-page'     : 'deletePage',
     'click  .cancel'          : 'cancel',
-    'click  .fullscreen-page' : 'fullscreen'
+    'click  .fullscreen-page' : 'fullscreenEditView'
   },
-  fullscreen: function (ev) {
+  fullscreenEditView: function (ev) {
     toggleFullscreen(this.editor);
   },
   submitForm: function () {
-    $('.edit-page-form').submit();
+    $('.info-page-form').submit();
   },
   savePage: function (ev) {
     var pageDetails = getFormData(ev.currentTarget);
@@ -911,7 +913,7 @@ var PageDetailView = Backbone.View.extend({
           that.page = new Page({_id: options.id});
           that.page.fetch({
             success: function (page) {
-              var template = _.template($('#edit-page-template').html(), {page: page, views: that.views, access_options: that.access_options, status_options: that.status_options});
+              var template = _.template($('#info-page-template').html(), {page: page, views: that.views, access_options: that.access_options, status_options: that.status_options});
               that.$el.html(template);
               that.editor = renderEditor('editor', that.page.get('content'), that.page.get('cursor'), null, that);
               $('#fullscreen-editor-controlbar').html($('#editor-controlbar-template').html());
@@ -924,7 +926,7 @@ var PageDetailView = Backbone.View.extend({
           });
         } else {
           that.page = null;
-          var template = _.template($('#edit-page-template').html(), {page: that.page, views: that.views, access_options: that.access_options, status_options: that.status_options});
+          var template = _.template($('#info-page-template').html(), {page: that.page, views: that.views, access_options: that.access_options, status_options: that.status_options});
           that.$el.html(template);
           that.editor = renderEditor('editor', null, { row: 0, column: 0 }, null, that);
           $('#fullscreen-editor-controlbar').html($('#editor-controlbar-template').html());
@@ -934,9 +936,78 @@ var PageDetailView = Backbone.View.extend({
             toggleFullscreen(that.editor);
           });
         }
-        
       }
     });
+  }
+});
+
+// Setup the full screen edit view
+var FullScreenEditView = Backbone.View.extend({
+  el: '#fullscreen-editor-container',
+  isEditView: true,
+  saveEditor: function () {
+    var that = this;
+    var modelDetails = {};
+    modelDetails[this.dataField] = this.editor.getValue();
+    modelDetails.cursor  = this.editor.selection.getCursor();
+    this.model.save(modelDetails, {
+      success: function (model) {
+        if (that.type) {
+          console.log(that.type + ' saved');
+        }
+        else {
+          console.log('page saved');
+        }
+      },
+      error: function (model, xhr) {
+        console.log(xhr);
+        if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
+          alertView.render({label:"Save", msg: $.parseJSON(xhr.responseText).msg});
+        }
+      }
+    });
+    return false;
+  },
+  closeEditor: function () {
+    this.saveEditor();
+    window.history.back();
+    $('#fullscreen-editor-container').addClass('hidden');
+    $('.save-fullscreen-editor').unbind('click');
+    $('.close-fullscreen-editor').unbind('click');
+  },
+  render: function (options) {
+    if (options.id) {
+      var that = this;
+      if (options.type) {
+        this.type = options.type;
+      }
+      if (this.type == 'view') {
+        this.model = new View({_id: options.id});
+      }
+      else {
+        this.model = new Page({_id: options.id});
+      }
+      this.model.fetch({
+        success: function (model) {
+          if (that.type == 'view') {
+            that.dataField = 'template';
+          }
+          else {
+            that.dataField = 'content';
+          }
+          that.editor = renderEditor('fullscreen-editor', that.model.get(that.dataField), that.model.get('cursor'), null, that, true);
+          $('#fullscreen-editor-controlbar').html($('#editor-controlbar-template').html());
+          $('.label-fse').html(that.model.get('name') + ' ' + that.dataField.humanize());
+          $('#fullscreen-editor-container').removeClass('hidden');
+          $('.save-fullscreen-editor').click(function() {
+            that.saveEditor();
+          });
+          $('.close-fullscreen-editor').click(function() {
+            that.closeEditor();
+          });
+        }
+      });
+    }
   }
 });
 
@@ -944,7 +1015,7 @@ var PageDetailView = Backbone.View.extend({
 var ViewDetailView = Backbone.View.extend({
   el: '.page',
   events: {
-    'submit .edit-view-form' : 'saveView',
+    'submit .info-view-form' : 'saveView',
     'click  .delete-view'    : 'deleteView',
     'click  .cancel'         : 'cancel',
     'click  .fullscreen-view': 'fullscreenEditView'
@@ -953,7 +1024,7 @@ var ViewDetailView = Backbone.View.extend({
     toggleFullscreen(this.editor);
   },
   submitForm: function () {
-    $('.edit-view-form').submit();
+    $('.info-view-form').submit();
   },
   saveView: function (ev) {
     var viewDetails = getFormData(ev.currentTarget);
@@ -1002,7 +1073,7 @@ var ViewDetailView = Backbone.View.extend({
       this.view = new View({_id: options.id});
       this.view.fetch({
         success: function (view) {
-          var template = _.template($('#edit-view-template').html(), {view: view, content_types: that.content_types}); 
+          var template = _.template($('#info-view-template').html(), {view: view, content_types: that.content_types}); 
           that.$el.html(template);
           that.editor = renderEditor('editor', that.view.get('template'), that.view.get('cursor'), null, that);
           $('#fullscreen-editor-controlbar').html($('#editor-controlbar-template').html());
@@ -1015,7 +1086,7 @@ var ViewDetailView = Backbone.View.extend({
       })
     } else {
       this.view = null;
-      var template = _.template($('#edit-view-template').html(), {view: this.view, content_types: this.content_types});
+      var template = _.template($('#info-view-template').html(), {view: this.view, content_types: this.content_types});
       this.$el.html(template);
       this.editor = renderEditor('editor', null, { row: 0, column: 0 }, null, that);
       $('#fullscreen-editor-controlbar').html($('#editor-controlbar-template').html());
@@ -1653,10 +1724,9 @@ var loginView            = new LoginView();
 var pwresetView          = new PwresetView();
 var pwchangeView         = new PwchangeView();
 var alertView            = new AlertView();
-var userListView         = new UserListView();
-var userDetailView       = new UserDetailView();
 var pageListView         = new PageListView();
 var pageDetailView       = new PageDetailView();
+var fullScreenEditView   = new FullScreenEditView();
 var viewListView         = new ViewListView();
 var viewDetailView       = new ViewDetailView();
 var varListView          = new VarListView();
@@ -1666,6 +1736,8 @@ var modelDetailView      = new ModelDetailView();
 var modelBrowseView      = new ModelBrowseView();
 var arrangeColumnsView   = new ArrangeColumnsView();
 var importView           = new ImportView();
+var userListView         = new UserListView();
+var userDetailView       = new UserDetailView();
 var siteDetailView       = new SiteDetailView();
 
 // Map an event to each route
@@ -1679,22 +1751,24 @@ var Router = Backbone.Router.extend({
       "pwreset/:email"    : "pw-reset",
       "pwchange"          : "pw-change",
       "pwchange/:token"   : "pw-change",
-      "users"             : "list-users",
-      "users/new"         : "edit-user",
-      "users/:id"         : "edit-user",
       "verify/:token"     : "verify-email",
       "pages"             : "list-pages",
-      "pages/new"         : "edit-page",
-      "pages/:id"         : "edit-page",
+      "pages/new"         : "info-page",
+      "pages/:id"         : "info-page",
+      "pages/:id/edit"    : "edit-page",
       "views"             : "list-views",
-      "views/new"         : "edit-view",
-      "views/:id"         : "edit-view",
+      "views/new"         : "info-view",
+      "views/:id"         : "info-view",
+      "views/:id/edit"    : "edit-view",
       "vars"              : "list-vars",
       "vars/new"          : "add-var",
       "models"            : "list-models",
       "models/new"        : "edit-model",
       "models/:id"        : "edit-model",
       "models/:id/browse" : "browse-model",
+      "users"             : "list-users",
+      "users/new"         : "edit-user",
+      "users/:id"         : "edit-user",
       "site"              : "edit-site"
     }
 });
@@ -1768,20 +1842,30 @@ router.on('route:list-pages', function() {
   // Render page list view
   pageListView.render();
 });
-router.on('route:edit-page', function(id) {
+router.on('route:info-page', function(id) {
   navselect("pages");
   // Render page detail view
   pageDetailView.render({id: id});
+});
+router.on('route:edit-page', function(id) {
+  navselect("pages");
+  // Render edit view
+  fullScreenEditView.render({id: id, type: 'page'});
 });
 router.on('route:list-views', function() {
   navselect("views");
   // Render view list view
   viewListView.render();
 });
-router.on('route:edit-view', function(id) {
+router.on('route:info-view', function(id) {
   navselect("views");
   // Render view detail view
   viewDetailView.render({id: id});
+});
+router.on('route:edit-view', function(id) {
+  navselect("views");
+  // Render edit view
+  fullScreenEditView.render({id: id, type: 'view'});
 });
 router.on('route:list-vars', function() {
   navselect("vars");
