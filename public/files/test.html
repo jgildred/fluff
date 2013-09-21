@@ -33,33 +33,33 @@
 // if no li[field] then build 1 li from schema
 // if [vertical] then build lis for each field with span for name and span for value
 
-// rules for span/div[model]:
+// build rules for span/div[model]:
 // if no tag[field] then build spans for span, divs for div
 // if child[template] then use as template
 
-// rules for span/div[model/id]:
+// build rules for span/div[model/id]:
 // if no tag[field] then build spans for span, divs for div
 // if child[template] then use as template
 // if span/div[model/id, field], then fill with field value removing existing contents
 
-// rules for form[model]:
+// build rules for form[model]:
 // if no input,textarea,select[field] then build labels and empty textboxes for each string/number/date field, checkbox for each bool, and selects for each string/number/date with enums, add button[type=button, submit=true] and linked event in the backbone view
 // if tag[field] checkboxes must be bool, selects must have enums
 
-// rules for form[model/id]:
+// build rules for form[model/id]:
 // if no input,textarea,select[field] then build labels and textboxes for each string/number/date field, checkboxes for each bool, and selects for each string/number/date with enums, add button[type=button, submit=true] and linked event in the backbone view
 // if tag[field] checkboxes must be bool, selects must have enums
 
-// rules for select[model]:
+// build rules for select[model]:
 // if select[model, field] then build options from data
 // if option[field] then build options from data
 
-// rules for select[model/id]:
+// build rules for select[model/id]:
 // if select[model/id,field] then build options from enums
 // if option[field] then build options from enums
 // if default set in schema, then set it as selected option
 
-// rules for form[auth]
+// build rules for form[auth]
 // if no input[name=email] then create it
 // if no input[name=password] then create it
 // if no button[submit] then create it with linked event in backbone view
@@ -69,7 +69,11 @@
 
 <form model="things"></form><br/><br/>
 
-<form model="things/5218787cbb6faba717000001"></form><br/>
+<form model="things/52394c0e5b7758c605000007">
+	<input type="text" field="name"/>
+	<input type="text" field="color"/>
+	<select model="things"></select>
+</form><br/>
 
 <table model="things">
 	<tr><th>My Colors</th><th>The Names</th></tr>
@@ -79,7 +83,7 @@
 <table model="things">
 </table><br/>
 
-<table model="things/5218787cbb6faba717000001" vertical></table><br/>
+<table model="things/52394c0e5b7758c605000007" vertical></table><br/>
 
 <ul model="things">
 	<li><span field="name"></span>, <span field="color"></span></li>
@@ -87,11 +91,11 @@
 
 <ul model="things"></ul><br/>
 
-<ul model="things/5218787cbb6faba717000001"></ul><br/>
+<ul model="things/52394c0e5b7758c605000007"></ul><br/>
 
 <ol model="things"></ol><br/>
 
-<ol model="things/5218787cbb6faba717000001"></ol><br/>
+<ol model="things/52394c0e5b7758c605000007"></ol><br/>
 
 <span model="things" fill="prepend">
 	<span template><strong field="name"></strong><span field="color"></span></span>
@@ -99,7 +103,7 @@
 
 <div model="things" fill="prepend"></div><br/><br/>
 
-<span model="things/5218787cbb6faba717000001" field="name"></span>
+<span model="things/52394c0e5b7758c605000007" field="name"></span>
 
 <script>
 	fluff.init({

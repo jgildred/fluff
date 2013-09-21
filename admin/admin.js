@@ -1,6 +1,6 @@
 
 // automatically run upon loading this js file
-function init () {
+var init = function () {
 
   // make sure the api key is correct if required
   var version = '0.8';
@@ -61,13 +61,13 @@ function init () {
 }
 
 // Helper functions
-function objectType(obj) {
+var objectType = function (obj) {
   return Object.prototype.toString.call(obj).slice(8, -1);
 }
-function htmlEncode(value) {
+var htmlEncode = function (value) {
   return $('<div/>').text(value).html();
 }
-function flattenArray(objectArray, key) {
+var flattenArray = function (objectArray, key) {
   var array = [];
   objectArray.forEach(function (object) {
     array.push(object[key]);
@@ -105,14 +105,14 @@ $.fn.serializeObject = function() {
   return o;
 };
 // use the "good" Collection methods to emulate Array.splice
-function hacked_splice(index, howMany /* model1, ... modelN */) {
+var hacked_splice = function (index, howMany /* model1, ... modelN */) {
   var args  = _.toArray(arguments).slice(2).concat({at: index}),
     removed = this.models.slice(index, index + howMany);
   this.remove(removed).add.apply(this, args);
   return removed;
 }
 // show a log of events getting fired
-function log_events(event, model) {
+var log_events = function (event, model) {
   var now = new Date();
   $("#example1_events").prepend(
       $("<option/>").text([
@@ -1583,9 +1583,8 @@ var ImportView = Backbone.View.extend({
         $('#import-modal').modal('hide');
         alertView.render({label:"Import complete", msg: "Import was successful.", onclose: onclose});
       },
-      error: function (data, xhr) {
+      error: function (xhr) {
         $('#import-modal').modal('hide');
-        console.log(xhr);
         if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
           alertView.render({label:"Import problem", msg: $.parseJSON(xhr.responseText).msg});
         }

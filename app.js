@@ -36,6 +36,15 @@ var lowerCaseObject = function (obj) {
 }
 exports.lowerCaseObject = lowerCaseObject;
 
+var flattenArray = function (objectArray, key) {
+  var array = [];
+  objectArray.forEach(function (object) {
+    array.push(object[key]);
+  });
+  return array;
+}
+exports.flattenArray = flattenArray;
+
 var dehumanize = function (string) {
   return string.replace(" ", "_").toLowerCase();
 }

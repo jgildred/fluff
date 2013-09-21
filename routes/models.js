@@ -33,35 +33,40 @@ exports.create = function (req, res) {
         else {
           req.body.model_id = app.dehumanize(req.body.model_id);
         }
-        // If there is a schema in the request use it
-        if (!req.body.schema_data && req.body.fieldset) {
-          req.body.schema_data = app.toSchemaData(req.body.fieldset);
-        }
-        if (req.body.schema_data) {
-          app.Models[req.body.name] = app.toModel({
-            model_id    : req.body.model_id, 
-            schema_data : req.body.schema_data
-          });
-        }
-        // If there is import data, use the first line as the schema
-        if (req.body.url || req.files) {
-          resource.import(req, res, null, function (req, res, resource, importData) {
-            if (!app.Models[req.body.name]) {
-              req.body.schema_data = app.toSchemaData(importData[0]);
-              app.Models[req.body.name] = app.toModel({
-                model_id    : req.body.model_id, 
-                schema_data : req.body.schema_data
-              });
-            }
-            doCreate(req, res, importData);
-          });
+        if (app.flattenArray(app.App.get('models'), 'model_id').indexOf(req.body.model_id)) {
+          app.msgResponse(req, res, 400, 'The model name is already in use.');
         }
         else {
-          if (app.Models[req.body.name]) {
-            doCreate(req, res);
+          // If there is a schema in the request use it
+          if (!req.body.schema_data && req.body.fieldset) {
+            req.body.schema_data = app.toSchemaData(req.body.fieldset);
+          }
+          if (req.body.schema_data) {
+            app.Models[req.body.name] = app.toModel({
+              model_id    : req.body.model_id, 
+              schema_data : req.body.schema_data
+            });
+          }
+          // If there is import data, use the first line as the schema
+          if (req.body.url || req.files) {
+            resource.import(req, res, null, function (req, res, resource, importData) {
+              if (!app.Models[req.body.name]) {
+                req.body.schema_data = app.toSchemaData(importData[0]);
+                app.Models[req.body.name] = app.toModel({
+                  model_id    : req.body.model_id, 
+                  schema_data : req.body.schema_data
+                });
+              }
+              doCreate(req, res, importData);
+            });
           }
           else {
-            app.msgResponse(req, res, 400, 'The model must have a schema.');
+            if (app.Models[req.body.name]) {
+              doCreate(req, res);
+            }
+            else {
+              app.msgResponse(req, res, 400, 'The model must have a schema.');
+            }
           }
         }
       }
