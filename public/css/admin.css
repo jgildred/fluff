@@ -71,8 +71,14 @@ a.navbar-brand {
   margin-bottom: 0px;
   color: #c0c0c0;
 }
+.label-fse-container {
+  margin-left: 10px;
+}
 .btn-fse {
-  margin-top: 1px;
+  margin-top: -38px;
+}
+.btn-fse-container {
+  width: 100px;
 }
 .x-overflow-scroll {
   overflow-x: scroll;

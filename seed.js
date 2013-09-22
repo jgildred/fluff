@@ -43,7 +43,7 @@ exports.Data = {
   },{
     "name"         : "Styles",
     "path"         : "/styles.css",  // page paths must be unique
-    "content"      : ".example {\n\tmargin-left: auto;\n\tmargin-right: auto;\n}\nh1.example {\n\tmargin-top: 100px;\n\tmargin-bottom: 100px;\n}\ntable.example th,td {\n\tfont-size: 20px;\n\tpadding: 10px;\n}",
+    "content"      : ".example {\n\tmargin-left: auto;\n\tmargin-right: auto;\n}\nh1.example {\n\tmargin-top: 50px;\n\tmargin-bottom: 50px;\n}\ntable.example th,td {\n\tfont-size: 20px;\n\tpadding: 10px;\n}",
     "status"       : "Published",    // 'Published' or 'Unpublished'
     "access"       : "Public"        // 'Public', 'Users' or 'Admins'
   }],
