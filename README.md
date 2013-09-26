@@ -13,31 +13,31 @@ INSTALL on local machine:
 1. install [Node.js](http://nodejs.org) and [MongoDB](http://mongodb.org) first
 2. clone this repo or download the [zip package](https://github.com/jgildred/fluff/archive/master.zip)
 3. cd to the root dir of the app
-4. type 'npm install'
-5. edit config.js: db_uri should point to an empty Mongo DB, and set initialize to true
-6. type 'node launch'
+4. type "npm install"
+5. edit config.js: db_uri should point to an empty Mongo DB, and set initialize to "true"
+6. type "node launch"
 7. open http://localhost:3000/fluff/admin in your browser
-8. login with 'admin@domain.com', password 'fluff'
+8. login with "admin@domain.com", password "fluff"
 
 INSTALL on Heroku:
 
 1. clone this repo or download the [zip package](https://github.com/jgildred/fluff/archive/master.zip)
 2. cd to the root dir of the app
-3. edit config.js: app_service is 'Heroku', db_service is 'MongoLab', initialize is true
+3. edit config.js: app_service is "Heroku", db_service is "MongoLab", initialize is "true"
 4. create a new app on Heroku and get the MongoLab addon
-5. push to Heroku (type 'git push heroku master')
+5. push to Heroku (type "git push heroku master")
 6. open the Heroku app url in your browser
-7. login with 'admin@domain.com', password 'fluff'
+7. login with "admin@domain.com", password "fluff"
 
 INSTALL on AppFog:
 
 1. clone this repo or download the [zip package](https://github.com/jgildred/fluff/archive/master.zip)
 2. cd to the root dir of the app
-3. edit config.js: app_service is 'AppFog', db_service is 'MongoDB', initialize is true
+3. edit config.js: app_service is "AppFog", db_service is "MongoDB", initialize is "true"
 4. create a new app on AppFog and bind the MongoDB service
-5. push to AppFog (type 'af update [name of app]')
+5. push to AppFog (type "af update [name of app]")
 6. open the AppFog app url in your browser
-7. login with 'admin@domain.com', password 'fluff'
+7. login with "admin@domain.com", password "fluff"
 
 ADMIN GUIDE:
 
@@ -56,9 +56,13 @@ REST API:
 
 See the [README-API.md](README-API.md) for a list of APIs.
 
+TESTS:
+
+Currently there is only a basic smoke test. Feel free to add more test cases if you're feeling testy. To run the smoke test, in the root dir of the app type "mocha".
+
 TO DO:
 
-- support for selects in fluff.js
+- fluff.js harvest all collections before building
 - paging of results
 - paged display in admin
 - sort in admin list views
