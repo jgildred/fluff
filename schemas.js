@@ -10,7 +10,7 @@ var enums = {
   db_service   : [ "Other MongoDB", "MongoLab" ],
   user_role    : [ "User", "Admin" ],
   user_status  : [ "Active", "Inactive", "Unverified" ],
-  access_level : [ "Public", "Users", "Admins" ],
+  access_level : [ "Public", "Users", "Owner", "Admins" ],
   page_status  : [ "Published", "Unpublished" ],
   content_type : [ "text/html", "application/javascript", "text/css", "application/json", "application/xml", "text/plain"]
 }

@@ -4,21 +4,40 @@
 // Dependencies
 var express    = require('express'),
     http       = require('http'),
-    mongoose   = require('mongoose'),
-    mime       = require('mime'),
+    mongoose   = require('mongoose');
+
+// Setup globals
+var Fluff  = {},
+    app    = express(),
+    Server = http.createServer(app),
+    PortChanged = false, 
+    Site, User, View, Page, Var, Model, 
+    Models   = {},
+    Plugins  = {},
+    ObjectId = mongoose.Schema.Types.ObjectId,
+    Buffer   = mongoose.Schema.Types.Buffer,
+    Mixed    = mongoose.Schema.Types.Mixed,
+    Callback;
+exports.Fluff  = Fluff;
+Fluff.app      = app;
+exports.App    = app;
+exports.Server = Server;
+exports.Models = Models;
+
+// Remaining dependencies
+var mime       = require('mime'),
     nodemailer = require('nodemailer'),
+    fs         = require('fs');
     config     = require('./config'),
     schemas    = require('./schemas'),
     csrf       = require('./csrf'),
+    site       = require('./routes/site'),
     auth       = require('./routes/auth'),
     users      = require('./routes/users'),
     models     = require('./routes/models'),
     resource   = require('./routes/resource');
 
-// Create the app
-var app = express();
-exports.App = app;
-
+// Helper functions
 var handleError = function (err) {
   console.log("Bad things happened: " + err);
 }
@@ -49,6 +68,85 @@ var dehumanize = function (string) {
   return string.replace(" ", "_").toLowerCase();
 }
 exports.dehumanize = dehumanize;
+
+// Init all plugins
+var initPlugins = function (req, res, callback) {
+  var path = __dirname + '/plugins';
+  fs.readdir(path, function (err, subDirectories) {
+    console.log("Detected plugins: " + subDirectories.join(","));
+    subDirectories.forEach (function (dirName, index) {
+      if ((subDirectories.length == index + 1) && (callback)) {
+        initOnePlugin(req, res, dirName, callback);
+      }
+      else {
+        initOnePlugin(req, res, dirName);
+      }
+    });
+  });
+}
+
+// Init one plugin
+var initOnePlugin = function (req, res, name, callback) {
+  var path = __dirname + '/plugins';
+  fs.exists(path + '/' + name + '/plug.js', function (exists) {
+    if (exists) {
+      if (Plugins[name]) {
+        console.log("Could not initialize " + name + " plugin as another already exists with the same name.");
+        if (callback) {
+          callback(req, res);
+        }
+      }
+      else {
+        Plugins[name] = require('./plugins/' + name + '/plug');
+        Plugins[name].init(function () {
+          console.log("Initialized " + name + " plugin.");
+          if (callback) {
+            callback(req, res);
+          }
+        });
+      }
+    }
+    else {
+      console.log("Could not find " + name + " plugin in the plugins directory.");
+    }
+    if (callback) {
+      callback(req, res);
+    }
+  });
+}
+
+// Load all plugins
+var loadPlugins = function (callback, callbackEach) {
+  for (plugin in Plugins) {
+    if (callbackEach) {
+      loadOnePlugin(plugin, callbackEach);
+    }
+    else {
+      loadOnePlugin(plugin);
+    }
+  }
+  if (callback) {
+    callback();
+  }
+}
+
+// Load one plugin
+var loadOnePlugin = function (name, callback) {
+  if (Plugins[name]) {
+    Plugins[name].load(function () {
+      console.log("Loaded " + name + " plugin.");
+      if (callback) {
+        callback();
+      }
+    });
+  }
+  else {
+    console.log("Could not load " + name + " plugin as it was not initialized.");
+    if (callback) {
+      callback();
+    }
+  }
+}
 
 // Load the default config
 var loadDefaults = function (custom_config) {
@@ -83,18 +181,6 @@ var loadDefaults = function (custom_config) {
   app.set('config', active_config);
 }
 
-// Setup globals
-var Server = http.createServer(app),
-    PortChanged = false, 
-    Site, User, View, Page, Var, Model, 
-    Models = {},
-    ObjectId = mongoose.Schema.Types.ObjectId,
-    Buffer   = mongoose.Schema.Types.Buffer,
-    Mixed    = mongoose.Schema.Types.Mixed,
-    Callback;
-exports.Server = Server;
-exports.Models = Models;
-
 // Setup DB connection
 var connectDb = function (req, res, callback) {
   console.log("Connecting to " + app.get('config').db_uri);
@@ -121,6 +207,9 @@ var connectDb = function (req, res, callback) {
   userSchema.methods.pwMatch = function (password) {
     var crypto = require('crypto');
     var hash   = crypto.createHash('md5').update(password + this.salt).digest("hex");
+    console.log('password: ' + password);
+    console.log('client hash:' + hash);
+    console.log('db hash: ' + this.pwhash);
     return (this.pwhash == hash) ?
       true : false;
   }
@@ -198,12 +287,26 @@ var doIfHasAccess = function (req, res, level, resourceScope, callback) {
   }
   else {
     if (HasAccess(req, res, level, resourceScope)) {
-      // Special case for update site
-      if ((callback == resource.update) && (resourceScope == Site)) {
-        callback(req, res, resourceScope, null, reloadConfig);
+      // if restricted to owner then positive result still needs to match user_id
+      if (level == "Owner") {
+        resourceScope.findOne({_id: req.params.id}).exec(function (err, data) {
+          if (data  && (req.session.user_id == data.user_id)) {
+            console.log(data.user_id + " has access to the requested item.");
+            callback(req, res, resourceScope);
+          }
+          else {
+            msgResponse(req, res, 404, "You must be the owner.");
+          }
+        });
       }
       else {
-        callback(req, res, resourceScope);
+        // Special case for update site and model which require reload config
+        if ([resource.create, resource.update, resource.remove].indexOf(callback) && ([Site, Model].indexOf(resourceScope))) { 
+          callback(req, res, resourceScope, null, reloadConfig);
+        }
+        else {
+          callback(req, res, resourceScope);
+        }
       }
     }
   }
@@ -229,6 +332,16 @@ var HasAccess = function(req, res, level, resourceScope){
           msgResponse(req, res, 403, "You must be the correct user or admin.");
           return false;
         }
+      }
+      break;
+    case 'Owner':
+      console.log("Restricted to owner only.");
+      if (resourceScope && (resourceScope.modelName != "User")) {
+        return true;
+      }
+      else {
+        msgResponse(req, res, 404, "You are not the owner because you can't own a user.");
+        return false;
       }
       break;
     case 'Admins':
@@ -351,7 +464,7 @@ var initDb = function (req, res, callback) {
     if (!err && (count == 0)) { 
 
       console.log("No site in the DB yet.");
-      Site.create(seed.Data.sites, function (err) {
+      Site.create(seed.Data.site, function (err) {
         console.log("Creating a site...");
         if (err) return handleError(err);
 
@@ -485,19 +598,38 @@ var loadConfig = function (req, res, callback) {
 var setupMailer = function () {
   var mailerData = {
     auth: {
-      user: app.get('config').smtp.username,
-      pass: app.get('config').smtp.password
+      user: Fluff.app.get('config').smtp.username,
+      pass: Fluff.app.get('config').smtp.password
     }
   };
-  if (app.get('config').smtp.service == "Other SMTP") {
-    mailerData.host             = app.get('config').smtp.host; // hostname
-    mailerData.secureConnection = app.get('config').smtp.ssl;  // use SSL
-    mailerData.port             = app.get('config').smtp.port;
+  if (Fluff.app.get('config').smtp.service == "Other SMTP") {
+    mailerData.host             = Fluff.app.get('config').smtp.host; // hostname
+    mailerData.secureConnection = Fluff.app.get('config').smtp.ssl;  // use SSL
+    mailerData.port             = Fluff.app.get('config').smtp.port;
   }
   else {
-    mailerData.service = app.get('config').smtp.service;
+    mailerData.service = Fluff.app.get('config').smtp.service;
   }
-  exports.mailer = nodemailer.createTransport("SMTP", mailerData);
+  Fluff.mailer = nodemailer.createTransport("SMTP", mailerData);
+}
+
+Fluff.emailToUser = function(mailinfo) {
+  if (mailinfo) {
+    console.log("MAIL TO USER: from " + app.get('config').email_from + ", to " + mailinfo.user.email + ", mailer info is " + JSON.stringify(Fluff.mailer));
+    Fluff.mailer.sendMail({
+      from:    app.get('config').email_from,
+      to:      mailinfo.user.email,
+      subject: mailinfo.subject,
+      text:    mailinfo.body
+    }, function(error) {
+      if(error){
+        console.log('Mailer error occured:');
+        console.log(error.message);
+        return;
+      }
+      Fluff.mailer.close();
+    });
+  }
 }
 
 var requireApiKey = function(req, res, next) {
@@ -775,9 +907,8 @@ var adminRoutes = function () {
   app.del  (base + '/models/:id', models.remove);
 
   // Site routes (only one site can and must exist)
-  app.get (base + '/sites',     function(req, res) {doIfHasAccess(req, res, 'Admins', Site, resource.find);} );
-  app.get (base + '/sites/:id', function(req, res) {doIfHasAccess(req, res, 'Admins', Site, resource.findone);} );
-  app.put (base + '/sites/:id', function(req, res) {doIfHasAccess(req, res, 'Admins', Site, resource.update);} );
+  app.get (base + '/site', function(req, res) {doIfHasAccess(req, res, 'Admins', Site, site.findone);} );
+  app.put (base + '/site', function(req, res) {doIfHasAccess(req, res, 'Admins', Site, site.update);} );
 }
 
 var staticType = function (req, res, next) {
@@ -810,39 +941,41 @@ var applyConfig = function (req, res, callback) {
   // Site url is useful for email notifications which link back to the site
   var protocol  = app.get('config').ssl  ? "https://" : "http://";
   var port      = app.get('config').port ? ":" + app.get('config').port : "";
-  var siteUrl   = protocol + app.get('config').domain;
+  var siteUrl   = protocol + app.get('config').domain + port;
   // Heroku and other paas will not expose the internal server port
   if (app.get('config').app_service != "Custom") {
     siteUrl += port;
   }
-  exports.siteUrl = siteUrl;   // Used by some routes
+  exports.siteUrl = siteUrl; // Used by some routes
 
   // Run all the setup routines with the latest config
-  setupMailer();               // Uses app.config smtp
-  app.use(allowCrossDomain);   // Uses app.config cors
-  app.use(requireApiKey);      // Uses app.config api_key
-  app.use(csrf.check);         // Uses app.config fluff_path
-  adminRoutes();       // Uses app.config fluff_path
-  modelRoutes();       // Uses app.config fluff_path
-  notFoundRoute();     // Uses app.config fluff_path
-  app.use(app.router); // Routes are processed before cmsPages
-  app.use(cmsPages);   // Doesn't use app.config, but runs on every request
-  staticFiles();       // Static files are processed last
-  // Restart the server if the port is changed
-  if (Server.address()) {
-    console.log("port is " + Server.address().port);
-    if (Server.address().port != app.get('config').port) {
-      var time = new Date();
-      console.log("Closing server at " + time + " and waiting for connections to time out...");
-      Server.close(function (req, res, callback) {
-        console.log("Starting back up at " + time + " and reloading config from DB...");
-        startListening(true, callback);
-      });
+  setupMailer();             // Uses app.config smtp
+  app.use(allowCrossDomain); // Uses app.config cors
+  app.use(requireApiKey);    // Uses app.config api_key
+  app.use(csrf.check);       // Uses app.config fluff_path
+  adminRoutes();             // Uses app.config fluff_path
+  modelRoutes();             // Uses app.config fluff_path
+  loadPlugins(function () {  // Load plugins last to allow overriding config
+    notFoundRoute();     // Uses app.config fluff_path
+    app.use(app.router); // Routes are processed before cmsPages
+    app.use(cmsPages);   // Doesn't use app.config, but runs on every request
+    staticFiles();       // Static files are processed last
+    // Restart the server if the port is changed
+    if (Server.address()) {
+      console.log("port is " + Server.address().port);
+      if (Server.address().port != app.get('config').port) {
+        var time = new Date();
+        console.log("Closing server at " + time + " and waiting for connections to time out...");
+        Server.close(function (req, res, callback) {
+          console.log("Starting back up at " + time + " and reloading config from DB...");
+          startListening(true, callback);
+        });
+      }
     }
-  }
-  else {
-    startListening(true, callback);
-  }
+    else {
+      startListening(true, callback);
+    }
+  });
 }
 
 var randomString = function (size) {
@@ -909,9 +1042,11 @@ var startup = function (req, res) {
     // Initialize db with seed data (site, admin, example page, view and vars)
     connectDb(req, res, function (req, res) {
       initDb(req, res, function (req, res) {
-        loadConfig (req, res, function (req, res) {
-          loadModels (req, res, function (req, res) {
-            applyConfig(req, res, Callback);
+        initPlugins(req, res, function (req, res) {
+          loadConfig (req, res, function (req, res) {
+            loadModels (req, res, function (req, res) {
+              applyConfig(req, res, Callback);
+            });
           });
         });
       });
@@ -919,9 +1054,11 @@ var startup = function (req, res) {
   }
   else {
     connectDb(req, res, function (req, res) {
-      loadConfig (req, res, function (req, res) {
-        loadModels (req, res, function (req, res) {
-          applyConfig(req, res, Callback);
+      initPlugins(req, res, function (req, res) {
+        loadConfig (req, res, function (req, res) {
+          loadModels (req, res, function (req, res) {
+            applyConfig(req, res, Callback);
+          });
         });
       });
     });
@@ -945,7 +1082,7 @@ var preLaunch = function () {
   app.use(express.cookieParser());
   app.use(express.session({
     secret : "abracadabra",
-    maxAge : new Date(Date.now() + 3600000) // 1 Hour; should move to per user setting
+    maxAge : new Date(Date.now() + 3600000) // 1 hr, should move to per user setting
   }));
   app.use(express.methodOverride());
 }

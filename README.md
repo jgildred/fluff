@@ -62,6 +62,7 @@ Currently there is only a basic smoke test. Feel free to add more test cases if 
 
 TO DO:
 
+- add Owner to access level options
 - fluff.js harvest all collections before building
 - paging of results
 - paged display in admin

@@ -292,6 +292,9 @@ var Var     = Backbone.Model.extend({
 var Model   = Backbone.Model.extend({
   urlRoot: apibase + '/models'
 });
+var Site    = Backbone.Model.extend({
+  url: apibase + '/site',
+});
 var Session = Backbone.Model.extend({
   urlRoot: apibase + '/auth',
   initialize: function () {
@@ -347,9 +350,6 @@ var Vars   = Backbone.Collection.extend({
 });
 var Models = Backbone.Collection.extend({
   url: apibase + '/models'
-});
-var Sites  = Backbone.Collection.extend({
-  url: apibase + '/sites'
 });
 
 // Setup the signup view
@@ -1159,7 +1159,7 @@ var ModelDetailView = Backbone.View.extend({
   },
   render: function (options) {
     // build the list of access options
-    this.access_options = ['Public', 'Users', 'Admins'];
+    this.access_options = ['Public', 'Users', 'Owner', 'Admins'];
     var that = this;
     if (options.id) {
       // then get the model details
@@ -1664,10 +1664,9 @@ var SiteDetailView = Backbone.View.extend({
     this.smtp_service_options = [ "SMTP", "Gmail", "DynectEmail", "hot.ee", "Hotmail", "iCloud", "mail.ee", "Mail.Ru", "Mailgun", "Mailjet", "Mandrill", "Postmark", "QQ", "SendGrid", "SES", "Yahoo", "yandex", "Zoho" ];
     var that = this;
     if (!this.site) {
-      var sites = new Sites();
-      sites.fetch({
-        success: function (sites) {
-          that.site = sites.models[0];
+      this.site = new Site();
+      this.site.fetch({
+        success: function (site) {
           var template = _.template($('#edit-site-template').html(), {site: that.site, cors_mode_options: that.cors_mode_options, smtp_service_options: that.smtp_service_options});
           that.$el.html(template);
           that.toggleSmtpOptions();

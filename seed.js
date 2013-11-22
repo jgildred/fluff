@@ -2,7 +2,7 @@
 // SEED DATA
 
 exports.Data = {
-  "sites" : [{
+  "site" : {
     "name"           : 'Web Site',
     "domain"         : 'localhost',   // used to build site url for external links
     "port"           : 3000,          // ignored unless config.js app_service is 'Custom'   
@@ -25,7 +25,7 @@ exports.Data = {
       "required"     : false,         // if true make sure admin index.html has apikey
       "keychain"     : ['1234567890'] // if api is require, you need at least one key in here
     }
-  }],
+  },
   "users" : [{
     "firstname": "Default",
     "lastname" : "Administrator",
@@ -49,7 +49,7 @@ exports.Data = {
   }],
   "views" : [{
     "name"         : "Basic",        // view names must be unique
-    "template"     : "<html>\n<head>\n<title>{{var.Title}}</title>\n<link rel=\"stylesheet\" href=\"/fluff/css/bootstrap.css\"/>\n<link rel=\"stylesheet\" href=\"/styles.css\"/>\n<script type=\"text/javascript\" src=\"/fluff/js/jquery.js\"></script>\n<script type=\"text/javascript\" src=\"/fluff/js/underscore.js\"></script>\n<script type=\"text/javascript\" src=\"/fluff/js/backbone.js\"></script>\n<script type=\"text/javascript\" src=\"/fluff/js/fluff.js\"></script>\n</head>\n<body>\n{{content}}\n<script>fluff.init()</script>\n</body>\n</html>",
+    "template"     : "<html>\n<head>\n<title>{{var.Title}}</title>\n<link rel=\"stylesheet\" href=\"/fluff/css/bootstrap.css\"/>\n<link rel=\"stylesheet\" href=\"/styles.css\"/>\n<script type=\"text/javascript\" src=\"/fluff/js/jquery.js\"></script>\n<script type=\"text/javascript\" src=\"/fluff/js/underscore.js\"></script>\n<script type=\"text/javascript\" src=\"/fluff/js/backbone.js\"></script>\n<script type=\"text/javascript\" src=\"/fluff/js/fluff.js\"></script>\n</head>\n<body>\n{{content}}\n<script>Fluff.init()</script>\n</body>\n</html>",
     "content_type" : "text/html",
   },{
     "name"         : "CSS",          // view names must be unique

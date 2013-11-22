@@ -14,6 +14,8 @@
     "mongoose": "*",
     "mime": "*",
     "nodemailer": "*",
-    "inflection": "*"
+    "inflection": "*",
+    "ursa": "*",
+    "x509": "*"
   }
 }

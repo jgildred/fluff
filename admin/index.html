@@ -596,7 +596,9 @@
               <div class="controls col-lg-9">
                 <select name="access.create" class="form-control" id="inputAccess">
                   <% _(access_options).each(function(option) { %>
-                  <option value="<%= option %>"<%= (model && (option == model.get('access').create)) ? ' selected' : ''%>><%= option %></option>
+                    <% if (option != 'Owner') { %>
+                      <option value="<%= option %>"<%= (model && (option == model.get('access').create)) ? ' selected' : ''%>><%= option %></option>
+                    <% } %>
                   <% }); %>
                 </select>
               </div>

@@ -2,6 +2,7 @@
 // GENERIC RESOURCE HANDLER
 
 var app     = require('../app'),
+    Fluff   = app.Fluff,
     schemas = require('../schemas');
 
 // Handler for GET
@@ -40,7 +41,13 @@ exports.find = function(req, res, resource, filter, callback){
         }
       }
       else {
-        app.msgResponse(req, res, 404, resource.modelName + ' not found.');
+        var name = resource.modelName;
+        for (model in app.Models) {
+          if (app.Models[model] == resource) {
+            name = model;
+          }
+        }
+        app.msgResponse(req, res, 404, name + ' not found.');
       }
     }
     //console.log("FIND ONE:\n" + body);
@@ -70,7 +77,13 @@ exports.count = function(req, res, resource, filter, callback){
         }
       }
       else {
-        app.msgResponse(req, res, 404, resource.modelName + ' not found.');
+        var name = resource.modelName;
+        for (model in app.Models) {
+          if (app.Models[model] == resource) {
+            name = model;
+          }
+        }
+        app.msgResponse(req, res, 404, name + ' not found.');
       }
     }
     //console.log("FIND ONE:\n" + body);
@@ -90,7 +103,13 @@ exports.where = function(req, res, resource, name, array, callback) {
         }
       }
       else {
-        app.msgResponse(req, res, 404, resource.modelName + ' not found.');
+        var name = resource.modelName;
+        for (model in app.Models) {
+          if (app.Models[model] == resource) {
+            name = model;
+          }
+        }
+        app.msgResponse(req, res, 404, name + ' not found.');
       }
     }
     //console.log("FIND ONE:\n" + body);
@@ -112,7 +131,13 @@ exports.findone = function(req, res, resource, filter, callback){
         }
       }
       else {
-        app.msgResponse(req, res, 404, resource.modelName + ' not found.');
+        var name = resource.modelName;
+        for (model in app.Models) {
+          if (app.Models[model] == resource) {
+            name = model;
+          }
+        }
+        app.msgResponse(req, res, 404, name + ' not found.');
       }
     }
     //console.log("FIND ONE:\n" + body);
@@ -150,14 +175,17 @@ exports.create = function(req, res, resource, callback){
 
 // Handler for PUT with id or other filter
 exports.update = function(req, res, resource, filter, callback){
+  console.log("IN UPDATE");
   if (req.body.id)  { delete req.body.id; }
   if (req.body._id) { delete req.body._id; }
   req.body.lastupdate     = new Date;
-  req.body.lastupdater_id = req.session.user_id;
+  if (req.session.user_id) {
+    req.body.lastupdater_id = req.session.user_id;
+  }
   filter = filter ? filter : {"_id": req.params.id}
   console.log("FILTER: " + JSON.stringify(filter));
   resource.findOneAndUpdate(filter, req.body, function (err, data) {
-    if (err) { 
+    if (err) {
       app.msgResponse(req, res, 500, JSON.stringify(err));
     }
     else { 

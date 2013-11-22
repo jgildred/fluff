@@ -1,6 +1,6 @@
 
 // The only global
-var fluff = {
+var Fluff = {
 	version     : "0.8",
 	session     : {},
 	models      : {},
@@ -14,11 +14,11 @@ var fluff = {
 Backbone.Model.prototype.idAttribute = "_id";
 
 // Helper function
-fluff.objectType = function (obj) {
+Fluff.objectType = function (obj) {
   return Object.prototype.toString.call(obj).slice(8, -1);
 }
 
-fluff.log = function (msg, obj) {
+Fluff.log = function (msg, obj) {
 	if (msg) {
 		console.log(msg);
 	}
@@ -27,7 +27,7 @@ fluff.log = function (msg, obj) {
 	}
 }
 
-fluff.flattenArray = function (objectArray, key) {
+Fluff.flattenArray = function (objectArray, key) {
   var array = [];
   objectArray.forEach(function (object) {
     array.push(object[key]);
@@ -35,12 +35,12 @@ fluff.flattenArray = function (objectArray, key) {
   return array;
 }
 
-fluff.dehumanize = function (string) {
+Fluff.dehumanize = function (string) {
   return string.replace(" ", "_").toLowerCase();
 }
 
 // Useful when comparing schema attributes
-fluff.lowerCaseObject = function (obj) {
+Fluff.lowerCaseObject = function (obj) {
   var key,
       keys = Object.keys(obj);
   var n = keys.length;
@@ -52,13 +52,13 @@ fluff.lowerCaseObject = function (obj) {
   return newobj;
 }
 
-fluff.dataToSchema = function (data) {
+Fluff.dataToSchema = function (data) {
 	if (data) {
 		var ObjectId = String,
 	      Buffer   = String,
 	      Mixed    = String;
 	  eval("var schema = " + data + ";");
-	  schema = fluff.lowerCaseObject(schema);
+	  schema = Fluff.lowerCaseObject(schema);
 	  schema._id            = String;
 	  schema.creator_id     = String;
 	  schema.lastupdater_id = String;
@@ -132,7 +132,7 @@ var getFormData = function(form) {
   }
 }
 
-fluff.addCollection = function (options) {
+Fluff.addCollection = function (options) {
 	var modelName = options.modelName;
 	// FIXME need to have name include filter
 	var name = modelName,
@@ -142,44 +142,44 @@ fluff.addCollection = function (options) {
 		path = name;
 	}
 	else {
-		if (options.filter && fluff.filters[options.filter]) {
+		if (options.filter && Fluff.filters[options.filter]) {
 			name += ":" + options.filter;
-			path += "?filter=" + fluff.filters[options.filter];
+			path += "?filter=" + Fluff.filters[options.filter];
 		}
 	}
-	if (fluff.collections[name] == undefined) {
+	if (Fluff.collections[name] == undefined) {
 		var Model = Backbone.Model.extend({
-			urlRoot: fluff.path + '/api/' + modelName
+			urlRoot: Fluff.path + '/api/' + modelName
 		});
 		var Collection = Backbone.Collection.extend({
   		model: Model,
-  		url: fluff.path + '/api/' + path // FIXME need to add filter here
+  		url: Fluff.path + '/api/' + path // FIXME need to add filter here
 		});
 		var collection = new Collection();
-		fluff.collections[name] = collection;
-		fluff.log("Added a collection to fluff: " + name);
+		Fluff.collections[name] = collection;
+		Fluff.log("Added a collection to fluff: " + name);
 	}
 	else {
-		var collection = fluff.collections[name];
+		var collection = Fluff.collections[name];
 	}
 	return collection;
 }
 
-fluff.addModel = function (name, callback) {
-	if (fluff.models[name] == undefined) {
+Fluff.addModel = function (name, callback) {
+	if (Fluff.models[name] == undefined) {
 		$.ajax({
 			type: 'GET',
-			url: fluff.path + '/api/' + name + '/info',
+			url: Fluff.path + '/api/' + name + '/info',
 			dataType: 'json',
 			success : function (data, status, xhr) {
-				if (data && (fluff.models[name] == undefined)) {
-					var Schema = fluff.dataToSchema(data.schema_data);
-					fluff.models[name] = {
+				if (data && (Fluff.models[name] == undefined)) {
+					var Schema = Fluff.dataToSchema(data.schema_data);
+					Fluff.models[name] = {
 						schema          : Schema,
 						display_columns : data.display_columns,
 						column_sort     : data.column_sort
 					};
-			  	fluff.log("Added a model to fluff: " + name);
+			  	Fluff.log("Added a model to fluff: " + name);
 				}
 				if (callback) {
 					callback();
@@ -194,17 +194,17 @@ fluff.addModel = function (name, callback) {
 	}
 }
 
-fluff.addView = function (type, element, View) {
+Fluff.addView = function (type, element, View) {
 	var view = new View();
 	var viewName = type + "[model=" + element.attr('model') + "]";
 	if (element.attr('id')) {
 			viewName = type + "#" + element.attr('id');
 		}
 	// FIXME careful not to overwrite existing views
-  fluff.views[viewName] = view;
+  Fluff.views[viewName] = view;
 }
 
-fluff.drawTableHeader = function (modelInfo) {
+Fluff.drawTableHeader = function (modelInfo) {
 	var html = "";
 	modelInfo.display_columns.forEach(function (column) {
 		html += "<th>" + column.title + "</th>";
@@ -212,7 +212,7 @@ fluff.drawTableHeader = function (modelInfo) {
 	return html;
 }
 
-fluff.renderFields = function (model, template) {
+Fluff.renderFields = function (model, template) {
 	var fields = model.toJSON();
 	if (template) {
 		var templateObj = $('<div></div>');
@@ -221,7 +221,7 @@ fluff.renderFields = function (model, template) {
 		elements.each(function () {
 			var element = $(this);
 			var type = this.nodeName.toLowerCase();
-			var field = fields[fluff.dehumanize(element.attr('field'))];
+			var field = fields[Fluff.dehumanize(element.attr('field'))];
 			if (field != undefined) {
 				switch (type) {
 					case 'input':
@@ -250,7 +250,7 @@ fluff.renderFields = function (model, template) {
 	}
 }
 
-fluff.autoRenderFields = function (model, modelInfo, elementType, dividerHtml) {
+Fluff.autoRenderFields = function (model, modelInfo, elementType, dividerHtml) {
 	dividerHtml = dividerHtml ? dividerHtml : '';
 	var modelData = model.toJSON();
 	var html = "";
@@ -272,7 +272,7 @@ fluff.autoRenderFields = function (model, modelInfo, elementType, dividerHtml) {
 	return html;
 }
 
-fluff.harvestElements = function () {
+Fluff.harvestElements = function () {
 	var tags  = ["div", "span", "ul", "ol"];
 	var elements = $(tags.join("[model], ") + "[model]");
   elements.each(function (e) {
@@ -288,7 +288,7 @@ fluff.harvestElements = function () {
 		if (element.attr('filter')) {
 			filter = element.attr('filter');
 		}
-		var collection = fluff.addCollection({
+		var collection = Fluff.addCollection({
 			modelName : modelName,
 			id        : modelId,
 			filter    : filter
@@ -299,7 +299,7 @@ fluff.harvestElements = function () {
 				var that = this;
 			  collection.fetch({
 			  	success: function () {
-			  		fluff.addModel(modelName, function () {
+			  		Fluff.addModel(modelName, function () {
 			  			that.render();
 			  		});
 			  	}
@@ -322,21 +322,21 @@ fluff.harvestElements = function () {
 				var bodyHtml = "";
 				collection.forEach(function (model) {
 					if (rowTemplate) {
-						bodyHtml += fluff.renderFields(model, rowTemplate) + "\n";
+						bodyHtml += Fluff.renderFields(model, rowTemplate) + "\n";
 					}
 					else {
 						var tag = filltag.split('[')[0];
-						bodyHtml += "<" + tag + ">" + fluff.autoRenderFields(model, fluff.models[modelName], 'span', ', ') + "</" + tag + ">\n";
+						bodyHtml += "<" + tag + ">" + Fluff.autoRenderFields(model, Fluff.models[modelName], 'span', ', ') + "</" + tag + ">\n";
 					}
 				});
 				elementObj.append(bodyHtml);
 			}
 		});
-		fluff.addView(type, element, View);
+		Fluff.addView(type, element, View);
 	});
 }
 
-fluff.harvestTables = function () {
+Fluff.harvestTables = function () {
 	var tables = $("table[model]");
   tables.each(function (t) {
   	var table = $(this);
@@ -350,7 +350,7 @@ fluff.harvestTables = function () {
 		if (table.attr('filter')) {
 			filter = table.attr('filter');
 		}
-		var collection = fluff.addCollection({
+		var collection = Fluff.addCollection({
 			modelName : modelName,
 			id        : modelId,
 			filter    : filter
@@ -361,7 +361,7 @@ fluff.harvestTables = function () {
 				var that = this;
 				collection.fetch({
 			  	success: function () {
-			  		fluff.addModel(modelName, function () {
+			  		Fluff.addModel(modelName, function () {
 			  			that.render();
 			  		});
 			  	}
@@ -372,7 +372,7 @@ fluff.harvestTables = function () {
 				// Build the header if none
 				var ths = elementObj.find('tr th');
 				if (ths.toArray().length == 0) {
-					var headHtml = "<tr>" + fluff.drawTableHeader(fluff.models[modelName]) + "</tr>";
+					var headHtml = "<tr>" + Fluff.drawTableHeader(Fluff.models[modelName]) + "</tr>";
 				}
 				else {
 					var headHtml = ths.first().parent().get(0).outerHTML;
@@ -402,20 +402,20 @@ fluff.harvestTables = function () {
 				var bodyHtml = "\n";
 				collection.forEach(function(model) {
 					if (rowTemplate) {
-						bodyHtml += fluff.renderFields(model, rowTemplate) + "\n";
+						bodyHtml += Fluff.renderFields(model, rowTemplate) + "\n";
 					}
 					else {
-						bodyHtml += "<tr>" + fluff.autoRenderFields(model, fluff.models[modelName], 'td') + "</tr>\n";
+						bodyHtml += "<tr>" + Fluff.autoRenderFields(model, Fluff.models[modelName], 'td') + "</tr>\n";
 					}
 				});
 				elementObj.find('tbody').first().append(bodyHtml + "\n");
 			}
 		});
-		fluff.addView("table", table, View);
+		Fluff.addView("table", table, View);
   });
 }
 
-fluff.harvestForms = function () {
+Fluff.harvestForms = function () {
 	var forms = $("form[model]");
   forms.each(function (f) {
   	var form = $(this);
@@ -426,7 +426,7 @@ fluff.harvestForms = function () {
   		modelName = modelName.split("/")[0].toLowerCase();
   	}
   	var Model = Backbone.Model.extend({
-			urlRoot: fluff.path + '/api/' + modelName
+			urlRoot: Fluff.path + '/api/' + modelName
 		});
 		var View = Backbone.View.extend({
 			el: form,
@@ -442,14 +442,14 @@ fluff.harvestForms = function () {
 					});
 					this.model.fetch({
 				  	success: function () {
-				  		fluff.addModel(modelName, function () {
+				  		Fluff.addModel(modelName, function () {
 			  				that.render();
 			  			});
 				  	}
 				  });
 				}
 				else {
-					fluff.addModel(modelName, function () {
+					Fluff.addModel(modelName, function () {
 			  		that.render();
 			  	});
 				}
@@ -475,46 +475,46 @@ fluff.harvestForms = function () {
 				this.model.save(modelDetails, {
       		patch: true,
       		success: function (model) {
-      			fluff.log(modelName + " saved.");
+      			Fluff.log(modelName + " saved.");
 		      },
 		      error: function (model, xhr) {
-		        fluff.log(xhr);
+		        Fluff.log(xhr);
 					}
 				});
 			},
 			render: function () {
 				var elementObj = $(this.el);
-				var modelInfo = fluff.models[modelName];
-				var schema = fluff.lowerCaseObject(modelInfo.schema);
+				var modelInfo = Fluff.models[modelName];
+				var schema = Fluff.lowerCaseObject(modelInfo.schema);
 				var template = null;
 				var filltag = 'input[field]';
 				var fts = elementObj.find(filltag);
 				if (fts.toArray().length > 0) {
 					var template = elementObj.html();
 				}
-				
 				var html = '';
 				if (template) {
-					html += fluff.renderFields(this.model, template) + "\n";
+					// TBD need to support form templates in the renderFields function
+					html += Fluff.renderFields(this.model, template) + "\n";
 				}
 				else {
-					// TBD need to support form templates
+					var that = this;
 					modelInfo.display_columns.forEach(function (field) {
 						switch (schema[field.name].name) {
 							case 'String':
-								html += '<input type="text" name="' + field.name + '" value="' + ((this.model && this.model.get(field.name)) ? this.model.get(field.name) : '') + '" placeholder="' + field.title + '" />\n';
+								html += '<input type="text" name="' + field.name + '" value="' + ((that.model && that.model.get(field.name)) ? that.model.get(field.name) : '') + '" placeholder="' + field.title + '" />\n';
 								break;
 							case 'Number':
-								html += '<input type="number" name="' + field.name + '" value="' + ((this.model && this.model.get(field.name)) ? this.model.get(field.name) : '') + '" placeholder="' + field.title + '" />\n';
+								html += '<input type="number" name="' + field.name + '" value="' + ((that.model && that.model.get(field.name)) ? that.model.get(field.name) : '') + '" placeholder="' + field.title + '" />\n';
 								break;
 							case 'Date':
-								html += '<input type="datetime" name="' + field.name + '" value="' + ((this.model && this.model.get(field.name)) ? this.model.get(field.name) : '') + '" placeholder="' + field.title + '" />\n';
+								html += '<input type="datetime" name="' + field.name + '" value="' + ((that.model && that.model.get(field.name)) ? that.model.get(field.name) : '') + '" placeholder="' + field.title + '" />\n';
 								break;
 							case 'Boolean':
-								html += '<input type="checkbox" name="' + field.name + '" value="' + ((this.model && this.model.get(field.name)) ? this.model.get(field.name) : 'false') + '"' + ((this.model && this.model.get(field.name)) ? ' checked' : '') + ' /> <label>' + field.title + '</label>\n';
+								html += '<input type="checkbox" name="' + field.name + '" value="' + ((that.model && that.model.get(field.name)) ? that.model.get(field.name) : 'false') + '"' + ((that.model && that.model.get(field.name)) ? ' checked' : '') + ' /> <label>' + field.title + '</label>\n';
 								break;
 							case 'Array':
-								html += '<input type="text" name="' + field.name + '" value="' + ((this.model && (this.model.get(field.name).length > 0)) ? this.model.get(field.name).join(',') : '') + '" placeholder="' + field.title + '" />\n';
+								html += '<input type="text" name="' + field.name + '" value="' + ((that.model && (that.model.get(field.name).length > 0)) ? that.model.get(field.name).join(',') : '') + '" placeholder="' + field.title + '" />\n';
 								break;
 							default:
 								break;
@@ -532,11 +532,11 @@ fluff.harvestForms = function () {
  				});
 			}
 		});
-		fluff.addView("form", form, View);
+		Fluff.addView("form", form, View);
 	});
 }
 
-fluff.harvestSelects = function () {
+Fluff.harvestSelects = function () {
 	var elements = $("select[model]");
   elements.each(function (e) {
   	var element = $(this);
@@ -551,7 +551,7 @@ fluff.harvestSelects = function () {
 		if (element.attr('filter')) {
 			filter = element.attr('filter');
 		}
-		var collection = fluff.addCollection({
+		var collection = Fluff.addCollection({
 			modelName : modelName,
 			id        : modelId,
 			filter    : filter
@@ -562,7 +562,7 @@ fluff.harvestSelects = function () {
 				var that = this;
 			  collection.fetch({
 			  	success: function () {
-			  		fluff.addModel(modelName, function () {
+			  		Fluff.addModel(modelName, function () {
 			  			that.render();
 			  		});
 			  	}
@@ -582,7 +582,7 @@ fluff.harvestSelects = function () {
 				var html = '';
 				collection.forEach(function (model) {
 					if (rowTemplate) {
-						html += fluff.renderFields(model, rowTemplate) + '\n';
+						html += Fluff.renderFields(model, rowTemplate) + '\n';
 					}
 					else {
 						var name = model.get('name') ? model.get('name') : model.get('_id');
@@ -592,12 +592,12 @@ fluff.harvestSelects = function () {
 				elementObj.append(html);
 			}
 		});
-		fluff.addView(type, element, View);
+		Fluff.addView(type, element, View);
 	});
 }
 
-fluff.Session = Backbone.Model.extend({
-  urlRoot: fluff.path + '/admin/api/auth',
+Fluff.Session = Backbone.Model.extend({
+  urlRoot: Fluff.path + '/admin/api/auth',
   initialize: function () {
     var that = this;
     // Hook into jquery
@@ -633,26 +633,25 @@ fluff.Session = Backbone.Model.extend({
   }
 });
 
-fluff.checkSession = function () {
-	fluff.session = new fluff.Session();
-	fluff.session.fetch({
+Fluff.checkSession = function () {
+	Fluff.session = new Fluff.Session();
+	Fluff.session.fetch({
     success: function () {
-    	fluff.log("Logged in as " + fluff.session.get('user').email);
+    	Fluff.log("Logged in as " + Fluff.session.get('user').email);
       Backbone.history.start();
     },
     error: function (xhr) {
-      fluff.log("check session error:", xhr);
+      Fluff.log("check session error:", xhr);
       Backbone.history.start();
     }
   });
 }
 
-fluff.harvestLogins = function () {
+Fluff.harvestLogins = function () {
 	var forms = $("form[auth]");
   forms.each(function (f) {
-  	fluff.log("Processing an auth form...");
+  	Fluff.log("Processing an auth form...");
   	var form = $(this);
-  	var modelName = 'user';
 		var View = Backbone.View.extend({
 			el: form,
 			template: null,
@@ -665,15 +664,15 @@ fluff.harvestLogins = function () {
 			},
 			submit: function (ev) {
 				var loginDetails = getFormData($(ev.currentTarget).parents("form:first"));
-				if ($.isEmptyObject(fluff.session)) {
-					fluff.session = new fluff.Session();
+				if ($.isEmptyObject(Fluff.session)) {
+					Fluff.session = new Fluff.Session();
 				}
-				fluff.session.login(loginDetails, {
+				Fluff.session.login(loginDetails, {
       		success: function (model) {
-      			fluff.log("Logged in.");
+      			Fluff.log("Logged in.");
 		      },
 		      error: function (model, xhr) {
-		        fluff.log("login error:". xhr);
+		        Fluff.log("login error:". xhr);
 					}
 				});
 			},
@@ -691,18 +690,18 @@ fluff.harvestLogins = function () {
  				});
 			}
 		});
-		fluff.addView("form", form, View);
+		Fluff.addView("form", form, View);
 	});
 }
 
 // Build the models and collections and render the views
-fluff.init = function (options) {
-	if (fluff.apikey && (fluff.apikey != '')) {
+Fluff.init = function (options) {
+	if (Fluff.apikey && (Fluff.apikey != '')) {
 		// prefilter for all ajax calls
 	  $.ajaxPrefilter( function( options, originalOptions, jqXHR ) {
 	    // Modify options, control originalOptions, store jqXHR, etc
 	    options.headers = options.headers ? options.headers : {};
-	    options.headers['X-API-Key'] = encodeURIComponent(fluff.apikey);
+	    options.headers['X-API-Key'] = encodeURIComponent(Fluff.apikey);
 	  });
 	}
 	this.harvestElements();

@@ -1,8 +1,9 @@
 
 // USER RESOURCE PREPROCESSOR
 
-var app = require('../app');
-var resource = require('./resource');
+var app      = require('../app'),
+    Fluff    = app.Fluff,
+    resource = require('./resource');
 
 // Preprocessor for GET /users
 exports.find = function(req, res){
@@ -24,7 +25,7 @@ exports.create = function(req, res){
       else {
         // if password not supplied, then make one up and force reset
         req.body.password = app.randomString();
-        var callback = SendNewResetEmail;
+        var callback = SendWelcomeEmail;
       }
       doCreate(req, res, callback);
     }
@@ -57,7 +58,8 @@ exports.update = function(req, res){
 exports.verify = function(req, res){
   req.body = { "status": "Active" };
   // as the token is stored urlencoded, make sure it's not urldecoded
-  var filter = { "verifytoken": encodeURIComponent(req.params.token) };
+  var token = encodeURIComponent(req.params.token).replace(".", "%2E");
+  var filter = { "verifytoken": token };
   resource.update(req, res, app.User, filter);
 };
 
@@ -75,15 +77,21 @@ exports.pwreset = function(req, res){
 
 // Preprocessor for PUT /pwchange/:token
 exports.pwchange = function(req, res){
+  console.log(req.body);
   if (req.body && req.body.password) {
     var password = req.body.password;
     req.body = {};
     req.body.salt = app.randomString();
     req.body.pwhash = saltyHash(password, req.body.salt);
+    console.log('created pwhash: ' + req.body.pwhash);
   }
   // as the token is stored urlencoded, make sure it's not urldecoded
-  var filter = { "verifytoken": encodeURIComponent(req.params.token) };
-  resource.update(req, res, app.User, filter);
+  var token = encodeURIComponent(req.params.token).replace(".", "%2E");
+  var filter = { "verifytoken": token };
+  console.log(req.body);
+  resource.update(req, res, app.User, filter, function(user) {
+    console.log('new pwhash: ' + user.pwhash);
+  });
 };
 
 // Preprocessor for DELETE /users/:id
@@ -136,23 +144,10 @@ var updateSession = function(req, res, user) {
   }
 }
 
-var emailToUser = function(mailinfo) {
-  if (mailinfo) {
-    console.log("MAIL TO USER: " + JSON.stringify(mailinfo.user));
-    app.mailer.sendMail({
-      from:    app.App.get('config').email_from,
-      to:      mailinfo.user.email,
-      subject: mailinfo.subject,
-      text:    mailinfo.body
-    });
-    app.mailer.close();
-  }
-}
-
 var SendVerifyEmail = function(req, res, user) {
   if (user) {
-    var link  = app.siteUrl + app.App.get('config').fluff_path + "/admin/#/verify/" + user.verifytoken;
-    emailToUser({
+    var link  = app.siteUrl + Fluff.app.get('config').fluff_path + "/admin/#/verify/" + user.verifytoken;
+    Fluff.emailToUser({
       user: user,
       subject: "Verify Your Email Address",
       body:    "Hi " + user.shortname + "\n\n" 
@@ -164,8 +159,8 @@ var SendVerifyEmail = function(req, res, user) {
 
 var SendResetEmail = function(req, res, user) {
   if (user) {
-    var link  = app.siteUrl + app.App.get('config').fluff_path + "/admin/#/pwchange/" + user.verifytoken;
-    emailToUser({
+    var link  = app.siteUrl + Fluff.app.get('config').fluff_path + "/admin/#/pwchange/" + user.verifytoken;
+    Fluff.emailToUser({
       user: user,
       subject: "Request to Reset Your Password",
       body:    "Hi " + user.shortname + "\n\n" 
@@ -175,10 +170,10 @@ var SendResetEmail = function(req, res, user) {
   }
 }
 
-var SendNewResetEmail = function(req, res, user) {
+var SendWelcomeEmail = function(req, res, user) {
   if (user) {
-    var link  = app.siteUrl + app.App.get('config').fluff_path + "/admin/#/pwchange/" + user.verifytoken;
-    emailToUser({
+    var link  = app.siteUrl + Fluff.app.get('config').fluff_path + "/admin/#/pwchange/" + user.verifytoken;
+    Fluff.emailToUser({
       user: user,
       subject: "Your Account is Ready",
       body:    "Hi " + user.shortname + "\n\n" 
@@ -223,6 +218,6 @@ var saltyHash = function (text, salt) {
 exports.saltyHash = saltyHash;
 
 var makeToken = function () {
-  return encodeURIComponent(app.randomString());
+  return encodeURIComponent(app.randomString()).replace(".", "%2E");
 }
 exports.makeToken = makeToken;

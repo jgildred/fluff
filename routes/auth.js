@@ -83,7 +83,7 @@ exports.attach = function(req, res){
           }
           else {
             req.session.auth = false;
-            res.status       = 400;
+            res.status(400);
             var body = {
               auth: req.session.auth, 
               msg:  "Password is incorrect."};
@@ -91,7 +91,7 @@ exports.attach = function(req, res){
         }
         else {
           req.session.auth = false;
-          res.status       = 401;
+          res.status(401);
           var body = {
             auth:   req.session.auth,
             status: user.status, 
@@ -103,7 +103,7 @@ exports.attach = function(req, res){
   }
   else {
     req.session.auth = false;
-    res.status       = 400;
+    res.status(400);
     var body = {
       auth: false, 
       msg:  "Credentials are missing."};
