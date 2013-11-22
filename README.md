@@ -50,7 +50,7 @@ ADMIN GUIDE:
 
 FLUFF.JS:
 
-The fluff.js library can be used in pages to provide automatic scaffolding of data into your pages. By simply adding model=[model name] attribute to elements like tables, you can auto-populate the table with data from that model. There is an example page created upon initialization which includes the fluff.js library. It requires jQuery and Backbone.js which are also included for convenience.
+The fluff.js library is an easy way to get automatic scaffolding of data into your pages. By simply adding model=[model name] attribute to elements like tables, you can auto-populate the table with data from that model. There is an example page created upon initialization which includes the fluff.js library. It requires jQuery and Backbone.js which are also included for convenience.
 
 REST API:
 
@@ -62,19 +62,18 @@ Currently there is only a basic smoke test. Feel free to add more test cases if 
 
 TO DO:
 
-- add Owner to access level options
 - fluff.js harvest all collections before building
-- paging of results
+- paging of api GET results
 - paged display in admin
 - sort in admin list views
 - search users
 
 WOULD BE NICE:
 
+- an easy way to add admin tabs for plugins
 - list of domains to redirect in site config (for cmspages)
 - manage email templates
 - manage error pages
 - page versioning
 - move session timeout to be user specific
-- meteor-style auto client updates
-- a plugin framework
+- meteor-style auto client updates (maybe)
