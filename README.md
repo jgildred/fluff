@@ -56,6 +56,10 @@ REST API:
 
 See the [README-API.md](README-API.md) for a list of APIs.
 
+PLUGINS:
+
+You can simply put your plugin code into a subfolder in the "plugins" folder. Fluff will scan for plugins on startup. More docs on plugins coming soon.
+
 TESTS:
 
 Currently there is only a basic smoke test. Feel free to add more test cases if you're feeling testy. To run the smoke test, in the root dir of the app type "mocha".
