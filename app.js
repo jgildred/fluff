@@ -258,7 +258,7 @@ var toModel = function (model, callback) {
   obj.creation       = { type: Date, default: Date.now };
   obj.lastupdate     = { type: Date, default: Date.now };
   var schema = new mongoose.Schema(obj);
-  var newModel = mongoose.model(randomString(), schema, dehumanize(model.model_id));
+  var newModel = mongoose.model(dehumanize(model.model_id) + "-" + randomString(), schema, dehumanize(model.model_id));
   return newModel;
 }
 exports.toModel = toModel;
