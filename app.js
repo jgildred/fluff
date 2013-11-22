@@ -72,16 +72,20 @@ exports.dehumanize = dehumanize;
 // Init all plugins
 var initPlugins = function (req, res, callback) {
   var path = __dirname + '/plugins';
-  fs.readdir(path, function (err, subDirectories) {
-    console.log("Detected plugins: " + subDirectories.join(","));
-    subDirectories.forEach (function (dirName, index) {
-      if ((subDirectories.length == index + 1) && (callback)) {
-        initOnePlugin(req, res, dirName, callback);
-      }
-      else {
-        initOnePlugin(req, res, dirName);
-      }
-    });
+  fs.exists(path, function (exists) {
+    if (exists) {
+      fs.readdir(path, function (err, subDirectories) {
+        console.log("Detected plugins: " + subDirectories.join(","));
+        subDirectories.forEach (function (dirName, index) {
+          if ((subDirectories.length == index + 1) && (callback)) {
+            initOnePlugin(req, res, dirName, callback);
+          }
+          else {
+            initOnePlugin(req, res, dirName);
+          }
+        });
+      });
+    }
   });
 }
 
