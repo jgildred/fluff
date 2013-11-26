@@ -69,54 +69,78 @@ var dehumanize = function (string) {
 }
 exports.dehumanize = dehumanize;
 
-// Init all plugins
+// Init all plugins; they are initialized synchronously in directory order
 var initPlugins = function (req, res, callback) {
   var path = __dirname + '/plugins';
   fs.exists(path, function (exists) {
     if (exists) {
       fs.readdir(path, function (err, subDirectories) {
-        console.log("Detected plugins: " + subDirectories.join(","));
-        subDirectories.forEach (function (dirName, index) {
-          if ((subDirectories.length == index + 1) && (callback)) {
-            initOnePlugin(req, res, dirName, callback);
+        if (subDirectories.length > 0) {
+          console.log("Detected plugins: " + subDirectories.join(", "));
+          initOnePlugin(req, res, subDirectories, 0, callback);
+        }
+        else {
+          console.log("No plugins detected.");
+          if (callback) {
+            callback(req, res);
           }
-          else {
-            initOnePlugin(req, res, dirName);
-          }
-        });
+        }
       });
+    }
+    else {
+      if (callback) {
+        callback(req, res);
+      }
     }
   });
 }
 
-// Init one plugin
-var initOnePlugin = function (req, res, name, callback) {
+// Init one plugin; you need the directory list and index of the plugin in the list
+var initOnePlugin = function (req, res, dirs, index, callback) {
   var path = __dirname + '/plugins';
+  index = index ? index : 0;
+  var name = dirs[index];
   fs.exists(path + '/' + name + '/plug.js', function (exists) {
     if (exists) {
       if (Plugins[name]) {
         console.log("Could not initialize " + name + " plugin as another already exists with the same name.");
-        if (callback) {
-          callback(req, res);
-        }
+        finishInitPlugin(req, res, dirs, index, callback);
       }
       else {
         Plugins[name] = require('./plugins/' + name + '/plug');
         Plugins[name].init(function () {
           console.log("Initialized " + name + " plugin.");
-          if (callback) {
-            callback(req, res);
-          }
+          finishInitPlugin(req, res, dirs, index, callback);
         });
       }
     }
     else {
-      console.log("Could not find " + name + " plugin in the plugins directory.");
+      console.log("Could not find plug.js in the /plugins/" + name + " directory.");
+      finishInitPlugin(req, res, dirs, index, callback);
     }
+  });
+}
+
+// Run after each plugin is initialized
+var finishInitPlugin = function (req, res, dirs, index, callback) {
+  // If there are more plugins to init, do the next
+  if ((index != null) && (dirs.length > (index + 1))) {
+    // Check that the plugin has not already been initialized
+    var pluginArray = [];
+    for (var p in Plugins) {
+      if (Plugins.hasOwnProperty(p)) {
+        pluginArray.push(p);
+      }
+    }
+    if (pluginArray.indexOf(dirs[index + 1]) == -1) {
+      initOnePlugin(req, res, dirs, index + 1, callback);
+    }
+  }
+  else {
     if (callback) {
       callback(req, res);
     }
-  });
+  }
 }
 
 // Load all plugins
@@ -1039,7 +1063,7 @@ var toSchemaData = function (array) {
 }
 exports.toSchemaData = toSchemaData;
 
-var startup = function (req, res) {
+var startUp = function (req, res) {
   console.log("Starting Fluff...");
   if (app.get('config').initialize) {
     
@@ -1115,10 +1139,10 @@ var startListening = function (ok, callback) {
 
 // This is the red button
 var launch = function (config, callback) {
-  // This callback is global as it is run at the end of startup
+  // This callback is a global, and it is run at the end of startUp.
   Callback = callback;
   preLaunch();
   loadDefaults(config);
-  startup();
+  startUp();
 }
 exports.launch = launch;
