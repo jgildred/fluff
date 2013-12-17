@@ -33,7 +33,7 @@ exports.create = function (req, res) {
         else {
           req.body.model_id = app.dehumanize(req.body.model_id);
         }
-        if (app.flattenArray(app.App.get('models'), 'model_id').indexOf(req.body.model_id)) {
+        if (app.flattenArray(app.App.get('models'), 'model_id').indexOf(req.body.model_id) != -1) {
           app.msgResponse(req, res, 400, 'The model name is already in use.');
         }
         else {
