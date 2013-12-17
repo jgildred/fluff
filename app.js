@@ -57,9 +57,11 @@ exports.lowerCaseObject = lowerCaseObject;
 
 var flattenArray = function (objectArray, key) {
   var array = [];
-  objectArray.forEach(function (object) {
-    array.push(object[key]);
-  });
+  if (objectArray) {
+    objectArray.forEach(function (object) {
+      array.push(object[key]);
+    });
+  }
   return array;
 }
 exports.flattenArray = flattenArray;
