@@ -1,3 +1,4 @@
 node_modules/
 plugins/
 config-*.js
+.DS_Store

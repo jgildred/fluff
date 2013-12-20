@@ -10,7 +10,7 @@ exports.find = function(req, res, resource, filter, callback){
   // First check if the query has a filter, and if so, use it
   var query_filter = {};
   for (param in req.query) {
-    if (schemas.enums.match_field.indexOf(param) >= 0) {
+    if (schemas.enums.match_field.indexOf(param) != -1) {
       query_filter[param] = new RegExp(req.query[param], 'i');
     }
   }
@@ -59,7 +59,7 @@ exports.count = function(req, res, resource, filter, callback){
   // First check if the query has a filter, and if so, use it
   var query_filter = {};
   for (param in req.query) {
-    if (schemas.enums.match_field.indexOf(param) >= 0) {
+    if (schemas.enums.match_field.indexOf(param) != -1) {
       query_filter[param] = new RegExp(req.query[param], 'i');
     }
   }
@@ -153,6 +153,11 @@ exports.create = function(req, res, resource, callback){
   req.body.lastupdater_id = req.session.user_id;
   req.body.creation       = rightNow;
   req.body.lastupdate     = rightNow;
+  // If the resource has a user_id field, then fill it on create
+  console.log("INFO " + JSON.stringify(resource.schema.path("user_id")));
+  if (resource.schema.path("user_id") && (!req.body.user_id)) {
+    req.body.user_id = req.session.user_id;
+  }
   console.log("INSERTING: "+ JSON.stringify(req.body));
   resource.create(req.body, function (err, data) {
     if (err) { 

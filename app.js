@@ -78,8 +78,14 @@ var initPlugins = function (req, res, callback) {
     if (exists) {
       fs.readdir(path, function (err, subDirectories) {
         if (subDirectories.length > 0) {
-          console.log("Detected plugins: " + subDirectories.join(", "));
-          initOnePlugin(req, res, subDirectories, 0, callback);
+          var plugins = [];
+          subDirectories.forEach(function (name) {
+            if (name.substr(0, 1) != ".") {
+              plugins.push(name);
+            }
+          });
+          console.log("Detected plugins: " + plugins.join(", "));
+          initOnePlugin(req, res, plugins, 0, callback);
         }
         else {
           console.log("No plugins detected.");
@@ -102,6 +108,7 @@ var initOnePlugin = function (req, res, dirs, index, callback) {
   var path = __dirname + '/plugins';
   index = index ? index : 0;
   var name = dirs[index];
+  // Skip directories that do not contain plug.js
   fs.exists(path + '/' + name + '/plug.js', function (exists) {
     if (exists) {
       if (Plugins[name]) {
@@ -318,9 +325,9 @@ var doIfHasAccess = function (req, res, level, resourceScope, callback) {
   else {
     if (HasAccess(req, res, level, resourceScope)) {
       // if restricted to owner then positive result still needs to match user_id
-      if (level == "Owner") {
+      if ((level == "Owner") && req.params.id) {
         resourceScope.findOne({_id: req.params.id}).exec(function (err, data) {
-          if (data  && (req.session.user_id == data.user_id)) {
+          if (data && (req.session.user_id == data.user_id)) {
             console.log(data.user_id + " has access to the requested item.");
             callback(req, res, resourceScope);
           }
@@ -331,7 +338,8 @@ var doIfHasAccess = function (req, res, level, resourceScope, callback) {
       }
       else {
         // Special case for update site and model which require reload config
-        if ([resource.create, resource.update, resource.remove].indexOf(callback) && ([Site, Model].indexOf(resourceScope))) { 
+        if (([resource.create, resource.update, resource.remove].indexOf(callback) != -1) && ([Site, Model].indexOf(resourceScope) != -1)) { 
+          console.log("HITIT");
           callback(req, res, resourceScope, null, reloadConfig);
         }
         else {
@@ -773,6 +781,10 @@ var handleModelRequest = function (req, res, next, callback) {
           });
         }
         else {
+          // Make sure that the user_id is filled if needed
+          if (Models[model.name]) {
+
+          }
           doIfHasAccess(req, res, access, Models[model.name], callback);
         }
       }

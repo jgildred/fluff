@@ -722,7 +722,7 @@ var ModelListView = Backbone.View.extend({
             $.ajax({
               type: "GET",
               dataType: "json",
-              url: adminbase.slice(0,adminbase.indexOf('admin')-1) + '/api/' + dehumanize(model.get('name')) + '/count',
+              url: adminbase.slice(0, adminbase.indexOf('admin') - 1) + '/api/' + dehumanize(model.get('name')) + '/count',
               data: null,
               success: function (data) {
                 if (data) {
@@ -1322,14 +1322,23 @@ var ModelBrowseView = Backbone.View.extend({
                 return {
                   data: function (modelItem, value) {
                     if (_.isUndefined(value)) {
-                      return modelItem.get(attr);
+                      var val = modelItem.get(attr);
+                      if (!val && (that.schema[attr].name == 'Boolean')) {
+                        val = false;
+                      }
+                      return val;
                     }
                     else {
                       modelItem.set(attr, value);
                       modelItem.save();
                     }
                   },
-                  type: (that.schema[attr].name == 'Boolean') ? 'checkbox' : null, // FIXME more types
+                  // FIXME more types
+                  type: (that.schema[attr].name == 'Boolean') ? 'checkbox' : 
+                    (
+                      (that.schema[attr].name == 'Date') ? 'date' : 
+                      null
+                    ),
                   readOnly: (noUpdateFields.indexOf(attr) == -1) ? false : true
                 };
               };
