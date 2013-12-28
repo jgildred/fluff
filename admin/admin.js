@@ -2,8 +2,8 @@
 // automatically run upon loading this js file
 var init = function () {
 
-  // make sure the api key is correct if required
-  var version = '0.8';
+  // make sure the api key here matches the one in the site config if required
+  var version = '0.8.5';
   var apikey  = '1234567890';
   
   // display the version at the footer
