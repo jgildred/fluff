@@ -1,4 +1,7 @@
 node_modules/
-plugins/
+plugins/*
+!plugins/example/
+#!plugins/avb.io/
+#!plugins/keypair.io/
 config-*.js
 .DS_Store
