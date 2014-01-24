@@ -298,23 +298,35 @@ exports.toModel = toModel;
 
 // CORS setup
 var allowCrossDomain = function(req, res, next) {
-  if ((!app.get('config').cors.restricted) || (app.get('config').cors.whitelist.indexOf(req.headers.origin) != -1)) { 
-    res.header('Access-Control-Allow-Credentials', true); 
-    res.header('Access-Control-Allow-Origin', req.headers.origin);
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS'); 
-    res.header('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-API-Key'); 
-    
-    // intercept OPTIONS method
-    if (req.method == 'OPTIONS') {
-      res.send(200);
+  if (app.get('config').cors.restricted) { 
+    // Allow access only to whitelist and self
+    if (app.get('config').cors.whitelist.indexOf(req.headers.origin) != -1) {
+      console.log("DENIED ORIGIN: " + req.headers.origin);
+      res.json({auth: false, origin: req.headers.origin});
     }
     else {
-      next();
+      // Build the cors header to include whitelist
+      var list = [req.headers.origin];
+      if (app.get('config').cors.whitelist.length > 0) {
+        list.push(app.get('config').cors.whitelist);
+      }
+      res.header('Access-Control-Allow-Credentials', true);
+      res.header('Access-Control-Allow-Origin', whitelist.join(','));
+      res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS'); 
+      res.header('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-API-Key'); 
+      
+      // intercept OPTIONS method
+      if (req.method == 'OPTIONS') {
+        res.send(200);
+      }
+      else {
+        next();
+      }
     }
   } 
+  // Allow anything
   else {
-    console.log("DENIED ORIGIN: " + req.headers.origin);
-    res.json({auth: false, origin: req.headers.origin});
+    next();
   }
 }
 
