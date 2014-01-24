@@ -305,7 +305,7 @@ var allowCrossDomain = function(req, res, next) {
   if (app.get('config').cors.restricted) { 
     // Allow access only to whitelist and self
     if (app.get('config').cors.whitelist.indexOf(req.headers.origin) != -1) {
-      console.log("DENIED ORIGIN: " + req.headers.origin);
+      console.log("DENIED ORIGIN: '" + req.headers.origin + "'");
       res.json({auth: false, origin: req.headers.origin});
     }
     else {
