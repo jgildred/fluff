@@ -2,6 +2,7 @@ node_modules/
 plugins/*
 !plugins/example/
 #!plugins/avb.io/
+!plugins/bantr/
 #!plugins/keypair.io/
 config-*.js
 .DS_Store

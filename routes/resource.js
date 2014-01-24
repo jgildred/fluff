@@ -145,7 +145,7 @@ exports.findone = function(req, res, resource, filter, callback){
 };
 
 // Handler for POST
-exports.create = function(req, res, resource, callback){
+exports.create = function(req, res, resource, callback, noresponse){
   if (req.body.id)  { delete req.body.id; }
   if (req.body._id) { delete req.body._id; }
   var rightNow = new Date;
@@ -165,7 +165,9 @@ exports.create = function(req, res, resource, callback){
     }
     else { 
       if (data) { 
-        res.json(data);
+        if (!noresponse) {
+          res.json(data);
+        }
         if (callback) {
           callback(req, res, data);
         }
@@ -179,7 +181,7 @@ exports.create = function(req, res, resource, callback){
 };
 
 // Handler for PUT with id or other filter
-exports.update = function(req, res, resource, filter, callback){
+exports.update = function(req, res, resource, filter, callback, noresponse){
   console.log("IN UPDATE");
   if (req.body.id)  { delete req.body.id; }
   if (req.body._id) { delete req.body._id; }
@@ -196,7 +198,9 @@ exports.update = function(req, res, resource, filter, callback){
     else { 
       if (data) {
         console.log("UPDATE ITEM:\n" + JSON.stringify(data));
-        res.json(data);
+        if (!noresponse) {
+          res.json(data);
+        }
       }
       else {
         app.msgResponse(req, res, 404, "Nothing to update.");
@@ -209,12 +213,14 @@ exports.update = function(req, res, resource, filter, callback){
 };
 
 // Handler for DELETE with id
-exports.remove = function(req, res, resource, callback){
+exports.remove = function(req, res, resource, callback, noresponse){
   resource.remove({_id: req.params.id}, function (err, data) {
     if (err) { var body = err; }
     else { var body = { msg: "Removed."}; }
     console.log("REMOVE ITEM:\n" + JSON.stringify(data));
-    res.json(body);
+    if (!noresponse) {
+      res.json(body);
+    }
     if (!err && callback) {
       callback(req, res, data);
     }

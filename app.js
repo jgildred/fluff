@@ -1027,6 +1027,13 @@ var randomString = function (size) {
 }
 exports.randomString = randomString;
 
+// Returns a random integer between min and max
+// Using Math.round() will give you a non-uniform distribution!
+function randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+exports.randomInt = randomInt;
+
 var removeRoutes = function (regex) {
   for (method in app.routes) {
     for (var r = 0; r < app.routes[method].length; r++) {
