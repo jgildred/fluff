@@ -10,9 +10,6 @@ var checkToken = function(req, res, next){
     var apikey = req.session.apikey;
     var token = req.session._csrf || (req.session._csrf = app.randomString(24));
     var val = defaultValue(req);
-    console.log("REQ " + req.method + ": " + req.path);
-    console.log("REQ BODY: " + JSON.stringify(req.body));
-    console.log("REQ HEADERS: " + JSON.stringify(req.headers));
     console.log("CSRF on server:   " + token);
     console.log("CSRF from client: " + val);
     if ('GET' == req.method || 'HEAD' == req.method || 'OPTIONS' == req.method) { return next(); }

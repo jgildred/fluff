@@ -298,6 +298,10 @@ exports.toModel = toModel;
 
 // CORS setup
 var allowCrossDomain = function(req, res, next) {
+  console.log("REQ " + req.method + ": " + req.path);
+  console.log("REQ BODY: " + JSON.stringify(req.body));
+  console.log("REQ HEADERS: " + JSON.stringify(req.headers));
+
   if (app.get('config').cors.restricted) { 
     // Allow access only to whitelist and self
     if (app.get('config').cors.whitelist.indexOf(req.headers.origin) != -1) {
@@ -312,7 +316,7 @@ var allowCrossDomain = function(req, res, next) {
       }
       res.header('Access-Control-Allow-Credentials', true);
       res.header('Access-Control-Allow-Origin', list.join(','));
-      res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS'); 
+      res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS'); 
       res.header('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-API-Key'); 
       
       // intercept OPTIONS method
