@@ -309,13 +309,10 @@ var allowCrossDomain = function(req, res, next) {
       res.json({auth: false, origin: req.headers.origin});
     }
     else {
-      // Build the cors header to include whitelist
-      var list = [];
-      if (app.get('config').cors.whitelist.length > 0) {
-        list.push(app.get('config').cors.whitelist);
-      }
+      // Build the cors header
+      var origin = req.headers.origin ? req.headers.origin : "http://" + req.headers.host;
       res.header('Access-Control-Allow-Credentials', true);
-      res.header('Access-Control-Allow-Origin', list.join(','));
+      res.header('Access-Control-Allow-Origin', origin);
       res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS'); 
       res.header('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-API-Key'); 
       
@@ -330,6 +327,12 @@ var allowCrossDomain = function(req, res, next) {
   } 
   // Allow anything
   else {
+    // Build the cors header
+    var origin = req.headers.origin ? req.headers.origin : "http://" + req.headers.host;
+    res.header('Access-Control-Allow-Credentials', true);
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS'); 
+    res.header('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-API-Key'); 
     next();
   }
 }
