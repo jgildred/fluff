@@ -310,7 +310,7 @@ var allowCrossDomain = function(req, res, next) {
     }
     else {
       // Build the cors header to include whitelist
-      var list = [req.headers.origin];
+      var list = [];
       if (app.get('config').cors.whitelist.length > 0) {
         list.push(app.get('config').cors.whitelist);
       }
