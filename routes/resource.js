@@ -50,7 +50,6 @@ exports.find = function(req, res, resource, filter, callback){
         app.msgResponse(req, res, 404, name + ' not found.');
       }
     }
-    //console.log("FIND ONE:\n" + body);
   });
 };
 
@@ -86,7 +85,6 @@ exports.count = function(req, res, resource, filter, callback){
         app.msgResponse(req, res, 404, name + ' not found.');
       }
     }
-    //console.log("FIND ONE:\n" + body);
   });
 };
 
@@ -112,7 +110,6 @@ exports.where = function(req, res, resource, name, array, callback) {
         app.msgResponse(req, res, 404, name + ' not found.');
       }
     }
-    //console.log("FIND ONE:\n" + body);
   });
 };
 
@@ -140,7 +137,6 @@ exports.findone = function(req, res, resource, filter, callback){
         app.msgResponse(req, res, 404, name + ' not found.');
       }
     }
-    //console.log("FIND ONE:\n" + body);
   });
 };
 
@@ -176,7 +172,6 @@ exports.create = function(req, res, resource, callback, noresponse){
         app.msgResponse(req, res, 404, resource.modelName + ' could not be created.');
       }
     }
-    //console.log("CREATE:\n" + body);
   });
 };
 

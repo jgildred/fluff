@@ -23,21 +23,21 @@ exports.findone = function(req, res){
 
 // Preprocessor for GET /response
 exports.respond = function(req, res, callback) {
-  var resource = Plug.Utterance;
+  var obj = Plug.Utterance;
   var rightNow = new Date;
   var utterance = {};
-  utterance.text = req.params['text'];
+  utterance.text = req.params.text;
   utterance.creator_id = req.session.user_id;
   utterance.lastupdater_id = req.session.user_id;
   utterance.creation = rightNow;
   utterance.lastupdate = rightNow;
   // If the resource has a user_id field, then fill it on create
-  console.log("INFO " + JSON.stringify(resource.schema.path("user_id")));
-  if (resource.schema.path("user_id") && (!utterance.user_id)) {
+  console.log("INFO " + JSON.stringify(obj.schema.path("user_id")));
+  if (obj.schema.path("user_id") && (!utterance.user_id)) {
     utterance.user_id = req.session.user_id;
   }
   console.log("INSERTING: "+ JSON.stringify(utterance));
-  resource.create(utterance, function (err, data) {
+  obj.create(utterance, function (err, data) {
     if (err) { 
       app.msgResponse(req, res, 500, JSON.stringify(err));
     }
