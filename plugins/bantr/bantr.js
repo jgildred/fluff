@@ -7,7 +7,7 @@ var app      = require('../../app'),
     Plug     = require('./plug');
 
 // React to an utterance
-exports.react = function(utterance, callback){
+exports.react = function(req, res, utterance, callback){
 
     // This is where the magic happens to pick a response
     var condition = new RegExp(utterance, 'i');
