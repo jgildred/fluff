@@ -31,12 +31,13 @@ exports.respond = function(req, res, callback) {
   utterance.lastupdater_id = req.session.user_id;
   utterance.creation = rightNow;
   utterance.lastupdate = rightNow;
+  console.log("UTTERANCE: " + JSON.stringify(utterance));
   // If the resource has a user_id field, then fill it on create
   console.log("INFO " + JSON.stringify(obj.schema.path("user_id")));
   if (obj.schema.path("user_id") && (!utterance.user_id)) {
     utterance.user_id = req.session.user_id;
   }
-  console.log("INSERTING: "+ JSON.stringify(utterance));
+  console.log("INSERTING: " + JSON.stringify(utterance));
   obj.create(utterance, function (err, data) {
     if (err) { 
       app.msgResponse(req, res, 500, JSON.stringify(err));
