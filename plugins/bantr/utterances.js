@@ -21,47 +21,14 @@ exports.findone = function(req, res){
   app.doIfHasAccess(req, res, 'Admins', Plug.Utterance, resource.findone);
 };
 
-// Preprocessor for GET /response
-exports.respond = function(req, res) {
-  var obj = Plug.Utterance;
-  var rightNow = new Date;
-  var utterance = {
-    "text" : req.params['text'],
-    "creator_id" : req.session.user_id,
-    "lastupdater_id" : req.session.user_id,
-    "creation" : rightNow,
-    "lastupdate" : rightNow
-  };
-  console.log("UTTERANCE: " + JSON.stringify(utterance));
-  // If the resource has a user_id field, then fill it on create
-  console.log("INFO " + JSON.stringify(obj.schema.path("user_id")));
-  if (obj.schema.path("user_id") && (!utterance.user_id)) {
-    utterance.user_id = req.session.user_id;
-  }
-  console.log("INSERTING: " + JSON.stringify(utterance));
-  obj.create(utterance, function (err, data) {
-    if (err) { 
-      app.msgResponse(req, res, 500, JSON.stringify(err));
-    }
-    else { 
-      if (data) { 
-        // You would think that you should learn before you react, but then the reaction would be slow. May change later.
-        Bantr.react(req, res, function(req, res) {
-          Bantr.learn(req, res);
-        });
-      }
-      else {
-        app.msgResponse(req, res, 404, 'Utterance could not be created.');
-      }
-    }
-  });
-};
-
 // Preprocessor for POST /utterances
 exports.create = function(req, res){
-  resource.create(req, res, Plug.Utterance, function(req, res) {
-    Bantr.learn(req, res);
-  });
+  resource.create(req, res, Plug.Utterance, function(req, res, utterance) {
+    // You would think that you should learn before you react, but then the reaction would be slow. May change later.
+    Bantr.react(req, res, utterance, function(utterance, rules) {
+      Bantr.learn(utterance, rules);
+    });
+  }, true);
 };
 
 // Preprocessor for PUT /utterances/:id

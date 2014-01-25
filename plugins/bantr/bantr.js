@@ -7,10 +7,10 @@ var app      = require('../../app'),
     Plug     = require('./plug');
 
 // React to an utterance
-exports.react = function(req, res, callback){
+exports.react = function(utterance, callback){
 
     // This is where the magic happens to pick a response
-    var condition = new RegExp(req.body['text'], 'i');
+    var condition = new RegExp(utterance, 'i');
     var filter = {"condition" : condition};
     Plug.Rule.find(filter).exec(function (err, rules) {
       console.log("Matches:");
@@ -30,14 +30,19 @@ exports.react = function(req, res, callback){
         var text = responses[app.randomInt(0, responses.length)];
         var url = "http://api.ispeech.org/api/rest?apikey=" + Plug.iSpeechKey + "&action=convert&format=mp3&text=" + encodeURIComponent(text);
       }
-      res.redirect(url);
+      var body = {
+        text:   text,
+        audio:  url,
+        format: "mp3"
+      }
+      res.json(body);
       if (callback) {
-        callback(req, res, rules);
+        callback(utterance, rules);
       }
     });
 };
 
 // Learn from the utterance and record new rules or change existing rules
-exports.learn = function(req, res, callback){
+exports.learn = function(utterance, rules){
   // DUH
 };

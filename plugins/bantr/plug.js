@@ -39,7 +39,6 @@ exports.load = function (callback) {
   var base = Fluff.app.get('config').fluff_path + '/admin/api';
 
   // Any routes added by the plugin, including routes for your plugin's model(s).
-  Fluff.app.get (base + '/response',           utterances.respond);
   Fluff.app.get (base + '/utterances',         utterances.find);
   Fluff.app.get (base + '/utterances/:id',     utterances.findone);
   Fluff.app.post(base + '/utterances',         utterances.create);

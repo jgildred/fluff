@@ -671,7 +671,6 @@ var setupMailer = function () {
   else {
     mailerData.service = Fluff.app.get('config').smtp.service;
   }
-  console.log(mailerData);
   Fluff.mailer = nodemailer.createTransport("SMTP", mailerData);
 }
 
