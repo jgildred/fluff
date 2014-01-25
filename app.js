@@ -672,9 +672,9 @@ var setupMailer = function () {
 
 Fluff.emailToUser = function(mailinfo) {
   if (mailinfo) {
-    console.log("MAIL TO USER: from " + app.get('config').email_from + ", to " + mailinfo.user.email + ", mailer info is " + JSON.stringify(Fluff.mailer));
+    console.log("MAIL TO USER: from " + Fluff.app.get('config').email_from + ", to " + mailinfo.user.email + ", mailer info is " + JSON.stringify(Fluff.mailer));
     Fluff.mailer.sendMail({
-      from:    app.get('config').email_from,
+      from:    Fluff.app.get('config').email_from,
       to:      mailinfo.user.email,
       subject: mailinfo.subject,
       text:    mailinfo.body
