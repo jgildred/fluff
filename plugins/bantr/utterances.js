@@ -25,13 +25,12 @@ exports.findone = function(req, res){
 exports.respond = function(req, res, callback) {
   var resource = Plug.Utterance;
   var rightNow = new Date;
-  var utterance = {
-    text: req.params['text'],
-    creator_id: req.session.user_id,
-    lastupdater_id: req.session.user_id,
-    creation: rightNow,
-    lastupdate: rightNow
-  };
+  var utterance = {};
+  utterance.text = req.params['text'];
+  utterance.creator_id = req.session.user_id;
+  utterance.lastupdater_id = req.session.user_id;
+  utterance.creation = rightNow;
+  utterance.lastupdate = rightNow;
   // If the resource has a user_id field, then fill it on create
   console.log("INFO " + JSON.stringify(resource.schema.path("user_id")));
   if (resource.schema.path("user_id") && (!utterance.user_id)) {
