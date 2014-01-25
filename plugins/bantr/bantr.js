@@ -18,7 +18,7 @@ exports.react = function(req, res, callback){
       if (rules.length > 0) {
         //redirect to ispeech url for 
         var text = rules[app.randomInt(0, rules.length)].response;
-        var url = "http://api.ispeech.org/api/rest?apikey=developerdemokeydeveloperdemokey&action=convert&format=mp3&text=" + encodeURIComponent(text);
+        var url = "http://api.ispeech.org/api/rest?apikey=" + Plug.iSpeechKey + "&action=convert&format=mp3&text=" + encodeURIComponent(text);
       }
       else {
         //provide canned response if no match
@@ -28,7 +28,7 @@ exports.react = function(req, res, callback){
           "hmm, I don't get it"
         ];
         var text = responses[app.randomInt(0, responses.length)];
-        var url = "http://api.ispeech.org/api/rest?apikey=developerdemokeydeveloperdemokey&action=convert&format=mp3&text=" + encodeURIComponent(text);
+        var url = "http://api.ispeech.org/api/rest?apikey=" + Plug.iSpeechKey + "&action=convert&format=mp3&text=" + encodeURIComponent(text);
       }
       res.redirect(url);
       if (callback) {

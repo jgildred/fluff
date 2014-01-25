@@ -301,13 +301,29 @@ var allowCrossDomain = function(req, res, next) {
   console.log("REQ " + req.method + ": " + req.path);
   console.log("REQ BODY: " + JSON.stringify(req.body));
   console.log("REQ HEADERS: " + JSON.stringify(req.headers));
-
-  if (app.get('config').cors.restricted) { 
-    // Allow access only to whitelist and self
-    if ((app.get('config').cors.whitelist.indexOf(req.headers.origin) == -1) && (app.get('config').cors.whitelist.indexOf("http://" + req.headers.host) == -1) && (app.get('config').cors.whitelist.indexOf("https://" + req.headers.host) == -1)) {
-      console.log("DENIED ORIGIN: '" + req.headers.origin + "'");
-      res.json({auth: false, origin: req.headers.origin});
-    }
+  // intercept OPTIONS method
+  if (req.method == 'OPTIONS') {
+    res.send(200);
+  }
+  else {
+    if (app.get('config').cors.restricted) { 
+      // Allow access only to whitelist and self
+      if ((app.get('config').cors.whitelist.indexOf(req.headers.origin) == -1) && (app.get('config').cors.whitelist.indexOf("http://" + req.headers.host) == -1) && (app.get('config').cors.whitelist.indexOf("https://" + req.headers.host) == -1)) {
+        console.log("DENIED ORIGIN: '" + req.headers.origin + "'");
+        res.json({auth: false, origin: req.headers.origin});
+      }
+      else {
+        // Build the cors header
+        var origin = req.headers.origin ? req.headers.origin : "http://" + req.headers.host;
+        res.header('Access-Control-Allow-Credentials', true);
+        res.header('Access-Control-Allow-Origin', origin);
+        res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS'); 
+        res.header('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-API-Key'); 
+          next();
+        }
+      }
+    } 
+    // Allow anything
     else {
       // Build the cors header
       var origin = req.headers.origin ? req.headers.origin : "http://" + req.headers.host;
@@ -315,25 +331,8 @@ var allowCrossDomain = function(req, res, next) {
       res.header('Access-Control-Allow-Origin', origin);
       res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS'); 
       res.header('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-API-Key'); 
-      
-      // intercept OPTIONS method
-      if (req.method == 'OPTIONS') {
-        res.send(200);
-      }
-      else {
-        next();
-      }
+      next();
     }
-  } 
-  // Allow anything
-  else {
-    // Build the cors header
-    var origin = req.headers.origin ? req.headers.origin : "http://" + req.headers.host;
-    res.header('Access-Control-Allow-Credentials', true);
-    res.header('Access-Control-Allow-Origin', origin);
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS'); 
-    res.header('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-API-Key'); 
-    next();
   }
 }
 
@@ -1008,9 +1007,6 @@ var applyConfig = function (req, res, callback) {
   var protocol  = app.get('config').ssl  ? "https://" : "http://";
   var port      = app.get('config').port ? ":" + app.get('config').port : "";
   var siteUrl   = protocol + app.get('config').domain;
-  if (!process.env.PORT && !process.env.VMC_APP_PORT) {
-    siteUrl += port;
-  }
   
   // Heroku and other paas will not expose the internal server port
   if (app.get('config').app_service != "Custom") {

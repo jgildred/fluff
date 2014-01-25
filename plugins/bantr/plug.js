@@ -10,6 +10,9 @@ var Fluff      = require('../../app').Fluff,
     utterances = require('./utterances'),
     rules      = require('./rules');
 
+var iSpeechKey = "8ae68fc6dfdd29852cf7424f9c00ce8b";
+exports.iSpeechKey = iSpeechKey;
+
 // This is a required function that must be exported.
 // This will run when you startup Fluff, but will not run when Fluff config is reloaded.
 exports.init = function (callback) {
