@@ -146,7 +146,7 @@ var updateSession = function(req, res, user) {
 
 var SendVerifyEmail = function(req, res, user) {
   if (user) {
-    var link  = app.siteUrl + Fluff.app.get('config').fluff_path + "/admin/#/verify/" + user.verifytoken;
+    var link  = Fluff.app.siteUrl + Fluff.app.get('config').fluff_path + "/admin/#/verify/" + user.verifytoken;
     Fluff.emailToUser({
       user: user,
       subject: "Verify Your Email Address",
@@ -159,7 +159,7 @@ var SendVerifyEmail = function(req, res, user) {
 
 var SendResetEmail = function(req, res, user) {
   if (user) {
-    var link  = app.siteUrl + Fluff.app.get('config').fluff_path + "/admin/#/pwchange/" + user.verifytoken;
+    var link  = Fluff.app.siteUrl + Fluff.app.get('config').fluff_path + "/admin/#/pwchange/" + user.verifytoken;
     Fluff.emailToUser({
       user: user,
       subject: "Request to Reset Your Password",
@@ -172,7 +172,7 @@ var SendResetEmail = function(req, res, user) {
 
 var SendWelcomeEmail = function(req, res, user) {
   if (user) {
-    var link  = app.siteUrl + Fluff.app.get('config').fluff_path + "/admin/#/pwchange/" + user.verifytoken;
+    var link  = Fluff.app.siteUrl + Fluff.app.get('config').fluff_path + "/admin/#/pwchange/" + user.verifytoken;
     Fluff.emailToUser({
       user: user,
       subject: "Your Account is Ready",

@@ -1007,7 +1007,11 @@ var applyConfig = function (req, res, callback) {
   // Site url is useful for email notifications which link back to the site
   var protocol  = app.get('config').ssl  ? "https://" : "http://";
   var port      = app.get('config').port ? ":" + app.get('config').port : "";
-  var siteUrl   = protocol + app.get('config').domain + port;
+  var siteUrl   = protocol + app.get('config').domain;
+  if (!process.env.PORT && !process.env.VMC_APP_PORT) {
+    siteUrl += port;
+  }
+  
   // Heroku and other paas will not expose the internal server port
   if (app.get('config').app_service != "Custom") {
     siteUrl += port;
