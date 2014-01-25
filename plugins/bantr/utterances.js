@@ -27,11 +27,11 @@ exports.respond = function(req, res) {
   var rightNow = new Date;
   var utterance = {
     "text" : req.params['text'],
-    "creator_id" : req.session.user_id;
-    "lastupdater_id" : req.session.user_id;
+    "creator_id" : req.session.user_id,
+    "lastupdater_id" : req.session.user_id,
     "creation" : rightNow,
     "lastupdate" : rightNow
-  }
+  };
   console.log("UTTERANCE: " + JSON.stringify(utterance));
   // If the resource has a user_id field, then fill it on create
   console.log("INFO " + JSON.stringify(obj.schema.path("user_id")));
