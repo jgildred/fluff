@@ -10,7 +10,7 @@ var checkToken = function(req, res, next){
     var apikey = req.session.apikey;
     var token = req.session._csrf || (req.session._csrf = app.randomString(24));
     var val = defaultValue(req);
-    console.log("CSRF on server: " + token + " for session " + req.session.id + " for user " + req.session.user.email);
+    console.log("CSRF on server: " + token + " for session " + req.session.id + " for user " + req.session.user);
     console.log("CSRF from client: " + val);
     var bypass = false;
     if (
