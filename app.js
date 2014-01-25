@@ -667,22 +667,27 @@ var setupMailer = function () {
   else {
     mailerData.service = Fluff.app.get('config').smtp.service;
   }
+  console.log(mailerData);
   Fluff.mailer = nodemailer.createTransport("SMTP", mailerData);
 }
 
 Fluff.emailToUser = function(mailinfo) {
   if (mailinfo) {
     console.log("MAIL TO USER: from " + Fluff.app.get('config').email_from + ", to " + mailinfo.user.email + ", mailer info is " + JSON.stringify(Fluff.mailer));
+
     Fluff.mailer.sendMail({
       from:    Fluff.app.get('config').email_from,
       to:      mailinfo.user.email,
       subject: mailinfo.subject,
       text:    mailinfo.body
-    }, function(error) {
+    }, function(error, response) {
       if(error){
         console.log('Mailer error occured:');
         console.log(error.message);
         return;
+      }
+      else {
+        console.log("Message sent: " + response.message);
       }
       Fluff.mailer.close();
     });
