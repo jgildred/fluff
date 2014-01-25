@@ -12,11 +12,13 @@ var checkToken = function(req, res, next){
     var val = defaultValue(req);
     console.log("CSRF on server:   " + token);
     console.log("CSRF from client: " + val);
-    if ('GET' == req.method || 'HEAD' == req.method || 'OPTIONS' == req.method) { return next(); }
-    // allow signup, verify, pwreset, pwchange, and login without csrf
     var bypass = false;
     if (
-      (
+      ( 
+         // allow signup, verify, pwreset, pwchange, and login without csrf
+         ('GET' == req.method || 'HEAD' == req.method || 'OPTIONS' == req.method)
+      )
+      || (
         (req.method == 'POST')
         && (
           (req.path == (app.App.get('config').fluff_path + '/admin/api/users'))
