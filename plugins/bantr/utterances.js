@@ -22,11 +22,11 @@ exports.findone = function(req, res){
 };
 
 // Preprocessor for GET /response
-exports.respond = function(req, res, callback) {
+exports.respond = function(req, res) {
   var obj = Plug.Utterance;
   var rightNow = new Date;
   var utterance = {};
-  utterance.text = req.params.text;
+  utterance['text'] = req.params['text'];
   utterance.creator_id = req.session.user_id;
   utterance.lastupdater_id = req.session.user_id;
   utterance.creation = rightNow;
