@@ -427,9 +427,23 @@ var HasAccess = function(req, res, level, resourceScope){
 };
 exports.HasAccess = HasAccess;
 
+// Render page info in a page's content, useful for dynamic headers in views
+var renderPageInfo = function (res, page, template) {
+  var page_tag = "page"; // this prefix could be added to site config
+  var output = template;
+  var pageInfo = [
+    { tag: 'name',       value: page.name }
+  ];
+  pageInfo.forEach(function (infoItem) {
+    var pattern = new RegExp("{{\\s*" + page_tag + "\\." + infoItem.tag + "\\s*}}", "gi");
+    output = output.replace(pattern, infoItem.value);
+  });
+  res.send(output);
+}
+
 // Render site info in a page's content
-var renderSiteInfo = function (res, template) {
-  var site_tag = "site"; // this may move to a site config
+var renderSiteInfo = function (res, page, template) {
+  var site_tag = "site"; // this prefix could be added to site config
   var output = template;
   var siteInfo = [
     { tag: 'name',       value: app.get('config').name },
@@ -442,11 +456,11 @@ var renderSiteInfo = function (res, template) {
     var pattern = new RegExp("{{\\s*" + site_tag + "\\." + infoItem.tag + "\\s*}}", "gi");
     output = output.replace(pattern, infoItem.value);
   });
-  res.send(output);
+  renderPageInfo(res, page, output);
 }
 
 // Render vars in a page's content
-var renderVars = function (res, template) {
+var renderVars = function (res, page, template) {
   var var_tag = "var"; // this may move to a site config
   var output = template;
   Var.find().exec(function (err, vars) {
@@ -456,7 +470,7 @@ var renderVars = function (res, template) {
         output = output.replace(pattern, vari.value);
       });
     }
-    renderSiteInfo(res, output);
+    renderSiteInfo(res, page, output);
   });
 }
 
@@ -471,7 +485,7 @@ var renderView = function (res, page) {
       var pattern = new RegExp("{{\\s*" + content_tag + "\\s*}}", "i");
       output = output.replace(pattern, page.content);
     }
-    renderVars(res, output);
+    renderVars(res, page, output);
   });
 }
 
