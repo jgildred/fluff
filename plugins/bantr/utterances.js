@@ -25,7 +25,6 @@ exports.findone = function(req, res){
 exports.create = function(req, res){
   resource.create(req, res, Plug.Utterance, function(req, res, utterance) {
     // You would think that you should learn before you react, but then the reaction would be slow. May change later.
-    console.log("UTTERANCE: "+utterance.text);
     Bantr.react(req, res, utterance, function(utterance, rules) {
       Bantr.learn(utterance, rules);
     });

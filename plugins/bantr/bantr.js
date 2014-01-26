@@ -12,6 +12,7 @@ exports.react = function(req, res, utterance, callback){
     // This is where the magic happens to pick a response
     var condition = new RegExp(utterance, 'i');
     var filter = {"condition" : condition};
+    console.log("CONDITION: "+condition);
     Plug.Rule.find(filter).exec(function (err, rules) {
       console.log("Matches:");
       console.log(rules);
