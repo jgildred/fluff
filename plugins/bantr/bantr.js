@@ -18,6 +18,8 @@ exports.react = function(req, res, utterance, callback){
       if (rules.length > 0) {
         //redirect to ispeech url for 
         var text = rules[app.randomInt(0, rules.length)].response;
+        console.log("RULES LENGTH "+rules.length);
+        console.log("RANDOM RULE "+app.randomInt(0, rules.length));
         var url  = "http://api.ispeech.org/api/rest?apikey=" + Plug.iSpeechKey + "&action=convert&format=mp3&text=" + encodeURIComponent(text);
       }
       else {
