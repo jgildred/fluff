@@ -19,7 +19,7 @@ exports.react = function(req, res, utterance, callback){
         //redirect to ispeech url for 
         var text = rules[app.randomInt(0, rules.length)].response;
         console.log("RULES LENGTH "+rules.length);
-        console.log("RANDOM RULE "+app.randomInt(0, rules.length));
+        console.log("RANDOM RULE "+app.randomInt(0, rules.length - 1));
         var url  = "http://api.ispeech.org/api/rest?apikey=" + Plug.iSpeechKey + "&action=convert&format=mp3&text=" + encodeURIComponent(text);
       }
       else {
@@ -27,9 +27,9 @@ exports.react = function(req, res, utterance, callback){
         var responses = [
           "sorry, I missed that",
           "what was that again?",
-          "hmm, I don't get it"
+          "I'm not sure what you mean"
         ];
-        var text = responses[app.randomInt(0, responses.length)];
+        var text = responses[app.randomInt(0, responses.length - 1)];
         var url  = "http://api.ispeech.org/api/rest?apikey=" + Plug.iSpeechKey + "&action=convert&format=mp3&text=" + encodeURIComponent(text);
       }
       var body = {
