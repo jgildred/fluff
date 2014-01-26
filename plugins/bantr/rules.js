@@ -37,6 +37,6 @@ exports.update = function(req, res){
 // Preprocessor for DELETE /rules/:id
 exports.remove = function(req, res){
   if (app.HasAccess(req, res, 'Admins')) {
-    resource.remove(req, res, Plug.Rule, null, callback);
+    resource.remove(req, res, Plug.Rule);
   }
 };
