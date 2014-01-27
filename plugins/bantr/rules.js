@@ -20,13 +20,33 @@ exports.find = function(req, res){
 exports.getinfo = function(req, res){
   app.doIfHasAccess(req, res, 'Admins', Plug.Rule, function(req, res) {
     var data = {
-      schema_data     : schemas.rule,
+      schema_data     : schemaToData(schemas.rule),
       display_columns : schemas.rule_display_columns,
       sort_column     : schemas.rule_sort_column
     }
     res.json(data);
   });
 };
+
+function schemaToData (schema) {
+  var schema_data = "{\n";
+  for (item in schema) {
+    if (schema[item].type) {
+      schema_data += item + ": { ";
+      var itemObj = schema[item]
+      for (subitem in itemObj) {
+        schema_data += subitem + ": " + (itemObj[subitem].name ? itemObj[subitem].name : itemObj[subitem]) + ", ";
+      }
+      schema_data = schema_data.substr(0, schema_data.length - 3); // fix
+      schema_data += " },\n";
+    }
+    else {
+      schema_data += item + ": " + schema[item].name + ",\n";
+    }
+  }
+  schema_data += "}";
+  return schema_data;
+}
 
 // Preprocessor for GET /rules/:id
 exports.findone = function(req, res){

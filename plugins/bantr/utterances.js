@@ -36,7 +36,7 @@ function schemaToData (schema) {
       schema_data += item + ": { ";
       var itemObj = schema[item]
       for (subitem in itemObj) {
-        schema_data += subitem + ": " + itemObj[subitem] + ", ";
+        schema_data += subitem + ": " + (itemObj[subitem].name ? itemObj[subitem].name : itemObj[subitem]) + ", ";
       }
       schema_data = schema_data.substr(0, schema_data.length - 3); // fix
       schema_data += " },\n";
