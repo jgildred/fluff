@@ -40,7 +40,7 @@ exports.rule_display_columns = [{
   size:  20
 },
 {
-  name:  'id',
+  name:  '_id',
   title: 'ID',
   size:   10
 },
