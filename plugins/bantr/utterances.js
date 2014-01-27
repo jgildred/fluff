@@ -38,7 +38,7 @@ function schemaToData (schema) {
       for (subitem in itemObj) {
         schema_data += subitem + ": " + itemObj[subitem] + ", ";
       }
-      substr(schema_data, 0, schema_data.length - 3); // fix
+      schema_data = schema_data.substr(0, schema_data.length - 3); // fix
       schema_data += " },\n";
     }
     else {
