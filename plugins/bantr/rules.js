@@ -20,7 +20,7 @@ exports.find = function(req, res){
 exports.getinfo = function(req, res){
   app.doIfHasAccess(req, res, 'Admins', Plug.Rule, function(req, res) {
     var data = {
-      schema_data     : JSON.stringify(schemas.rule),
+      schema_data     : schemas.rule,
       display_columns : schemas.rule_display_columns,
       sort_column     : schemas.rule_sort_column
     }
