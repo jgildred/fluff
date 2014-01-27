@@ -944,11 +944,24 @@ var schemaToData = function (schema) {
   for (item in schema) {
     if (schema[item].type) {
       schema_data += item + ": { ";
-      var itemObj = schema[item]
+      var itemObj = schema[item];
       for (subitem in itemObj) {
-        schema_data += subitem + ": " + (itemObj[subitem].name ? itemObj[subitem].name : JSON.stringify(itemObj[subitem])) + ", ";
+        schema_data += subitem + ": ";
+        if (itemObj[subitem].name) {
+          schema_data += itemObj[subitem].name;
+        }
+        else {
+          if (JSON.stringify(itemObj[subitem]) == 'now') {
+            schema_data += "Date.now";
+          }
+          else {
+            schema_data += JSON.stringify(itemObj[subitem]);
+          }
+        }
+        schema_data += ", "
       }
-      schema_data = schema_data.substr(0, schema_data.length - 2); // fix
+      // Remove the last comma and close the brace
+      schema_data = schema_data.substr(0, schema_data.length - 2);
       schema_data += " },\n";
     }
     else {
