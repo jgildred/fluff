@@ -938,6 +938,28 @@ var loadModels = function (req, res, callback) {
   });
 }
 
+var schemaToData = function (schema) {
+  var schema_data = "{\n";
+  for (item in schema) {
+    if (schema[item].type) {
+      schema_data += item + ": { ";
+      var itemObj = schema[item]
+      for (subitem in itemObj) {
+        schema_data += subitem + ": " + (itemObj[subitem].name ? itemObj[subitem].name : JSON.stringify(itemObj[subitem])) + ", ";
+      }
+      schema_data = schema_data.substr(0, schema_data.length - 3); // fix
+      schema_data += " },\n";
+    }
+    else {
+      schema_data += item + ": " + schema[item].name + ",\n";
+    }
+  }
+  schema_data += "}";
+  console.log("SCHEMA TO DATA: " + schema_data);
+  return schema_data;
+}
+exports.schemaToData = schemaToData;
+
 var adminRoutes = function () {
   // Setup routes using the default resource handler
   var base = app.get('config').fluff_path + '/admin/api';
