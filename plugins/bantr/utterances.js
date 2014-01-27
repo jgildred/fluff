@@ -32,7 +32,18 @@ exports.getinfo = function(req, res){
 function schemaToData (schema) {
   var schema_data = "{\n";
   for (item in schema) {
-    schema_data += item + ": " + schema[item].name + ",\n";
+    if (schema[item].type) {
+      schema_data += item + ": { ";
+      var itemObj = schema[item]
+      for (subitem in itemObj) {
+        schema_data += subitem + ": " + itemObj[subitem] + ", ";
+      }
+      substr(schema_data, 0, schema_data.length - 3); // fix
+      schema_data += " },\n";
+    }
+    else {
+      schema_data += item + ": " + schema[item].name + ",\n";
+    }
   }
   schema_data += "}";
   return schema_data;
