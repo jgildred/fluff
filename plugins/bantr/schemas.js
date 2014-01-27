@@ -3,6 +3,22 @@
 
 var mongoose = require('mongoose');
 
+exports.utterance_display_columns = [{
+  name:  'text',
+  title: 'What Was Said',
+  size:  20
+},
+{
+  name:  'user_id',
+  title: 'User',
+  size:  10
+},
+{
+  name:  'lastupdate',
+  title: 'Last Updated',
+  size:   10
+}];
+exports.utterance_sort_column = { name:'lastupdate', order:true };
 exports.utterance = {
   user_id        : mongoose.Schema.Types.ObjectId,    // This is used to identify the owner.
   text           : { type: String, required: true},   // Text representation of utterance.
@@ -13,6 +29,27 @@ exports.utterance = {
   lastupdate     : { type: Date, default: Date.now }  // Fluff wants these fields for accounting.
 };
 
+exports.rule_display_columns = [{
+  name:  'condition',
+  title: 'What Was Said',
+  size:  20
+},
+{
+  name:  'response',
+  title: 'User',
+  size:  20
+},
+{
+  name:  'id',
+  title: 'ID',
+  size:   10
+},
+{
+  name:  'lastupdate',
+  title: 'Last Updated',
+  size:   10
+}];
+exports.rule_sort_column = { name:'lastupdate', order:true };
 exports.rule = {
   user_id        : mongoose.Schema.Types.ObjectId,    // This is used to restrict a rule to a particular user.
   utterance_id   : mongoose.Schema.Types.ObjectId,    // The utterance that caused the last update.

@@ -16,6 +16,18 @@ exports.find = function(req, res){
   app.doIfHasAccess(req, res, 'Admins', Plug.Utterance, resource.find);
 };
 
+// Preprocessor for GET /utterances/info
+exports.getinfo = function(req, res){
+  app.doIfHasAccess(req, res, 'Admins', Plug.Utterance, function(req, res) {
+    var data = {
+      schema_data     : JSON.stringify(schemas.utterance),
+      display_columns : schemas.utterance_display_columns,
+      sort_column     : schemas.utterance_sort_column
+    }
+    res.json(data);
+  });
+};
+
 // Preprocessor for GET /utterances/:id
 exports.findone = function(req, res){
   app.doIfHasAccess(req, res, 'Admins', Plug.Utterance, resource.findone);

@@ -10,7 +10,7 @@ var app      = require('../../app'),
 exports.react = function(req, res, utterance, callback){
 
     // This is where the magic happens to pick a response
-    var condition = new RegExp(utterance.text, 'i');
+    var condition = new RegExp(utterance.text, 'gi');
     var filter = {"condition" : condition};
     Plug.Rule.find(filter).exec(function (err, rules) {
       console.log("Matches:");

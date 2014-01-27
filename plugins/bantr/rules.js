@@ -6,6 +6,7 @@
 var app      = require('../../app'),
     Fluff    = app.Fluff,
     resource = require('../../routes/resource'),
+    schemas  = require('./schemas'),
     Plug     = require('./plug');
 
 // Preprocessor for GET /rules
@@ -13,6 +14,18 @@ exports.find = function(req, res){
   // Using app.doIfHasAccess is not required but illustrates the use of access control.
   // There is a good change you will want to enforce 'Admins' level access to plugin resources.
   app.doIfHasAccess(req, res, 'Admins', Plug.Rule, resource.find);
+};
+
+// Preprocessor for GET /rules/info
+exports.getinfo = function(req, res){
+  app.doIfHasAccess(req, res, 'Admins', Plug.Rule, function(req, res) {
+    var data = {
+      schema_data     : JSON.stringify(schemas.rule),
+      display_columns : schemas.rule_display_columns,
+      sort_column     : schemas.rule_sort_column
+    }
+    res.json(data);
+  });
 };
 
 // Preprocessor for GET /rules/:id

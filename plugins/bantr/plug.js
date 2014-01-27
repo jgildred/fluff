@@ -39,17 +39,19 @@ exports.load = function (callback) {
   var base = Fluff.app.get('config').fluff_path + '/admin/api';
 
   // Any routes added by the plugin, including routes for your plugin's model(s).
-  Fluff.app.get (base + '/utterances',         utterances.find);
-  Fluff.app.get (base + '/utterances/:id',     utterances.findone);
-  Fluff.app.post(base + '/utterances',         utterances.create);
-  Fluff.app.put (base + '/utterances/:id',     utterances.update);
-  Fluff.app.del (base + '/utterances/:id',     utterances.remove);
+  Fluff.app.get (base + '/utterances',      utterances.find);
+  Fluff.app.get (base + '/utterances/info', utterances.getinfo);
+  Fluff.app.get (base + '/utterances/:id',  utterances.findone);
+  Fluff.app.post(base + '/utterances',      utterances.create);
+  Fluff.app.put (base + '/utterances/:id',  utterances.update);
+  Fluff.app.del (base + '/utterances/:id',  utterances.remove);
 
-  Fluff.app.get (base + '/rules',         rules.find);
-  Fluff.app.get (base + '/rules/:id',     rules.findone);
-  Fluff.app.post(base + '/rules',         rules.create);
-  Fluff.app.put (base + '/rules/:id',     rules.update);
-  Fluff.app.del (base + '/rules/:id',     rules.remove);
+  Fluff.app.get (base + '/rules',      rules.find);
+  Fluff.app.get (base + '/rules/info', rules.getinfo);
+  Fluff.app.get (base + '/rules/:id',  rules.findone);
+  Fluff.app.post(base + '/rules',      rules.create);
+  Fluff.app.put (base + '/rules/:id',  rules.update);
+  Fluff.app.del (base + '/rules/:id',  rules.remove);
 
 	if (callback) {
 		callback();
