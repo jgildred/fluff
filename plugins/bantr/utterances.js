@@ -21,13 +21,22 @@ exports.find = function(req, res){
 exports.getinfo = function(req, res){
   app.doIfHasAccess(req, res, 'Admins', Plug.Utterance, function(req, res) {
     var data = {
-      schema_data     : JSON.stringify(schemas.utterance),
+      schema_data     : schemaToData(schemas.utterance),
       display_columns : schemas.utterance_display_columns,
       sort_column     : schemas.utterance_sort_column
     }
     res.json(data);
   });
 };
+
+function schemaToData (schema) {
+  var schema_data = "{\n";
+  for (item in schema) {
+    schema_data += item + ": " + schema[item].name + ",\n";
+  }
+  schema_data += "}";
+  return schema_data;
+}
 
 // Preprocessor for GET /utterances/:id
 exports.findone = function(req, res){
