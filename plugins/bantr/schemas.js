@@ -31,12 +31,12 @@ exports.utterance = {
 
 exports.rule_display_columns = [{
   name:  'condition',
-  title: 'What Was Said',
+  title: 'Substring Match',
   size:  20
 },
 {
   name:  'response',
-  title: 'User',
+  title: 'Response',
   size:  20
 },
 {
