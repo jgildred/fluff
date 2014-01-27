@@ -20,11 +20,11 @@ exports.utterance_display_columns = [{
 }];
 exports.utterance_sort_column = { name:'lastupdate', order:true };
 exports.utterance = "{\n\
-  user_id        : mongoose.Schema.Types.ObjectId,    // This is used to identify the owner.\n\
+  user_id        : ObjectId,                          // This is used to identify the owner.\n\
   text           : { type: String, required: true},   // Text representation of utterance.\n\
   audio_file     : String,                            // Audio of utterance, not used yet.\n\
-  creator_id     : mongoose.Schema.Types.ObjectId,    // Fluff wants these fields for accounting.\n\
-  lastupdater_id : mongoose.Schema.Types.ObjectId,    // Fluff wants these fields for accounting.\n\
+  creator_id     : ObjectId,                          // Fluff wants these fields for accounting.\n\
+  lastupdater_id : ObjectId,                          // Fluff wants these fields for accounting.\n\
   creation       : { type: Date, default: Date.now }, // Fluff wants these fields for accounting.\n\
   lastupdate     : { type: Date, default: Date.now }  // Fluff wants these fields for accounting.\n\
 }";
@@ -51,12 +51,12 @@ exports.rule_display_columns = [{
 }];
 exports.rule_sort_column = { name:'lastupdate', order:true };
 exports.rule = "{\n\
-  user_id        : mongoose.Schema.Types.ObjectId,    // This is used to restrict a rule to a particular user.\n\
-  utterance_id   : mongoose.Schema.Types.ObjectId,    // The utterance that caused the last update.\n\
+  user_id        : ObjectId,                          // This is used to restrict a rule to a particular user.\n\
+  utterance_id   : ObjectId,                          // The utterance that caused the last update.\n\
   condition      : { type: String, required: true},   // Condition where rule applies.\n\
   response       : { type: String, required: true},   // Text of the response.\n\
-  creator_id     : mongoose.Schema.Types.ObjectId,    // Fluff wants these fields for accounting.\n\
-  lastupdater_id : mongoose.Schema.Types.ObjectId,    // Fluff wants these fields for accounting.\n\
+  creator_id     : ObjectId,                          // Fluff wants these fields for accounting.\n\
+  lastupdater_id : ObjectId,                          // Fluff wants these fields for accounting.\n\
   creation       : { type: Date, default: Date.now }, // Fluff wants these fields for accounting.\n\
   lastupdate     : { type: Date, default: Date.now }  // Fluff wants these fields for accounting.\n\
 }";
