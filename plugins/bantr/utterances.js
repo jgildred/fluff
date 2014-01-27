@@ -6,6 +6,7 @@
 var app      = require('../../app'),
     Fluff    = app.Fluff,
     resource = require('../../routes/resource'),
+    schemas  = require('./schemas'),
     Plug     = require('./plug'),
     Bantr    = require('./bantr');
 
