@@ -4,7 +4,8 @@
 // All plugins must have a "plug.js" file which exports an "init" and a "load" function with a callback as the first argument
 
 // Pretty standard requirements assuming you need additional model(s) for the plugin.
-var Fluff      = require('../../app').Fluff,
+var app        = require('../../app'),
+    Fluff      = app.Fluff,
     mongoose   = require('mongoose'),
     schemas    = require('./schemas'),
     utterances = require('./utterances'),
@@ -21,9 +22,9 @@ exports.init = function (callback) {
 	console.log("I'm the Bantr plugin.");
 
   // Pulls in the schema definitions from "schemas.js".
-	var utteranceSchema = new mongoose.Schema(schemas.utterance);
+	var utteranceSchema = app.toSchema(schemas.utterance);
   exports.Utterance   = mongoose.model('Utterance', utteranceSchema);
-  var ruleSchema = new mongoose.Schema(schemas.rule);
+  var ruleSchema = app.toSchema(schemas.rule);
   exports.Rule   = mongoose.model('Rule', ruleSchema);
 
   if (callback) {

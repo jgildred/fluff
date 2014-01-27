@@ -21,7 +21,7 @@ exports.find = function(req, res){
 exports.getinfo = function(req, res){
   app.doIfHasAccess(req, res, 'Admins', Plug.Utterance, function(req, res) {
     var data = {
-      schema_data     : app.schemaToData(schemas.utterance),
+      schema_data     : schemas.utterance,
       display_columns : schemas.utterance_display_columns,
       sort_column     : schemas.utterance_sort_column
     }

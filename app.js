@@ -281,9 +281,9 @@ var mongooseCollection = function (model) {
 }
 exports.mongooseCollection = mongooseCollection;
 
-// Create a model; model must have a model_id and schema_data
-var toModel = function (model, callback) {
-  eval("var obj = " + model.schema_data);
+// Create a schema from schema_data
+var toSchema = function (schema_data) {
+  eval("var obj = " + schema_data);
   obj = lowerCaseObject(obj);
   // Make sure that the model will handle these fields correctly.
   obj.creator_id     = ObjectId;
@@ -291,6 +291,13 @@ var toModel = function (model, callback) {
   obj.creation       = { type: Date, default: Date.now };
   obj.lastupdate     = { type: Date, default: Date.now };
   var schema = new mongoose.Schema(obj);
+  return schema;
+}
+exports.toSchema = toSchema;
+
+// Create a model; model must have a model_id and schema_data
+var toModel = function (model) {
+  var schema = toSchema(model.schema_data);
   var newModel = mongoose.model(dehumanize(model.model_id) + "-" + randomString(), schema, dehumanize(model.model_id));
   return newModel;
 }

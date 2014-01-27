@@ -19,15 +19,15 @@ exports.utterance_display_columns = [{
   size:   10
 }];
 exports.utterance_sort_column = { name:'lastupdate', order:true };
-exports.utterance = {
-  user_id        : mongoose.Schema.Types.ObjectId,    // This is used to identify the owner.
-  text           : { type: String, required: true},   // Text representation of utterance.
-  audio_file     : String,                            // Audio of utterance, not used yet.
-  creator_id     : mongoose.Schema.Types.ObjectId,    // Fluff wants these fields for accounting.
-  lastupdater_id : mongoose.Schema.Types.ObjectId,    // Fluff wants these fields for accounting.
-  creation       : { type: Date, default: Date.now }, // Fluff wants these fields for accounting.
-  lastupdate     : { type: Date, default: Date.now }  // Fluff wants these fields for accounting.
-};
+exports.utterance = "{\n\
+  user_id        : mongoose.Schema.Types.ObjectId,    // This is used to identify the owner.\n\
+  text           : { type: String, required: true},   // Text representation of utterance.\n\
+  audio_file     : String,                            // Audio of utterance, not used yet.\n\
+  creator_id     : mongoose.Schema.Types.ObjectId,    // Fluff wants these fields for accounting.\n\
+  lastupdater_id : mongoose.Schema.Types.ObjectId,    // Fluff wants these fields for accounting.\n\
+  creation       : { type: Date, default: Date.now }, // Fluff wants these fields for accounting.\n\
+  lastupdate     : { type: Date, default: Date.now }  // Fluff wants these fields for accounting.\n\
+}";
 
 exports.rule_display_columns = [{
   name:  'condition',
@@ -50,13 +50,13 @@ exports.rule_display_columns = [{
   size:   10
 }];
 exports.rule_sort_column = { name:'lastupdate', order:true };
-exports.rule = {
-  user_id        : mongoose.Schema.Types.ObjectId,    // This is used to restrict a rule to a particular user.
-  utterance_id   : mongoose.Schema.Types.ObjectId,    // The utterance that caused the last update.
-  condition      : { type: String, required: true},   // Condition where rule applies.
-  response       : { type: String, required: true},   // Text of the response.
-  creator_id     : mongoose.Schema.Types.ObjectId,    // Fluff wants these fields for accounting.
-  lastupdater_id : mongoose.Schema.Types.ObjectId,    // Fluff wants these fields for accounting.
-  creation       : { type: Date, default: Date.now }, // Fluff wants these fields for accounting.
-  lastupdate     : { type: Date, default: Date.now }  // Fluff wants these fields for accounting.
-};
+exports.rule = "{\n\
+  user_id        : mongoose.Schema.Types.ObjectId,    // This is used to restrict a rule to a particular user.\n\
+  utterance_id   : mongoose.Schema.Types.ObjectId,    // The utterance that caused the last update.\n\
+  condition      : { type: String, required: true},   // Condition where rule applies.\n\
+  response       : { type: String, required: true},   // Text of the response.\n\
+  creator_id     : mongoose.Schema.Types.ObjectId,    // Fluff wants these fields for accounting.\n\
+  lastupdater_id : mongoose.Schema.Types.ObjectId,    // Fluff wants these fields for accounting.\n\
+  creation       : { type: Date, default: Date.now }, // Fluff wants these fields for accounting.\n\
+  lastupdate     : { type: Date, default: Date.now }  // Fluff wants these fields for accounting.\n\
+}";
