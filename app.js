@@ -938,6 +938,7 @@ var loadModels = function (req, res, callback) {
   });
 }
 
+// Converts a schema object into a schema_data string
 var schemaToData = function (schema) {
   var schema_data = "{\n";
   for (item in schema) {
@@ -947,7 +948,7 @@ var schemaToData = function (schema) {
       for (subitem in itemObj) {
         schema_data += subitem + ": " + (itemObj[subitem].name ? itemObj[subitem].name : JSON.stringify(itemObj[subitem])) + ", ";
       }
-      schema_data = schema_data.substr(0, schema_data.length - 3); // fix
+      schema_data = schema_data.substr(0, schema_data.length - 2); // fix
       schema_data += " },\n";
     }
     else {
