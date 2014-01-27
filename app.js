@@ -947,7 +947,7 @@ var schemaToData = function (schema) {
       var itemObj = schema[item];
       for (subitem in itemObj) {
         schema_data += subitem + ": ";
-        if (itemObj[subitem].name) {
+        if (['String','Number','Boolean','ObjectId','Date'].indexOf(itemObj[subitem].name) != -1) {
           schema_data += itemObj[subitem].name;
         }
         else {
