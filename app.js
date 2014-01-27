@@ -951,7 +951,7 @@ var schemaToData = function (schema) {
           schema_data += itemObj[subitem].name;
         }
         else {
-          if (typof itemObj[subitem] == 'Date') {
+          if (typeof itemObj[subitem] == 'Date') {
             schema_data += "Date.now";
           }
           else {
