@@ -42,14 +42,14 @@ exports.create = function(req, res){
 // Preprocessor for PUT /rules/:id
 exports.update = function(req, res){
   // This if statement is not required but illustrates another way to use access control. Note that any Admin can still gain access to resources that require 'Owner' level access control.
-  if (app.HasAccess(req, res, 'Owner')) {
+  if (app.HasAccess(req, res, 'Owner', Plug.Rule)) {
     resource.update(req, res, Plug.Rule);
   }
 };
 
 // Preprocessor for DELETE /rules/:id
 exports.remove = function(req, res){
-  if (app.HasAccess(req, res, 'Admins')) {
+  if (app.HasAccess(req, res, 'Admins', Plug.Rule)) {
     resource.remove(req, res, Plug.Rule);
   }
 };
