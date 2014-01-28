@@ -45,6 +45,7 @@ exports.load = function (callback) {
   Fluff.app.get (base + '/utterances/:id',  utterances.findone);
   Fluff.app.post(base + '/utterances',      utterances.create);
   Fluff.app.put (base + '/utterances/:id',  utterances.update);
+  Fluff.app.patch (base + '/utterances/:id',  utterances.update);
   Fluff.app.del (base + '/utterances/:id',  utterances.remove);
 
   Fluff.app.get (base + '/rules',      rules.find);
@@ -52,6 +53,7 @@ exports.load = function (callback) {
   Fluff.app.get (base + '/rules/:id',  rules.findone);
   Fluff.app.post(base + '/rules',      rules.create);
   Fluff.app.put (base + '/rules/:id',  rules.update);
+  Fluff.app.patch (base + '/rules/:id',  rules.update);
   Fluff.app.del (base + '/rules/:id',  rules.remove);
 
 	if (callback) {
