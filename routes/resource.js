@@ -11,7 +11,7 @@ exports.find = function(req, res, resource, filter, callback){
   var query_filter = {};
   for (param in req.query) {
     if ((Fluff.matchfield.general.indexOf(param) != -1) 
-     && (Fluff.matchfield[resource.modelName].indexOf(param) != -1)) {
+     || (Fluff.matchfield[resource.modelName].indexOf(param) != -1)) {
       query_filter[param] = new RegExp(req.query[param], 'gi');
     }
   }
