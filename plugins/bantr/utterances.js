@@ -12,8 +12,6 @@ var app      = require('../../app'),
 
 // Preprocessor for GET /utterances
 exports.find = function(req, res){
-  // Using app.doIfHasAccess is not required but illustrates the use of access control.
-  // There is a good change you will want to enforce 'Admins' level access to plugin resources.
   app.doIfHasAccess(req, res, 'Admins', Plug.Utterance, resource.find);
 };
 

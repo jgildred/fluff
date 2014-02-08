@@ -53,6 +53,7 @@ exports.rule_sort_column = { name:'lastupdate', order:true };
 exports.rule = "{\n\
   user_id        : ObjectId,                          // This is used to restrict a rule to a particular user.\n\
   utterance_id   : ObjectId,                          // The utterance that caused the last update.\n\
+  weight         : Number,                            // Weight for preference\n\
   condition      : { type: String, required: true},   // Condition where rule applies.\n\
   response       : { type: String, required: true},   // Text of the response.\n\
   creator_id     : ObjectId,                          // Fluff wants these fields for accounting.\n\

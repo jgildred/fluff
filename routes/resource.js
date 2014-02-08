@@ -16,7 +16,8 @@ exports.find = function(req, res, resource, filter, callback){
   }
   filter = filter ? filter : query_filter;
   console.log("findfilter: " + JSON.stringify(filter));
-  resource.find(filter).exec(function (err, data) {
+  var limit = req.params.limit || 100;
+  resource.find(filter).limit(limit).exec(function (err, data) {
     if (err) { 
       app.msgResponse(req, res, 500, JSON.stringify(err));
     }

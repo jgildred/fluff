@@ -36,7 +36,9 @@ Fluff.flattenArray = function (objectArray, key) {
 }
 
 Fluff.dehumanize = function (string) {
-  return string.replace(" ", "_").toLowerCase();
+  if (string) {
+    return string.replace(" ", "_").toLowerCase();
+  }
 }
 
 // Useful when comparing schema attributes
@@ -59,9 +61,9 @@ Fluff.dataToSchema = function (data) {
 	      Mixed    = String;
 	  eval("var schema = " + data + ";");
 	  schema = Fluff.lowerCaseObject(schema);
-	  schema._id            = String;
-	  schema.creator_id     = String;
-	  schema.lastupdater_id = String;
+	  schema._id            = ObjectId;
+	  schema.creator_id     = ObjectId;
+	  schema.lastupdater_id = ObjectId;
 	  schema.creation       = Date;
 	  schema.lastupdate     = Date;
 	  return schema;
@@ -134,7 +136,6 @@ var getFormData = function(form) {
 
 Fluff.addCollection = function (options) {
 	var modelName = options.modelName;
-	// FIXME need to have name include filter
 	var name = modelName,
 			path = modelName;
 	if (options.id) {
@@ -149,15 +150,15 @@ Fluff.addCollection = function (options) {
 	}
 	if (Fluff.collections[name] == undefined) {
 		var Model = Backbone.Model.extend({
-			urlRoot: Fluff.path + '/api/' + modelName
+			urlRoot: Fluff.path + '/admin/api/' + modelName
 		});
 		var Collection = Backbone.Collection.extend({
   		model: Model,
-  		url: Fluff.path + '/api/' + path // FIXME need to add filter here
+  		url: Fluff.path + '/admin/api/' + path
 		});
 		var collection = new Collection();
 		Fluff.collections[name] = collection;
-		Fluff.log("Added a collection to fluff: " + name);
+		Fluff.log("ADDED COLLECTION: " + name);
 	}
 	else {
 		var collection = Fluff.collections[name];
@@ -169,7 +170,7 @@ Fluff.addModel = function (name, callback) {
 	if (Fluff.models[name] == undefined) {
 		$.ajax({
 			type: 'GET',
-			url: Fluff.path + '/api/' + name + '/info',
+			url: Fluff.path + '/admin/api/' + name + '/info',
 			dataType: 'json',
 			success : function (data, status, xhr) {
 				if (data && (Fluff.models[name] == undefined)) {
@@ -179,7 +180,7 @@ Fluff.addModel = function (name, callback) {
 						display_columns : data.display_columns,
 						column_sort     : data.column_sort
 					};
-			  	Fluff.log("Added a model to fluff: " + name);
+			  	Fluff.log("ADDED MODEL: " + name);
 				}
 				if (callback) {
 					callback();
@@ -195,13 +196,14 @@ Fluff.addModel = function (name, callback) {
 }
 
 Fluff.addView = function (type, element, View) {
-	var view = new View();
-	var viewName = type + "[model=" + element.attr('model') + "]";
+	var name = type + "[model=" + element.attr('model') + "]";
 	if (element.attr('id')) {
-			viewName = type + "#" + element.attr('id');
-		}
-	// FIXME careful not to overwrite existing views
-  Fluff.views[viewName] = view;
+		name = type + "#" + element.attr('id');
+	}
+	if (Fluff.views[name] == undefined) {
+	  Fluff.views[name] = new View();
+	  console.log("ADDED VIEW: " + name);
+	}
 }
 
 Fluff.drawTableHeader = function (modelInfo) {
@@ -217,11 +219,15 @@ Fluff.renderFields = function (model, template) {
 	if (template) {
 		var templateObj = $('<div></div>');
 		$(template).appendTo(templateObj);
-		var elements = templateObj.find('[field]');
+		// First render fields base upon the field attribute
+		var elements = templateObj.find('[field],[name]');
 		elements.each(function () {
 			var element = $(this);
 			var type = this.nodeName.toLowerCase();
 			var field = fields[Fluff.dehumanize(element.attr('field'))];
+			if (field == undefined) {
+			  field = fields[Fluff.dehumanize(element.attr('name'))];
+			}
 			if (field != undefined) {
 				switch (type) {
 					case 'input':
@@ -238,12 +244,24 @@ Fluff.renderFields = function (model, template) {
 							}
 						}
 						break;
+					case 'a':
+					  element.attr('href', field);
+					  break;
+					case 'img':
+					  element.attr('src', field);
+					  break;
 					default:
 						element.html(field);
 				}
 			}
 		});
-		return templateObj.html();
+		// Next render fields based upon the {{field_name}} tag
+		var html = templateObj.html();
+		for (field in fields) {
+		  var pattern = new RegExp("{{\\s*" + field + "\\s*}}", "gi");
+      html = html.replace(pattern, fields[field]);
+		}
+		return html;
 	}
 	else {
 		return "";
@@ -272,9 +290,14 @@ Fluff.autoRenderFields = function (model, modelInfo, elementType, dividerHtml) {
 	return html;
 }
 
-Fluff.harvestElements = function () {
-	var tags  = ["div", "span", "ul", "ol"];
-	var elements = $(tags.join("[model], ") + "[model]");
+Fluff.harvestElements = function (element) {
+  var tags  = ["div", "span", "ul", "ol"];
+  if (element && (tags.IndexOf(element.nodeName.toLowerCase()) != -1)) {
+    var elements = $(element);
+  }
+  else {
+	  var elements = $(tags.join("[model], ") + "[model]");
+	}
   elements.each(function (e) {
   	var element = $(this);
   	var type = this.nodeName.toLowerCase();
@@ -336,8 +359,13 @@ Fluff.harvestElements = function () {
 	});
 }
 
-Fluff.harvestTables = function () {
-	var tables = $("table[model]");
+Fluff.harvestTables = function (table) {
+  if (table) {
+    var tables = $(table);
+  }
+  else {
+	  var tables = $("table[model]");
+	}
   tables.each(function (t) {
   	var table = $(this);
   	var modelName = table.attr('model');
@@ -358,8 +386,10 @@ Fluff.harvestTables = function () {
 		var View = Backbone.View.extend({
 			el: table,
 			initialize: function() {
+			  this.rowTemplate = null;
 				var that = this;
-				collection.fetch({
+				this.collection = collection;
+				this.collection.fetch({
 			  	success: function () {
 			  		Fluff.addModel(modelName, function () {
 			  			that.render();
@@ -367,7 +397,18 @@ Fluff.harvestTables = function () {
 			  	}
 			  });
 			},
+			change: function(id) {
+			  var elementObj = $(this.el).find('tr[id=' + id + ']');
+			  var model = this.collection.get(id);
+			  var bodyHtml = Fluff.renderFields(model, this.rowTemplate) + "\n";
+			  elementObj.replaceWith($(bodyHtml));
+			},
+			remove: function(id) {
+			  var elementObj = $(this.el).find('tr[id=' + id + ']');
+			  elementObj.remove();
+			},
 			render: function() {
+			  var that = this;
 				var elementObj = $(this.el);
 				// Build the header if none
 				var ths = elementObj.find('tr th');
@@ -387,10 +428,10 @@ Fluff.harvestTables = function () {
 					elementObj.append("\n<thead>\n" + headHtml + "\n</thead>\n");
 				}
 				// If there is at least one data row then use the first one as a template
-				var rowTemplate = null;
 				var tds = elementObj.find('tr td');
 				if (tds.toArray().length > 0) {
-					var rowTemplate = tds.first().parent().get(0).outerHTML;
+				  tds.first().parent().attr('id', '{{_id}}');
+					this.rowTemplate = tds.first().parent().get(0).outerHTML;
 					tds.first().parent().remove();
 				}
 				else {
@@ -400,12 +441,12 @@ Fluff.harvestTables = function () {
 				}
 				// Build the body rows
 				var bodyHtml = "\n";
-				collection.forEach(function(model) {
-					if (rowTemplate) {
-						bodyHtml += Fluff.renderFields(model, rowTemplate) + "\n";
+				this.collection.forEach(function(model) {
+					if (that.rowTemplate) {
+						bodyHtml += Fluff.renderFields(model, that.rowTemplate) + "\n";
 					}
 					else {
-						bodyHtml += "<tr>" + Fluff.autoRenderFields(model, Fluff.models[modelName], 'td') + "</tr>\n";
+						bodyHtml += "<tr id='" + model.id + "'>" + Fluff.autoRenderFields(model, Fluff.models[modelName], 'td') + "</tr>\n";
 					}
 				});
 				elementObj.find('tbody').first().append(bodyHtml + "\n");
@@ -415,8 +456,13 @@ Fluff.harvestTables = function () {
   });
 }
 
-Fluff.harvestForms = function () {
-	var forms = $("form[model]");
+Fluff.harvestForms = function (form, template, callback) {
+  if (form) {
+    var forms = $(form);
+  }
+  else {
+	  var forms = $("form[model]");
+	}
   forms.each(function (f) {
   	var form = $(this);
   	var modelName = form.attr('model');
@@ -426,31 +472,36 @@ Fluff.harvestForms = function () {
   		modelName = modelName.split("/")[0].toLowerCase();
   	}
   	var Model = Backbone.Model.extend({
-			urlRoot: Fluff.path + '/api/' + modelName
+			urlRoot: Fluff.path + '/admin/api/' + modelName
 		});
 		var View = Backbone.View.extend({
 			el: form,
   		events: {
   			'change [type=checkbox]' : 'changeCheckbox',
-    		'click  .submit'         : 'submit'
+    		'click  .submit'         : 'submitForm'
   		},
 			initialize: function() {
+				this.callback = this.callback || callback;
+				this.template = this.template || template;
+				this.modelId = this.modelId || modelId;
 				var that = this;
-				if (modelId) {
+				console.log("modelId: "+modelId);
+				if (this.modelId) {
 					this.model = new Model({
-						_id: modelId
+						_id: this.modelId
 					});
 					this.model.fetch({
 				  	success: function () {
 				  		Fluff.addModel(modelName, function () {
-			  				that.render();
+			  				that.render(that.template, that.callback);
 			  			});
 				  	}
 				  });
 				}
 				else {
+				  this.model = null;
 					Fluff.addModel(modelName, function () {
-			  		that.render();
+			  		that.render(that.template, that.callback);
 			  	});
 				}
 			},
@@ -463,44 +514,77 @@ Fluff.harvestForms = function () {
 					checkbox.val('false');
 				}
 			},
-			submit: function (ev) {
+			setAction: function (action) {
+			  if (action) {
+			    this.action = action;
+			  }
+			},
+			setId: function (id, callback) {
+			  this.modelId = id;
+			  this.callback = callback;
+			  this.initialize();
+			},
+			submitForm: function (ev) {
 				var that = this;
 				var modelDetails = getFormData($(ev.currentTarget).parents("form:first"));
+				console.log("THIS MODEL dets:");
+				console.log(modelDetails);
 				if (!this.model) {
 					this.model = new Model();
 					if (modelDetails.hasOwnProperty('_id')) {
 						delete modelDetails._id;
 					}
 				}
+				else {
+				  console.log("THIS MODEL: ");
+				  console.log(this.model);
+				  if (!modelDetails.hasOwnProperty('_id')) {
+						modelDetails._id = this.model.get('_id');
+					}
+				}
+				console.log("THIS MODEL dets again:");
+				console.log(modelDetails);
 				this.model.save(modelDetails, {
       		patch: true,
       		success: function (model) {
       			Fluff.log(modelName + " saved.");
+      			if (that.action) {
+      			  that.action(that.model);
+      			}
 		      },
 		      error: function (model, xhr) {
 		        Fluff.log(xhr);
 					}
 				});
 			},
-			render: function () {
-				var elementObj = $(this.el);
+			render: function (template, callback) {
+			  var that = this;
+				var elementObj = $(that.el);
 				var modelInfo = Fluff.models[modelName];
 				var schema = Fluff.lowerCaseObject(modelInfo.schema);
-				var template = null;
-				var filltag = 'input[field]';
+				var filltag = 'input[name]';
 				var fts = elementObj.find(filltag);
 				if (fts.toArray().length > 0) {
-					var template = elementObj.html();
+					this.template = this.template || elementObj.html();
 				}
 				var html = '';
-				if (template) {
-					// TBD need to support form templates in the renderFields function
-					html += Fluff.renderFields(this.model, template) + "\n";
+				if (this.template) {
+				  if (this.model) {
+					  html += Fluff.renderFields(this.model, this.template) + "\n";
+					}
+					else {
+					  html += this.template;
+					}
 				}
 				else {
-					var that = this;
 					modelInfo.display_columns.forEach(function (field) {
-						switch (schema[field.name].name) {
+					  if (schema[field.name].name) {
+					    var type = schema[field.name].name;
+					  }
+					  else {
+					    var type = schema[field.name].type.name;
+					  }
+						switch (type) {
 							case 'String':
 								html += '<input type="text" name="' + field.name + '" value="' + ((that.model && that.model.get(field.name)) ? that.model.get(field.name) : '') + '" placeholder="' + field.title + '" />\n';
 								break;
@@ -527,29 +611,38 @@ Fluff.harvestForms = function () {
 				// Hitting enter key while in the form will submit.
 				elementObj.bind('keypress', function(e){
    				if (e.keyCode == 13) {
-     				$(this).find('.submit:first').click();
+     				elementObj.find('.submit:first').click();
    				}
  				});
+ 				console.log("Rendered form for " + modelName + ": " + html);
+ 				if (callback) {
+ 				  callback();
+ 				}
 			}
 		});
 		Fluff.addView("form", form, View);
 	});
 }
 
-Fluff.harvestSelects = function () {
-	var elements = $("select[model]");
-  elements.each(function (e) {
-  	var element = $(this);
+Fluff.harvestSelects = function (select) {
+  if (select) {
+    var selects = $(select);
+  }
+  else {
+    var selects = $("select[model]");
+  }
+  selects.each(function (e) {
+  	var select = $(this);
   	var type = this.nodeName.toLowerCase();
-  	var modelName = element.attr('model');
+  	var modelName = select.attr('model');
   	var modelId   = null;
   	var filter    = null;
   	if (modelName.split("/").length > 1) {
   		modelId   = modelName.split("/")[1];
   		modelName = modelName.split("/")[0].toLowerCase();
   	}
-		if (element.attr('filter')) {
-			filter = element.attr('filter');
+		if (select.attr('filter')) {
+			filter = select.attr('filter');
 		}
 		var collection = Fluff.addCollection({
 			modelName : modelName,
@@ -557,7 +650,7 @@ Fluff.harvestSelects = function () {
 			filter    : filter
 		});
 		var View = Backbone.View.extend({
-			el: element,
+			el: select,
 			initialize: function() {
 				var that = this;
 			  collection.fetch({
@@ -592,7 +685,7 @@ Fluff.harvestSelects = function () {
 				elementObj.append(html);
 			}
 		});
-		Fluff.addView(type, element, View);
+		Fluff.addView(type, select, View);
 	});
 }
 

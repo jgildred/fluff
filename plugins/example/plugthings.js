@@ -11,7 +11,7 @@ var app      = require('../../app'),
 // Preprocessor for GET /plugthings
 exports.find = function(req, res){
   // Using app.doIfHasAccess is not required but illustrates the use of access control.
-  // There is a good change you will want to enforce 'Admins' level access to plugin resources.
+  // There is a good chance you will want to enforce 'Admins' level access to plugin resources.
   app.doIfHasAccess(req, res, 'Admins', Plug.Plugthing, resource.find);
 };
 
