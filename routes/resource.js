@@ -27,7 +27,8 @@ exports.find = function(req, res, resource, filter, callback){
     }
     sort += req.query.sort.split('-')[0];
   }
-  console.log("USING FILTER: " + JSON.stringify(query_filter));
+  console.log("USING FILTER: ");
+  console.log(query_filter);
   resource.find(filter).sort(sort).limit(limit).exec(function (err, data) {
     if (err) { 
       app.msgResponse(req, res, 500, JSON.stringify(err));
