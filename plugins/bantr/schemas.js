@@ -4,8 +4,8 @@
 var mongoose = require('mongoose');
 
 var matchfield = {
-  utternace: ['text'],
-  rules:     ['condition']
+  Utterance: ['text'],
+  Rule:     ['condition']
 }
 exports.matchfield = matchfield;
 

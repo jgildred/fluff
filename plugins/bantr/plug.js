@@ -27,8 +27,8 @@ exports.init = function (callback) {
   var ruleSchema = app.toSchema(schemas.rule);
   exports.Rule   = mongoose.model('Rule', ruleSchema);
 
-  Fluff.matchfield.utterances = schemas.matchfield.utterances;
-  Fluff.matchfield.rules      = schemas.matchfield.rules;
+  Fluff.matchfield.Utterance = schemas.matchfield.Utterance;
+  Fluff.matchfield.Rule      = schemas.matchfield.Rule;
 
   if (callback) {
     callback();
