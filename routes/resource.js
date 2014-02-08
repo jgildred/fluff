@@ -17,7 +17,17 @@ exports.find = function(req, res, resource, filter, callback){
   filter = filter ? filter : query_filter;
   console.log("findfilter: " + JSON.stringify(filter));
   var limit = req.params.limit || 100;
-  resource.find(filter).limit(limit).exec(function (err, data) {
+  var sort = '';
+  if (req.params.sort) {
+    if (req.params.sort.split('-')[1] == 'desc') {
+      sort += '-';
+    }
+    else {
+      sort += '+';
+    }
+    sort += req.params.sort.split('-')[0];
+  }
+  resource.find(filter).sort(sort).limit(limit).exec(function (err, data) {
     if (err) { 
       app.msgResponse(req, res, 500, JSON.stringify(err));
     }
