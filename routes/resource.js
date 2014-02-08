@@ -11,7 +11,7 @@ exports.find = function(req, res, resource, filter, callback){
   var query_filter = {};
   for (param in req.query) {
     if (schemas.enums.match_field.indexOf(param) != -1) {
-      query_filter[param] = new RegExp(req.query[param], 'i');
+      query_filter[param] = new RegExp(req.query[param], 'gi');
     }
   }
   filter = filter ? filter : query_filter;
@@ -27,6 +27,7 @@ exports.find = function(req, res, resource, filter, callback){
     }
     sort += req.query.sort.split('-')[0];
   }
+  console.log("USING FILTER: " + query_filter);
   resource.find(filter).sort(sort).limit(limit).exec(function (err, data) {
     if (err) { 
       app.msgResponse(req, res, 500, JSON.stringify(err));
