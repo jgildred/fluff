@@ -17,13 +17,13 @@ exports.find = function(req, res, resource, filter, callback){
   filter = filter ? filter : query_filter;
   console.log("findfilter: " + JSON.stringify(filter));
   var limit = req.params.limit || 100;
-  var sort = '';
+  var sort = '-creation';
   if (req.params.sort) {
     if (req.params.sort.split('-')[1] == 'desc') {
-      sort += '-';
+      sort = '-';
     }
     else {
-      sort += '+';
+      sort = '+';
     }
     sort += req.params.sort.split('-')[0];
   }
