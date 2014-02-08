@@ -11,7 +11,7 @@ var app      = require('../../app'),
 
 // Preprocessor for GET /rules
 exports.find = function(req, res){
-  req.params.sort = 'creation-desc';
+  req.query.sort = 'creation-desc';
   app.doIfHasAccess(req, res, 'Admins', Plug.Rule, resource.find);
 };
 

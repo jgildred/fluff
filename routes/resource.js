@@ -16,16 +16,16 @@ exports.find = function(req, res, resource, filter, callback){
   }
   filter = filter ? filter : query_filter;
   console.log("findfilter: " + JSON.stringify(filter));
-  var limit = req.params.limit || 100;
+  var limit = req.query.limit || 100;
   var sort = '-creation';
-  if (req.params.sort) {
-    if (req.params.sort.split('-')[1] == 'desc') {
+  if (req.query.sort) {
+    if (req.query.sort.split('-')[1] == 'desc') {
       sort = '-';
     }
     else {
       sort = '+';
     }
-    sort += req.params.sort.split('-')[0];
+    sort += req.query.sort.split('-')[0];
   }
   resource.find(filter).sort(sort).limit(limit).exec(function (err, data) {
     if (err) { 
