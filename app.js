@@ -18,6 +18,7 @@ var Fluff  = {},
     Buffer   = mongoose.Schema.Types.Buffer,
     Mixed    = mongoose.Schema.Types.Mixed,
     Callback;
+    Fluff.matchfield = {};
 exports.Fluff  = Fluff;
 Fluff.app      = app;
 exports.App    = app;
@@ -269,6 +270,8 @@ var connectDb = function (req, res, callback) {
   var modelSchema  = new mongoose.Schema(schemas.model);
   Model            = mongoose.model('Model', modelSchema);
   exports.Model = Model;
+
+  Fluff.matchfield.general = schemas.enums.match_field;
 
   if (callback) {
     callback(req, res);

@@ -10,7 +10,8 @@ exports.find = function(req, res, resource, filter, callback){
   // First check if the query has a filter, and if so, use it
   var query_filter = {};
   for (param in req.query) {
-    if (schemas.enums.match_field.indexOf(param) != -1) {
+    if ((Fluff.matchfield.general.indexOf(param) != -1) 
+     && (Fluff.matchfield[resource.modelName].indexOf(param) != -1)) {
       query_filter[param] = new RegExp(req.query[param], 'gi');
     }
   }

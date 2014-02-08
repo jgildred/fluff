@@ -3,6 +3,12 @@
 
 var mongoose = require('mongoose');
 
+var matchfield = {
+  utternace: ['text'],
+  rules:     ['condition']
+}
+exports.matchfield = matchfield;
+
 exports.utterance_display_columns = [{
   name:  'text',
   title: 'What Was Said',
