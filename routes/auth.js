@@ -33,9 +33,11 @@ exports.check = function(req, res){
     var body = {
       auth    : false,
       human   : req.session.human || false,
-      _csrf   : req.session._csrf,
       status  : req.session.status
     };
+    if (req.session.human) {
+      body._csrf = req.session._csrf;
+    }
   }
   res.json(body);
 };
