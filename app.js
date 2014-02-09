@@ -359,7 +359,7 @@ var doIfHasAccess = function (req, res, level, resourceScope, callback) {
   }
   else {
     if (level == "Humans") {
-      if (req.session.captcha) {
+      if (req.session.human) {
         callback(req, res, resourceScope);
       }
       else {

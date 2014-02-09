@@ -9,7 +9,7 @@ exports.check = function(req, res){
     console.log("AUTH OK.");
     var body = {
       auth    : req.session.auth,
-      captcha : req.session.captcha,
+      human   : req.session.human,
       _id     : req.session.id,
       _csrf   : req.session._csrf,
       site    : {
@@ -32,7 +32,7 @@ exports.check = function(req, res){
     res.status(401);
     var body = {
       auth    : false,
-      captcha : req.session.captcha,
+      human   : req.session.human,
       status  : req.session.status
     };
   }
@@ -57,6 +57,7 @@ exports.attach = function(req, res){
           if (user.pwMatch(req.body.password)) {
             console.log("LOGIN USER " + user.displayname + ":" + JSON.stringify(user));
             req.session.auth    = true;
+            req.session.human   = true;  // if it's a real user, then it's human
             req.session.user_id = user._id;
             req.session.email   = user.email;
             req.session.role    = user.role;
@@ -71,7 +72,7 @@ exports.attach = function(req, res){
             };
             var body = {
               auth     : req.session.auth,
-              captcha  : req.session.captcha,
+              human    : req.session.human,
               _id      : req.session.id,
               _csrf    : req.session._csrf,
               site     : req.session.site,
