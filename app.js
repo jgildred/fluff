@@ -358,8 +358,13 @@ var doIfHasAccess = function (req, res, level, resourceScope, callback) {
     callback(req, res, resourceScope);
   }
   else {
-    if ((level == "Humans") && (req.session.captcha)) {
-      callback(req, res, resourceScope);
+    if (level == "Humans") {
+      if (req.session.captcha) {
+        callback(req, res, resourceScope);
+      }
+      else {
+        msgResponse(req, res, 404, "Sorry, humans only.");
+      }
     }
     else {
       if (HasAccess(req, res, level, resourceScope)) {
