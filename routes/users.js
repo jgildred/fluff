@@ -230,7 +230,12 @@ exports.captcha = function(req, res){
     if(response.is_valid) {
       console.log("Captcha verified.");
       req.session.human = true;
-      app.msgResponse(req, res, 200, "Captcha was verified.");
+      var body = {
+        auth = req.session.auth || false;
+        human = req.session.human;
+        _csrf = req.session._csrf;
+      };
+      app.json(body);
     }
     else {
       console.log("Captcha invalid.");
