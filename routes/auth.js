@@ -9,7 +9,7 @@ exports.check = function(req, res){
     console.log("AUTH OK.");
     var body = {
       auth    : req.session.auth,
-      human   : req.session.human,
+      human   : req.session.human || false,
       _id     : req.session.id,
       _csrf   : req.session._csrf,
       site    : {
@@ -32,7 +32,7 @@ exports.check = function(req, res){
     res.status(401);
     var body = {
       auth    : false,
-      human   : req.session.human,
+      human   : req.session.human || false,
       status  : req.session.status
     };
   }

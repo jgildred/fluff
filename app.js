@@ -1008,7 +1008,6 @@ var adminRoutes = function () {
 
   // Authentication routes
   app.get (base + '/auth',     auth.check);
-  app.get (base + '/auth/:id', auth.check);
   app.post(base + '/auth',     auth.attach);
   app.put (base + '/auth/:id', auth.attach);
   app.del (base + '/auth/:id', auth.detach);
