@@ -24,6 +24,7 @@ var checkToken = function(req, res, next){
           (req.path == (app.App.get('config').fluff_path + '/admin/api/users'))
           || (req.path == (app.App.get('config').fluff_path + '/admin/api/auth'))
           || (req.path == (app.App.get('config').fluff_path + '/admin/api/identities'))
+          || (req.path == (app.App.get('config').fluff_path + '/admin/api/captcha'))
         )
       ) 
       || (

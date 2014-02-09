@@ -26,6 +26,7 @@ exports.site = {
     restricted   : { type: Boolean,  default: false },
     whitelist    : [ String ]
   },
+  captcha        : { type: Boolean, default: false },
   email_from     : String,
   smtp : {
     service      : { type: String, enum: enums.smtp_service, default: "Other SMTP" },

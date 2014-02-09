@@ -19,6 +19,8 @@ var Fluff  = {},
     Mixed    = mongoose.Schema.Types.Mixed,
     Callback;
     Fluff.matchfield = {};
+    Fluff.reCaptchaPublicKey  = '';
+    Fluff.reCaptchaPrivateKey = '';
 exports.Fluff  = Fluff;
 Fluff.app      = app;
 exports.App    = app;
@@ -1010,6 +1012,7 @@ var adminRoutes = function () {
   app.put (base + '/pwreset/:email',  users.pwreset);
   app.put (base + '/pwchange/:token', users.pwchange);
   app.del (base + '/users/:id',       users.remove);
+  app.post(base + '/captcha',         users.captcha);
 
   // Page routes
   app.get (base + '/pages',     function(req, res) {doIfHasAccess(req, res, 'Admins', Page, resource.find);} );

@@ -221,3 +221,24 @@ var makeToken = function () {
   return encodeURIComponent(app.randomString()).replace(".", "%2E");
 }
 exports.makeToken = makeToken;
+
+// Handler for POST /captcha
+exports.captcha = function(req, res){
+  var ra = require('recaptcha-async');
+  var recaptcha = new ra.reCaptcha();
+  recaptcha.on('data', function (response) {
+    if(response.is_valid) {
+      console.log("Captcha verified.");
+      app.msgResponse(req, res, 200, "Captcha was verified.");
+    }
+    else {
+      console.log("Captcha invalid.");
+      app.msgResponse(req, res, 403, "That's not the captcha.");
+      //html = recaptcha.getCaptchaHtml(mypublickey, res.error);
+    }
+  });
+  recaptcha.checkAnswer(Fluff.reCaptchaPrivateKey, 
+    req.connection.remoteAddress, 
+    req.body.recaptcha_challenge_field, 
+    req.body.recaptcha_response_field);
+}

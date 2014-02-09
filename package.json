@@ -6,7 +6,7 @@
     "start": "node app"
   },
   "engines": {
-    "node": "0.8.x",
+    "node": "0.10.x",
     "npm":  "1.1.x"
   },
   "dependencies": {
@@ -16,6 +16,7 @@
     "nodemailer": "*",
     "inflection": "*",
     "ursa": "*",
-    "x509": "*"
+    "x509": "*",
+    "recaptcha-async": "*"
   }
 }

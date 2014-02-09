@@ -14,6 +14,10 @@ var app        = require('../../app'),
 var iSpeechKey = "8ae68fc6dfdd29852cf7424f9c00ce8b";
 exports.iSpeechKey = iSpeechKey;
 
+// These are restricted to bantr.herokuapp.com
+Fluff.reCaptchaPublicKey  = "6LfEWu4SAAAAAFYvmd9uZ-WvUXl6PLQ0bX4LIUaT";
+Fluff.reCaptchaPrivateKey = "6LfEWu4SAAAAAJQUaEvnMmUTuZqnSay85aLC1D7p";
+
 // This is a required function that must be exported.
 // This will run when you startup Fluff, but will not run when Fluff config is reloaded.
 exports.init = function (callback) {
