@@ -231,9 +231,9 @@ exports.captcha = function(req, res){
       console.log("Captcha verified.");
       req.session.human = true;
       var body = {
-        auth = req.session.auth || false;
-        human = req.session.human;
-        _csrf = req.session._csrf;
+        auth  : req.session.auth || false;
+        human : req.session.human;
+        _csrf : req.session._csrf;
       };
       app.json(body);
     }
