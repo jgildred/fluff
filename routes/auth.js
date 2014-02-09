@@ -8,10 +8,11 @@ exports.check = function(req, res){
   if (req.session.auth) {
     console.log("AUTH OK.");
     var body = {
-      auth  : req.session.auth,
-      _id   : req.session.id,
-      _csrf : req.session._csrf,
-      site  : {
+      auth    : req.session.auth,
+      captcha : req.session.captcha,
+      _id     : req.session.id,
+      _csrf   : req.session._csrf,
+      site    : {
         name       : app.App.get('config').name,
         fluff_path : app.App.get('config').fluff_path,
         apikey    : {
@@ -30,8 +31,9 @@ exports.check = function(req, res){
     console.log("AUTH BAD.");
     res.status(401);
     var body = {
-      auth   : false,
-      status : req.session.status
+      auth    : false,
+      captcha : req.session.captcha,
+      status  : req.session.status
     };
   }
   res.json(body);
@@ -69,6 +71,7 @@ exports.attach = function(req, res){
             };
             var body = {
               auth     : req.session.auth,
+              captcha  : req.session.captcha,
               _id      : req.session.id,
               _csrf    : req.session._csrf,
               site     : req.session.site,

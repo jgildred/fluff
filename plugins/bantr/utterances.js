@@ -34,12 +34,14 @@ exports.findone = function(req, res){
 
 // Preprocessor for POST /utterances
 exports.create = function(req, res){
-  resource.create(req, res, Plug.Utterance, function(req, res, utterance) {
-    // You would think that you should learn before you react, but then the reaction would be slow. May change later.
-    Bantr.react(req, res, utterance, function(utterance, rules) {
-      Bantr.learn(utterance, rules);
-    });
-  }, true);
+  app.doIfHasAccess(req, res, 'Humans', Plug.Utterance, function(req, res) {
+    resource.create(req, res, Plug.Utterance, function(req, res, utterance) {
+      // You would think that you should learn before you react, but then the reaction would be slow. May change later.
+      Bantr.react(req, res, utterance, function(utterance, rules) {
+        Bantr.learn(utterance, rules);
+      });
+    }, true);
+  });
 };
 
 // Preprocessor for PUT /utterances/:id

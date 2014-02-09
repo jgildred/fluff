@@ -229,10 +229,12 @@ exports.captcha = function(req, res){
   recaptcha.on('data', function (response) {
     if(response.is_valid) {
       console.log("Captcha verified.");
+      req.session.captcha = true;
       app.msgResponse(req, res, 200, "Captcha was verified.");
     }
     else {
       console.log("Captcha invalid.");
+      req.session.captcha = false;
       app.msgResponse(req, res, 403, "That's not the captcha.");
       //html = recaptcha.getCaptchaHtml(mypublickey, res.error);
     }

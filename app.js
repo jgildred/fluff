@@ -358,32 +358,37 @@ var doIfHasAccess = function (req, res, level, resourceScope, callback) {
     callback(req, res, resourceScope);
   }
   else {
-    if (HasAccess(req, res, level, resourceScope)) {
-      // if restricted to owner then positive result still needs to match user_id or be admin
-      if ((level == "Owner") && req.params.id) {
-        if ((req.session.role) && (req.session.role == 'Admin')) {
-          console.log(data.user_id + " has access to the requested item.");
-          callback(req, res, resourceScope);
+    if ((level == "Humans") && (res.session.captcha)) {
+      callback(req, res, resourceScope);
+    }
+    else {
+      if (HasAccess(req, res, level, resourceScope)) {
+        // if restricted to owner then positive result still needs to match user_id or be admin
+        if ((level == "Owner") && req.params.id) {
+          if ((req.session.role) && (req.session.role == 'Admin')) {
+            console.log(data.user_id + " has access to the requested item.");
+            callback(req, res, resourceScope);
+          }
+          else {
+            resourceScope.findOne({_id: req.params.id}).exec(function (err, data) {
+              if (data && (req.session.user_id == data.user_id)) {
+                console.log(data.user_id + " has access to the requested item.");
+                callback(req, res, resourceScope);
+              }
+              else {
+                msgResponse(req, res, 404, "You must be the owner.");
+              }
+            });
+          }
         }
         else {
-          resourceScope.findOne({_id: req.params.id}).exec(function (err, data) {
-            if (data && (req.session.user_id == data.user_id)) {
-              console.log(data.user_id + " has access to the requested item.");
-              callback(req, res, resourceScope);
-            }
-            else {
-              msgResponse(req, res, 404, "You must be the owner.");
-            }
-          });
-        }
-      }
-      else {
-        // Special case for update site and model which require reload config
-        if (([resource.create, resource.update, resource.remove].indexOf(callback) != -1) && ([Site, Model].indexOf(resourceScope) != -1)) { 
-          callback(req, res, resourceScope, null, reloadConfig);
-        }
-        else {
-          callback(req, res, resourceScope);
+          // Special case for update site and model which require reload config
+          if (([resource.create, resource.update, resource.remove].indexOf(callback) != -1) && ([Site, Model].indexOf(resourceScope) != -1)) { 
+            callback(req, res, resourceScope, null, reloadConfig);
+          }
+          else {
+            callback(req, res, resourceScope);
+          }
         }
       }
     }
