@@ -358,7 +358,7 @@ var doIfHasAccess = function (req, res, level, resourceScope, callback) {
     callback(req, res, resourceScope);
   }
   else {
-    if ((level == "Humans") && (res.session.captcha)) {
+    if ((level == "Humans") && (req.session.captcha)) {
       callback(req, res, resourceScope);
     }
     else {
