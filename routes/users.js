@@ -233,15 +233,22 @@ exports.captcha = function(req, res){
       var body = {
         auth  : req.session.auth || false,
         human : req.session.human,
-        _csrf : req.session._csrf
+        _csrf : req.session._csrf,
+        msg   : "Captcha verified."
       };
-      app.json(body);
+      res.json(body);
     }
     else {
-      console.log("Captcha invalid.");
+      console.log("Captcha not verified.");
       req.session.human = false;
-      app.msgResponse(req, res, 403, "That's not the captcha.");
-      //html = recaptcha.getCaptchaHtml(mypublickey, res.error);
+      var body = {
+        auth  : req.session.auth || false,
+        human : req.session.human,
+        _csrf : req.session._csrf,
+        msg   : "Captcha not verified."
+      };
+      res.status(403);
+      res.json(body);
     }
   });
   recaptcha.checkAnswer(Fluff.reCaptchaPrivateKey, 
