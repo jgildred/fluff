@@ -247,7 +247,7 @@ exports.captcha = function(req, res){
         _csrf : req.session._csrf,
         msg   : "Captcha not verified."
       };
-      res.status(403);
+      res.status(401);
       res.json(body);
     }
   });
