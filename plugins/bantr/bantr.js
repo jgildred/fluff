@@ -50,11 +50,12 @@ exports.react = function(req, res, utterance){
           "sorry_i_missed_that",
           "im_not_sure_what_you_mean"
         ];
+        var text = "i'm not sure what you mean";
         var fileName = responses[app.randomInt(0, responses.length - 1)];
         var url = Plug.cdnUrlPrefix + "/audio/" + fileName + ".mp3";
       }
       var body = {
-        text:   "i'm not sure what you mean",
+        text:   text,
         audio:  url,
         format: "mp3"
       };

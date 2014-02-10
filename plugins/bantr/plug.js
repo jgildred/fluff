@@ -12,9 +12,10 @@ var app        = require('../../app'),
     rules      = require('./rules');
 
 // Some useful Fluff variables for the plugin
-exports.iSpeechKey = "8ae68fc6dfdd29852cf7424f9c00ce8b";
+var iSpeechKey = "8ae68fc6dfdd29852cf7424f9c00ce8b";
+exports.iSpeechKey = iSpeechKey;
 exports.cdnUrlPrefix = "https://s3-us-west-2.amazonaws.com/bantr.org";
-exports.iSpeechUrlPrefix = "https://api.ispeech.org/api/rest?apikey=" + Fluff.iSpeechKey + "&action=convert&format=mp3&text=";
+exports.iSpeechUrlPrefix = "https://api.ispeech.org/api/rest?apikey=" + iSpeechKey + "&action=convert&format=mp3&text=";
 
 // This is a required function that must be exported.
 // This will run when you startup Fluff, but will not run when Fluff config is reloaded.
