@@ -17,7 +17,7 @@ exports.react = function(req, res, utterance, callback){
     var fileName = "ok_ill_try_to_remember_that";
     var url = Plug.cdnUrlPrefix + "/audio/" + fileName + ".mp3";
     var body = {
-      text:   text,
+      text:   "ok i'll try to remember that",
       audio:  url,
       format: "mp3"
     };
@@ -26,7 +26,6 @@ exports.react = function(req, res, utterance, callback){
       callback(utterance, rules);
     }
   }
-
   else {
     // Next check if it matches any existing rules
     var condition = new RegExp(utterance.text, 'gi');
@@ -51,7 +50,7 @@ exports.react = function(req, res, utterance, callback){
         var url = Plug.cdnUrlPrefix + "/audio/" + fileName + ".mp3";
       }
       var body = {
-        text:   text,
+        text:   "i'm not sure what you mean",
         audio:  url,
         format: "mp3"
       };
