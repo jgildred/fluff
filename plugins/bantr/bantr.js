@@ -12,7 +12,7 @@ exports.react = function(req, res, utterance, callback){
   // This is where the magic happens to pick a response
 
   // First check to see if it's a request to learn
-  var condition = new RegExp('.* i say . then you say .*', 'gi');
+  var condition = new RegExp('i say [\\s\\S]+ you say [\\s\\S]+', 'gi');
   if (condition.test(utterance.text)) {
     var fileName = "ok_ill_try_to_remember_that";
     var url = Plug.cdnUrlPrefix + "/audio/" + fileName + ".mp3";
