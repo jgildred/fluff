@@ -11,12 +11,10 @@ var app        = require('../../app'),
     utterances = require('./utterances'),
     rules      = require('./rules');
 
-var iSpeechKey = "8ae68fc6dfdd29852cf7424f9c00ce8b";
-exports.iSpeechKey = iSpeechKey;
-
-// These are restricted to bantr.herokuapp.com
-Fluff.reCaptchaPublicKey  = "6LfEWu4SAAAAAFYvmd9uZ-WvUXl6PLQ0bX4LIUaT";
-Fluff.reCaptchaPrivateKey = "6LfEWu4SAAAAAJQUaEvnMmUTuZqnSay85aLC1D7p";
+// Some useful Fluff variables for the plugin
+exports.iSpeechKey = "8ae68fc6dfdd29852cf7424f9c00ce8b";
+exports.cdnUrlPrefix = "https://s3-us-west-2.amazonaws.com/bantr.org";
+exports.iSpeechUrlPrefix = "https://api.ispeech.org/api/rest?apikey=" + Fluff.iSpeechKey + "&action=convert&format=mp3&text=";
 
 // This is a required function that must be exported.
 // This will run when you startup Fluff, but will not run when Fluff config is reloaded.
@@ -24,6 +22,10 @@ exports.init = function (callback) {
 
   // If you see this on Fluff startup, then your plugin was detected.
 	console.log("I'm the Bantr plugin.");
+
+  // These are restricted to bantr.herokuapp.com
+  Fluff.reCaptchaPublicKey  = "6LfEWu4SAAAAAFYvmd9uZ-WvUXl6PLQ0bX4LIUaT";
+  Fluff.reCaptchaPrivateKey = "6LfEWu4SAAAAAJQUaEvnMmUTuZqnSay85aLC1D7p";
 
   // Pulls in the schema definitions from "schemas.js".
 	var utteranceSchema = app.toSchema(schemas.utterance);

@@ -9,28 +9,46 @@ var app      = require('../../app'),
 // React to an utterance
 exports.react = function(req, res, utterance, callback){
 
-    // This is where the magic happens to pick a response
+  // This is where the magic happens to pick a response
+
+  // First check to see if it's a request to learn
+  var condition = new RegExp('.* i say . then you say .*', 'gi');
+  if (condition.test(utterance.text)) {
+    var text = "ok i'll try to do that";
+    var url  = Plug.iSpeechUrlPrefix + encodeURIComponent(text);
+    var body = {
+      text:   text,
+      audio:  url,
+      format: "mp3"
+    };
+    res.json(body);
+    if (callback) {
+      callback(utterance, rules);
+    }
+  }
+
+  else {
+    // Next check if it matches any existing rules
     var condition = new RegExp(utterance.text, 'gi');
     var filter = {"condition" : condition};
     Plug.Rule.find(filter).exec(function (err, rules) {
-      console.log("Matches:");
-      console.log(rules);
+      console.log("Rule matches: " + rules.length);
       if (rules.length > 0) {
         //redirect to ispeech url for 
         var text = rules[app.randomInt(0, rules.length - 1)].response;
         console.log("RULES LENGTH "+rules.length);
         console.log("RANDOM RULE "+app.randomInt(0, rules.length - 1));
-        var url  = "https://api.ispeech.org/api/rest?apikey=" + Plug.iSpeechKey + "&action=convert&format=mp3&text=" + encodeURIComponent(text);
+        var url  = Plug.iSpeechUrlPrefix + encodeURIComponent(text);
       }
       else {
-        //provide canned response if no match
+        // Provide canned response if no match
         var responses = [
-          "sorry, I missed that",
-          "what was that again?",
-          "I'm not sure what you mean"
+          "what_was_that_again?",
+          "sorry_i_missed_that",
+          "im_not_sure_what_you_mean"
         ];
-        var text = responses[app.randomInt(0, responses.length - 1)];
-        var url  = "https://api.ispeech.org/api/rest?apikey=" + Plug.iSpeechKey + "&action=convert&format=mp3&text=" + encodeURIComponent(text);
+        var fileName = responses[app.randomInt(0, responses.length - 1)];
+        var url = Plug.cdnUrlPrefix + "/audio/" + fileName + ".mp3";
       }
       var body = {
         text:   text,
@@ -42,6 +60,7 @@ exports.react = function(req, res, utterance, callback){
         callback(utterance, rules);
       }
     });
+  }
 };
 
 // Learn from the utterance and record new rules or change existing rules
