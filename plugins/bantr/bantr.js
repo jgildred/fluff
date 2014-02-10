@@ -43,7 +43,7 @@ exports.react = function(req, res, utterance, callback){
       else {
         // Provide canned response if no match
         var responses = [
-          "what_was_that_again?",
+          "what_was_that_again",
           "sorry_i_missed_that",
           "im_not_sure_what_you_mean"
         ];
