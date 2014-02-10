@@ -7,7 +7,7 @@ var app      = require('../../app'),
     Plug     = require('./plug');
 
 // React to an utterance
-exports.react = function(req, res, utterance, callback){
+exports.react = function(req, res, utterance){
 
   // This is where the magic happens to pick a response
 
@@ -21,10 +21,14 @@ exports.react = function(req, res, utterance, callback){
       audio:  url,
       format: "mp3"
     };
-    res.json(body);
-    if (callback) {
-      callback(utterance, rules);
-    }
+    var newRule = condition.exec(utterance.text)[0].toLowerCase().split("i say ")[1].split(" you say ");
+    var rule = {
+      condition : newRule[0],
+      response  : newRule[1]
+    };
+    Plug.Rule.create(rule).exec(function () {
+      res.json(body);
+    });
   }
   else {
     // Next check if it matches any existing rules
@@ -55,9 +59,6 @@ exports.react = function(req, res, utterance, callback){
         format: "mp3"
       };
       res.json(body);
-      if (callback) {
-        callback(utterance, rules);
-      }
     });
   }
 };
