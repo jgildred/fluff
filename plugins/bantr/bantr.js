@@ -21,13 +21,16 @@ exports.react = function(req, res, utterance){
       audio:  url,
       format: "mp3"
     };
-    console.log("EXEC IS "+condition.exec(utterance.text));
-    var newRule = condition.exec(utterance.text)[0].toLowerCase().split("i say ")[1].split(" you say ");
+    console.log("UTTERANCE IS " + utterance.text);
+    console.log("EXEC IS")
+    console.log(condition.exec(utterance.text));
+    //var newRule = condition.exec(utterance.text)[0].toLowerCase().split("i say ")[1].split(" you say ");
+    var newRule = ['hi','now bye'];
     var rule = {
       condition : newRule[0],
       response  : newRule[1]
     };
-    Plug.Rule.create(rule).exec(function () {
+    Plug.Rule.create(rule, function () {
       res.json(body);
     });
   }
