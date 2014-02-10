@@ -14,8 +14,8 @@ exports.react = function(req, res, utterance, callback){
   // First check to see if it's a request to learn
   var condition = new RegExp('.* i say . then you say .*', 'gi');
   if (condition.test(utterance.text)) {
-    var text = "ok i'll try to do that";
-    var url  = Plug.iSpeechUrlPrefix + encodeURIComponent(text);
+    var fileName = "ok_ill_try_to_remember_that";
+    var url  = var url = Plug.cdnUrlPrefix + "/audio/" + fileName + ".mp3";
     var body = {
       text:   text,
       audio:  url,
