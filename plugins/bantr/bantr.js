@@ -48,7 +48,10 @@ exports.react = function(req, res, utterance){
         var responses = [
           "what_was_that_again",
           "sorry_i_missed_that",
-          "im_not_sure_what_you_mean"
+          "im_not_sure_what_you_mean",
+          "let_me_google_that",
+          "here_is_a_google_search",
+          "i_have_no_idea_what_you_said"
         ];
         var text = "i'm not sure what you mean";
         var fileName = responses[app.randomInt(0, responses.length - 1)];
