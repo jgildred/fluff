@@ -21,7 +21,8 @@ exports.react = function(req, res, utterance){
       audio:  url,
       format: "mp3"
     };
-    console.log("UTTERANCE IS " + utterance.text);
+    console.log("PATTERN IS ");
+    console.log(condition);
     console.log("EXEC IS")
     console.log(condition.exec(utterance.text));
     //var newRule = condition.exec(utterance.text)[0].toLowerCase().split("i say ")[1].split(" you say ");
