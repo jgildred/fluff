@@ -15,7 +15,7 @@ exports.react = function(req, res, utterance, callback){
   var condition = new RegExp('.* i say . then you say .*', 'gi');
   if (condition.test(utterance.text)) {
     var fileName = "ok_ill_try_to_remember_that";
-    var url  = var url = Plug.cdnUrlPrefix + "/audio/" + fileName + ".mp3";
+    var url = Plug.cdnUrlPrefix + "/audio/" + fileName + ".mp3";
     var body = {
       text:   text,
       audio:  url,
