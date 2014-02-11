@@ -22,6 +22,10 @@ exports.react = function(req, res, utterance){
       format: "mp3"
     };
     var newRule = condition.exec(utterance.text)[0].toLowerCase().split("i say ")[1].split(" you say ");
+    // Bleep any censored words
+    censored.forEach(function(word) {
+      newRule[1] = newRule[1].replace(word, "bleep");
+    });
     var rule = {
       condition : newRule[0],
       response  : newRule[1]
@@ -71,3 +75,8 @@ exports.react = function(req, res, utterance){
 exports.learn = function(utterance, rules){
   // DUH
 };
+
+// Naughty bits
+var censored = [
+  "fuck","shit","shits","cock","cocks","dick","dicks","asshole","assholes","pussy","pussies","cunt","cunts","kunt","kunts","fucker","fuckers","shitty","fucking","twat","twats","twot","twots","tit","tits","titty","titties","anal","butthole","buttholes"
+];
