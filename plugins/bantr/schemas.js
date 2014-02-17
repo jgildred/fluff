@@ -3,6 +3,10 @@
 
 var mongoose = require('mongoose');
 
+var enums = {
+  rule_type : ["substring", "pattern"];
+};
+
 var matchfield = {
   Utterance: ['text'],
   Rule:     ['condition']
@@ -29,6 +33,7 @@ exports.utterance = "{\n\
   user_id        : ObjectId,                          // This is used to identify the owner.\n\
   text           : { type: String, required: true},   // Text representation of utterance.\n\
   audio_file     : String,                            // Audio of utterance, not used yet.\n\
+  ip_address     : String,                            // The IP address of the user agent.\n\
   creator_id     : ObjectId,                          // Fluff wants these fields for accounting.\n\
   lastupdater_id : ObjectId,                          // Fluff wants these fields for accounting.\n\
   creation       : { type: Date, default: Date.now }, // Fluff wants these fields for accounting.\n\
@@ -59,9 +64,12 @@ exports.rule_sort_column = { name:'lastupdate', order:true };
 exports.rule = "{\n\
   user_id        : ObjectId,                          // This is used to restrict a rule to a particular user.\n\
   utterance_id   : ObjectId,                          // The utterance that caused the last update.\n\
+  type           : { type: String, enum: enums.rule_type, default: 'substring'},   // The type of rule.\n\
   weight         : Number,                            // Weight for preference\n\
   condition      : { type: String, required: true},   // Condition where rule applies.\n\
   response       : { type: String, required: true},   // Text of the response.\n\
+
+  ip_address     : String,                            // The IP address of the user agent.\n\
   creator_id     : ObjectId,                          // Fluff wants these fields for accounting.\n\
   lastupdater_id : ObjectId,                          // Fluff wants these fields for accounting.\n\
   creation       : { type: Date, default: Date.now }, // Fluff wants these fields for accounting.\n\
