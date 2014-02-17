@@ -17,8 +17,6 @@ exports.iSpeechKey = iSpeechKey;
 exports.cdnUrlPrefix = "https://s3-us-west-2.amazonaws.com/bantr.org";
 exports.iSpeechUrlPrefix = "https://api.ispeech.org/api/rest?apikey=" + iSpeechKey + "&action=convert&format=mp3&text=";
 
-var enums = schemas.enums;
-
 // This is a required function that must be exported.
 // This will run when you startup Fluff, but will not run when Fluff config is reloaded.
 exports.init = function (callback) {

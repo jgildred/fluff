@@ -34,6 +34,7 @@ exports.findone = function(req, res){
 // Preprocessor for POST /rules
 exports.create = function(req, res){
   // This is what it looks like when you have no access control.
+  req.body.ip_address = req.ip;
   app.doIfHasAccess(req, res, 'Admins', Plug.Rule, resource.create);
 };
 
