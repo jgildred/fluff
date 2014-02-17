@@ -22,7 +22,7 @@ exports.react = function(req, res, utterance){
       format: "mp3"
     };
     var newRule = condition.exec(utterance.text)[0].toLowerCase().split("i say ")[1].split(" you say ");
-    // Bleep any words with *
+    // Bleep any words with *, like f***
     var condition = new RegExp('\\b.\\*+', 'i');
     newRule[1] = newRule[1].replace(condition, "bleep");
     // Bleep any censored words
@@ -44,35 +44,61 @@ exports.react = function(req, res, utterance){
     Plug.Rule.find(filter).exec(function (err, rules) {
       console.log("Rule matches: " + rules.length);
       if (rules.length > 0) {
-        //redirect to ispeech url for 
         var text = rules[app.randomInt(0, rules.length - 1)].response;
-        console.log("RULES LENGTH "+rules.length);
-        console.log("RANDOM RULE "+app.randomInt(0, rules.length - 1));
         var url  = Plug.iSpeechUrlPrefix + encodeURIComponent(text);
+        utteranceResponse(text, url)
       }
       else {
-        // Provide canned response if no match
-        var responses = [
-          "what_was_that_again",
-          "sorry_i_missed_that",
-          "im_not_sure_what_you_mean",
-          "let_me_google_that",
-          "here_is_a_google_search",
-          "i_have_no_idea_what_you_said"
-        ];
-        var text = "i'm not sure what you mean";
-        var fileName = responses[app.randomInt(0, responses.length - 1)];
-        var url = Plug.cdnUrlPrefix + "/audio/" + fileName + ".mp3";
+        // Next try to match again without "banter"
+        var condition = new RegExp('(^banter|banter$)', 'i');
+        if (condition.test(utterance.text)) {
+          var phrase = utterance.text.replace(condition, "").trim();
+          var condition = new RegExp(phrase, 'gi');
+          var filter = {"condition" : condition};
+          Plug.Rule.find(filter).exec(function (err, rules) {
+            console.log("Rule matches: " + rules.length);
+            if (rules.length > 0) {
+              var text = rules[app.randomInt(0, rules.length - 1)].response;
+              var url  = Plug.iSpeechUrlPrefix + encodeURIComponent(text);
+              utteranceResponse(text, url);
+            }
+            else {
+              fallBackResponse(req, res);
+            }
+          });
+        }
+        else {
+          fallBackResponse(req, res);
+        }
       }
-      var body = {
-        text:   text,
-        audio:  url,
-        format: "mp3"
-      };
-      res.json(body);
     });
   }
 };
+
+var fallBackResponse = function (req, res) {
+  // Provide canned response if no match
+  var responses = [
+    "what_was_that_again",
+    "sorry_i_missed_that",
+    "im_not_sure_what_you_mean",
+    "let_me_google_that",
+    "here_is_a_google_search",
+    "i_have_no_idea_what_you_said"
+  ];
+  var text = "i'm not sure what you mean";
+  var fileName = responses[app.randomInt(0, responses.length - 1)];
+  var url = Plug.cdnUrlPrefix + "/audio/" + fileName + ".mp3";
+  utteranceResponse(text, url)
+}
+
+var utteranceResponse(text, url) {
+  var body = {
+    text:   text,
+    audio:  url,
+    format: "mp3"
+  };
+  res.json(body);
+}
 
 // Learn from the utterance and record new rules or change existing rules
 exports.learn = function(utterance, rules){
