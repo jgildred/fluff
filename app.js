@@ -310,7 +310,7 @@ exports.toModel = toModel;
 
 // CORS setup
 var allowCrossDomain = function(req, res, next) {
-  console.log("REQ " + req.method + ": " + req.path + " from " + req.ips);
+  console.log("REQ " + req.method + ": " + req.path + " from " + req.ips.join(','));
   console.log("REQ BODY: " + JSON.stringify(req.body));
   console.log("REQ HEADERS: " + JSON.stringify(req.headers));
   // intercept OPTIONS method
