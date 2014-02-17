@@ -310,7 +310,7 @@ exports.toModel = toModel;
 
 // CORS setup
 var allowCrossDomain = function(req, res, next) {
-  console.log("REQ " + req.method + ": " + req.path + " from " + req.ips.join(','));
+  console.log("REQ " + req.method + ": " + req.path + " from " + req.ip);
   console.log("REQ BODY: " + JSON.stringify(req.body));
   console.log("REQ HEADERS: " + JSON.stringify(req.headers));
   // intercept OPTIONS method
@@ -1096,6 +1096,7 @@ var applyConfig = function (req, res, callback) {
   exports.siteUrl = siteUrl; // Used by some routes
 
   // Run all the setup routines with the latest config
+  app.enable('trust proxy'); // To support proxies
   setupMailer();             // Uses app.config smtp
   app.use(allowCrossDomain); // Uses app.config cors
   app.use(requireApiKey);    // Uses app.config api_key
