@@ -22,6 +22,9 @@ exports.react = function(req, res, utterance){
       format: "mp3"
     };
     var newRule = condition.exec(utterance.text)[0].toLowerCase().split("i say ")[1].split(" you say ");
+    // Bleep any words with *
+    var condition = new RegExp('\b.\*+', 'i');
+    newRule[1] = newRule[1].replace(condition, "bleep");
     // Bleep any censored words
     censored.forEach(function(word) {
       newRule[1] = newRule[1].replace(word, "bleep");
