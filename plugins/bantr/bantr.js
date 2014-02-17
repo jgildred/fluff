@@ -46,7 +46,7 @@ exports.react = function(req, res, utterance){
       if (rules.length > 0) {
         var text = rules[app.randomInt(0, rules.length - 1)].response;
         var url  = Plug.iSpeechUrlPrefix + encodeURIComponent(text);
-        utteranceResponse(text, url);
+        utteranceResponse(res, text, url);
       }
       else {
         // Next try to match again without "banter"
@@ -60,7 +60,7 @@ exports.react = function(req, res, utterance){
             if (rules.length > 0) {
               var text = rules[app.randomInt(0, rules.length - 1)].response;
               var url  = Plug.iSpeechUrlPrefix + encodeURIComponent(text);
-              utteranceResponse(text, url);
+              utteranceResponse(res, text, url);
             }
             else {
               fallBackResponse(req, res);
@@ -88,10 +88,10 @@ var fallBackResponse = function (req, res) {
   var text = "i'm not sure what you mean";
   var fileName = responses[app.randomInt(0, responses.length - 1)];
   var url = Plug.cdnUrlPrefix + "/audio/" + fileName + ".mp3";
-  utteranceResponse(text, url);
+  utteranceResponse(res, text, url);
 }
 
-var utteranceResponse = function (text, url) {
+var utteranceResponse = function (res, text, url) {
   var body = {
     text:   text,
     audio:  url,
