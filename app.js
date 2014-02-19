@@ -313,7 +313,7 @@ var forceSsl = function (req, res, next) {
   console.log("SSL IS ["+app.get('config').ssl+"]");
   if (app.get('config').ssl) {
     if (req.headers['x-forwarded-proto'] != 'https') {
-      res.redirect(Fluff.siteUrl);
+      res.redirect(externalUrl);
     }
     else {
       next();
@@ -1104,14 +1104,17 @@ var applyConfig = function (req, res, callback) {
   // Site url is useful for email notifications which link back to the site
   var protocol  = app.get('config').ssl  ? "https://" : "http://";
   var port      = app.get('config').port ? ":" + app.get('config').port : "";
+  var externalPort = port;
   var siteUrl   = protocol + app.get('config').domain;
 
   // Heroku and other paas will not expose the internal server port
   if (app.get('config').app_service != "Custom") {
     siteUrl += port;
+    externalPort = "";
   }
   exports.siteUrl = siteUrl; // Used by some routes
   Fluff.siteUrl   = siteUrl;
+  Fluff.externalUrl = protocol + app.get('config').domain + externalPort + req.url;
 
   // Run all the setup routines with the latest config
   app.enable('trust proxy'); // To support proxies
