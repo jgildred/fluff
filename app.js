@@ -74,8 +74,181 @@ var dehumanize = function (string) {
 }
 exports.dehumanize = dehumanize;
 
+var initDb = function (callback) {
+  console.log("Initialize DB...");
+  var crypto = require('crypto')
+    , seed   = require('./seed');
+  // make sure that there is not existing db data (check for site)
+  Site.count().exec(function (err, count) {
+    if (!err && (count == 0)) { 
+
+      console.log("No site in the DB yet.");
+      Site.create(seed.Data.site, function (err) {
+        console.log("Creating a site...");
+        if (err) return handleError(err);
+
+        seed.Data.users.forEach(function (user) { 
+          user.salt           = randomString();
+          user.pwhash         = users.saltyHash(user.password, user.salt);
+          user.verifytoken    = users.makeToken();
+        });
+        User.create(seed.Data.users, function (err, firstuser) {
+          console.log("Creating an admin user...");
+          if (err) return handleError(err);
+
+          firstuser.creator_id     = firstuser._id;
+          firstuser.lastupdater_id = firstuser._id;
+          firstuser.save();
+          seed.Data.views.forEach(function (view) {
+            view.creator_id     = firstuser._id;
+            view.lastupdater_id = firstuser._id;
+          });
+          View.create(seed.Data.views, function (err, htmlview, cssview) {
+            console.log("Creating views...");
+            if (err) return handleError(err);
+            
+            seed.Data.pages.forEach(function (page) {
+              page.view_id        = /\.css/i.test(page.path) ? cssview._id : htmlview._id;
+              page.creator_id     = firstuser._id;
+              page.lastupdater_id = firstuser._id;
+            });
+            Page.create(seed.Data.pages, function (err) {
+              console.log("Creating pages...");
+              if (err) return handleError(err);
+              
+              seed.Data.vars.forEach(function (vari) {
+                vari.creator_id     = firstuser._id;
+                vari.lastupdater_id = firstuser._id;
+              });
+              Var.create(seed.Data.vars, function (err) {
+                console.log("Creating vars...");
+                if (err) return handleError(err);
+
+                seed.Data.models.forEach(function (model) {
+                  model.creator_id     = firstuser._id;
+                  model.lastupdater_id = firstuser._id;
+                });
+                Model.create(seed.Data.models, function (err) {
+                  console.log("Creating a model...");
+                  if (err) return handleError(err);
+
+                  console.log("Initialized DB with seed data.");
+                  if (callback) {
+                    callback();
+                  }
+                  else {
+                    loadConfig();
+                  }
+                });
+              });
+            });
+          });
+        });
+      });
+    }
+    else {
+      if (count > 0) {
+        console.log("There is a Fluff site in the DB already.");
+      }
+      else {
+        console.log("DB init error: " + err);
+      }
+      console.log("Wipe DB and restart Fluff, or set 'initialize' to false in config.js.");
+      runAlertMode("Not feeling fluffy.<br/>Fluff DB already initialized.");
+    }
+  });
+}
+
+// Setup DB connection
+var connectDb = function (callback) {
+  console.log("Connecting to " + app.get('config').db_uri);
+  mongoose.connect(app.get('config').db_uri);
+
+  // Create schemas and use them to register the models
+  var userSchema    = new mongoose.Schema(schemas.user);
+  userSchema.virtual('displayname').get(function () {
+    return this.firstname ? 
+      (this.lastname ? 
+        this.firstname + ' ' + this.lastname
+        : this.firstname)
+      : (this.lastname ?
+        this.lastname
+        : this.email);
+  });
+  userSchema.virtual('shortname').get(function () {
+    return this.firstname ? 
+      this.firstname 
+      : (this.lastname ?
+        this.lastname
+        : this.email);
+  });
+  userSchema.methods.pwMatch = function (password) {
+    var crypto = require('crypto');
+    var hash   = crypto.createHash('md5').update(password + this.salt).digest("hex");
+    console.log('password: ' + password);
+    console.log('client hash:' + hash);
+    console.log('db hash: ' + this.pwhash);
+    return (this.pwhash == hash) ?
+      true : false;
+  }
+  User   = mongoose.model('User', userSchema);
+  exports.User = User;
+
+  var siteSchema = new mongoose.Schema(schemas.site);
+  Site           = mongoose.model('Site', siteSchema);
+  exports.Site = Site;
+
+  var viewSchema = new mongoose.Schema(schemas.view);
+  View           = mongoose.model('View', viewSchema);
+
+  var pageSchema = new mongoose.Schema(schemas.page);
+  Page           = mongoose.model('Page', pageSchema);
+
+  var varSchema  = new mongoose.Schema(schemas.var);
+  Var            = mongoose.model('Var', varSchema);
+
+  var modelSchema  = new mongoose.Schema(schemas.model);
+  Model            = mongoose.model('Model', modelSchema);
+  exports.Model = Model;
+
+  Fluff.matchfield.general = schemas.enums.match_field;
+
+  if (callback) {
+    callback();
+  }
+}
+
+// Useful for direct manipulation of DB collections
+var mongooseCollection = function (model) {
+  return mongoose.connection.collections[dehumanize(model.model_id)];
+}
+exports.mongooseCollection = mongooseCollection;
+
+// Create a schema from schema_data
+var toSchema = function (schema_data) {
+  eval("var obj = " + schema_data);
+  obj = lowerCaseObject(obj);
+  // Make sure that the model will handle these fields correctly.
+  obj.creator_id     = ObjectId;
+  obj.lastupdater_id = ObjectId;
+  obj.creation       = { type: Date, default: Date.now };
+  obj.lastupdate     = { type: Date, default: Date.now };
+  var schema = new mongoose.Schema(obj);
+  return schema;
+}
+exports.toSchema = toSchema;
+
+// Create a model; model must have a model_id and schema_data
+var toModel = function (model) {
+  var schema = toSchema(model.schema_data);
+  var newModel = mongoose.model(dehumanize(model.model_id) + "-" + randomString(), schema, dehumanize(model.model_id));
+  return newModel;
+}
+exports.toModel = toModel;
+
+
 // Init all plugins; they are initialized synchronously in directory order
-var initPlugins = function (req, res, callback) {
+var initPlugins = function (callback) {
   var path = __dirname + '/plugins';
   fs.exists(path, function (exists) {
     if (exists) {
@@ -88,26 +261,26 @@ var initPlugins = function (req, res, callback) {
             }
           });
           console.log("Detected plugins: " + plugins.join(", "));
-          initOnePlugin(req, res, plugins, 0, callback);
+          initOnePlugin(plugins, 0, callback);
         }
         else {
           console.log("No plugins detected.");
           if (callback) {
-            callback(req, res);
+            callback();
           }
         }
       });
     }
     else {
       if (callback) {
-        callback(req, res);
+        callback();
       }
     }
   });
 }
 
 // Init one plugin; you need the directory list and index of the plugin in the list
-var initOnePlugin = function (req, res, dirs, index, callback) {
+var initOnePlugin = function (dirs, index, callback) {
   var path = __dirname + '/plugins';
   index = index ? index : 0;
   var name = dirs[index];
@@ -116,25 +289,25 @@ var initOnePlugin = function (req, res, dirs, index, callback) {
     if (exists) {
       if (Plugins[name]) {
         console.log("Could not initialize " + name + " plugin as another already exists with the same name.");
-        finishInitPlugin(req, res, dirs, index, callback);
+        finishInitPlugin(dirs, index, callback);
       }
       else {
         Plugins[name] = require('./plugins/' + name + '/plug');
         Plugins[name].init(function () {
           console.log("Initialized " + name + " plugin.");
-          finishInitPlugin(req, res, dirs, index, callback);
+          finishInitPlugin(dirs, index, callback);
         });
       }
     }
     else {
       console.log("Could not find plug.js in the /plugins/" + name + " directory.");
-      finishInitPlugin(req, res, dirs, index, callback);
+      finishInitPlugin(dirs, index, callback);
     }
   });
 }
 
 // Run after each plugin is initialized
-var finishInitPlugin = function (req, res, dirs, index, callback) {
+var finishInitPlugin = function (dirs, index, callback) {
   // If there are more plugins to init, do the next
   if ((index != null) && (dirs.length > (index + 1))) {
     // Check that the plugin has not already been initialized
@@ -145,12 +318,12 @@ var finishInitPlugin = function (req, res, dirs, index, callback) {
       }
     }
     if (pluginArray.indexOf(dirs[index + 1]) == -1) {
-      initOnePlugin(req, res, dirs, index + 1, callback);
+      initOnePlugin(dirs, index + 1, callback);
     }
   }
   else {
     if (callback) {
-      callback(req, res);
+      callback();
     }
   }
 }
@@ -220,93 +393,6 @@ var loadDefaults = function (custom_config) {
   }
   app.set('config', active_config);
 }
-
-// Setup DB connection
-var connectDb = function (req, res, callback) {
-  console.log("Connecting to " + app.get('config').db_uri);
-  mongoose.connect(app.get('config').db_uri);
-
-  // Create schemas and use them to register the models
-  var userSchema    = new mongoose.Schema(schemas.user);
-  userSchema.virtual('displayname').get(function () {
-    return this.firstname ? 
-      (this.lastname ? 
-        this.firstname + ' ' + this.lastname
-        : this.firstname)
-      : (this.lastname ?
-        this.lastname
-        : this.email);
-  });
-  userSchema.virtual('shortname').get(function () {
-    return this.firstname ? 
-      this.firstname 
-      : (this.lastname ?
-        this.lastname
-        : this.email);
-  });
-  userSchema.methods.pwMatch = function (password) {
-    var crypto = require('crypto');
-    var hash   = crypto.createHash('md5').update(password + this.salt).digest("hex");
-    console.log('password: ' + password);
-    console.log('client hash:' + hash);
-    console.log('db hash: ' + this.pwhash);
-    return (this.pwhash == hash) ?
-      true : false;
-  }
-  User   = mongoose.model('User', userSchema);
-  exports.User = User;
-
-  var siteSchema = new mongoose.Schema(schemas.site);
-  Site           = mongoose.model('Site', siteSchema);
-  exports.Site = Site;
-
-  var viewSchema = new mongoose.Schema(schemas.view);
-  View           = mongoose.model('View', viewSchema);
-
-  var pageSchema = new mongoose.Schema(schemas.page);
-  Page           = mongoose.model('Page', pageSchema);
-
-  var varSchema  = new mongoose.Schema(schemas.var);
-  Var            = mongoose.model('Var', varSchema);
-
-  var modelSchema  = new mongoose.Schema(schemas.model);
-  Model            = mongoose.model('Model', modelSchema);
-  exports.Model = Model;
-
-  Fluff.matchfield.general = schemas.enums.match_field;
-
-  if (callback) {
-    callback(req, res);
-  }
-}
-
-// Useful for direct manipulation of DB collections
-var mongooseCollection = function (model) {
-  return mongoose.connection.collections[dehumanize(model.model_id)];
-}
-exports.mongooseCollection = mongooseCollection;
-
-// Create a schema from schema_data
-var toSchema = function (schema_data) {
-  eval("var obj = " + schema_data);
-  obj = lowerCaseObject(obj);
-  // Make sure that the model will handle these fields correctly.
-  obj.creator_id     = ObjectId;
-  obj.lastupdater_id = ObjectId;
-  obj.creation       = { type: Date, default: Date.now };
-  obj.lastupdate     = { type: Date, default: Date.now };
-  var schema = new mongoose.Schema(obj);
-  return schema;
-}
-exports.toSchema = toSchema;
-
-// Create a model; model must have a model_id and schema_data
-var toModel = function (model) {
-  var schema = toSchema(model.schema_data);
-  var newModel = mongoose.model(dehumanize(model.model_id) + "-" + randomString(), schema, dehumanize(model.model_id));
-  return newModel;
-}
-exports.toModel = toModel;
 
 // Force SSL if required
 var forceSsl = function (req, res, next) {
@@ -573,91 +659,6 @@ var cmsPages = function (req, res, next) {
   }
 }
 
-var initDb = function (req, res, callback) {
-  console.log("Initialize DB...");
-  var crypto = require('crypto')
-    , seed   = require('./seed');
-  // make sure that there is not existing db data (check for site)
-  Site.count().exec(function (err, count) {
-    if (!err && (count == 0)) { 
-
-      console.log("No site in the DB yet.");
-      Site.create(seed.Data.site, function (err) {
-        console.log("Creating a site...");
-        if (err) return handleError(err);
-
-        seed.Data.users.forEach(function (user) { 
-          user.salt           = randomString();
-          user.pwhash         = users.saltyHash(user.password, user.salt);
-          user.verifytoken    = users.makeToken();
-        });
-        User.create(seed.Data.users, function (err, firstuser) {
-          console.log("Creating an admin user...");
-          if (err) return handleError(err);
-
-          firstuser.creator_id     = firstuser._id;
-          firstuser.lastupdater_id = firstuser._id;
-          firstuser.save();
-          seed.Data.views.forEach(function (view) {
-            view.creator_id     = firstuser._id;
-            view.lastupdater_id = firstuser._id;
-          });
-          View.create(seed.Data.views, function (err, htmlview, cssview) {
-            console.log("Creating views...");
-            if (err) return handleError(err);
-            
-            seed.Data.pages.forEach(function (page) {
-              page.view_id        = /\.css/i.test(page.path) ? cssview._id : htmlview._id;
-              page.creator_id     = firstuser._id;
-              page.lastupdater_id = firstuser._id;
-            });
-            Page.create(seed.Data.pages, function (err) {
-              console.log("Creating pages...");
-              if (err) return handleError(err);
-              
-              seed.Data.vars.forEach(function (vari) {
-                vari.creator_id     = firstuser._id;
-                vari.lastupdater_id = firstuser._id;
-              });
-              Var.create(seed.Data.vars, function (err) {
-                console.log("Creating vars...");
-                if (err) return handleError(err);
-
-                seed.Data.models.forEach(function (model) {
-                  model.creator_id     = firstuser._id;
-                  model.lastupdater_id = firstuser._id;
-                });
-                Model.create(seed.Data.models, function (err) {
-                  console.log("Creating a model...");
-                  if (err) return handleError(err);
-
-                  console.log("Initialized DB with seed data.");
-                  if (callback) {
-                    callback(req, res);
-                  }
-                  else {
-                    loadConfig(req, res);
-                  }
-                });
-              });
-            });
-          });
-        });
-      });
-    }
-    else {
-      if (count > 0) {
-        console.log("There is a Fluff site in the DB already.");
-      }
-      else {
-        console.log("DB init error: " + err);
-      }
-      console.log("Wipe DB and restart Fluff, or set 'initialize' to false in config.js.");
-      runAlertMode("Not feeling fluffy.<br/>Fluff DB already initialized.");
-    }
-  });
-}
-
 var mergeConfig = function (app_config, site_config) {
   for (item in site_config) {
     if ((Object.prototype.toString.call(site_config[item]) === '[object Object]') && (Object.keys(site_config[item]).length > 0)) {
@@ -684,7 +685,7 @@ var mergeConfig = function (app_config, site_config) {
 }
 
 // Load the site config from the db
-var loadConfig = function (req, res, callback) {
+var loadConfig = function (callback) {
   console.log("Loading config...");
   Site.findOne().exec(function (err, data) {
     if (!err && data) {
@@ -692,12 +693,11 @@ var loadConfig = function (req, res, callback) {
       var stored_config = data.toJSON();
       app.set('config', mergeConfig(active_config, stored_config));
       console.log("Loaded complete config.");
-      console.log(app.get('config').toString());
       if (callback) {
-        callback(req, res);
+        callback();
       }
       else {
-        applyConfig(req, res);
+        applyConfig();
       }
     }
     else {
@@ -970,7 +970,7 @@ var loadOneModel = function (model) {
 }
 exports.loadOneModel = loadOneModel;
 
-var loadModels = function (req, res, callback) {
+var loadModels = function (callback) {
   console.log("Loading models from DB...");
   Model.find().exec(function (err, models) {
     models.forEach(function (model) {
@@ -978,7 +978,7 @@ var loadModels = function (req, res, callback) {
       loadOneModel(model);
     });
     if (callback) {
-      callback(req, res);
+      callback();
     }
   });
 }
@@ -1119,7 +1119,7 @@ var setUrls = function (req, res, next) {
 }
 
 // Every time the site config changes this is run. Could be more efficient.
-var applyConfig = function (req, res, callback) {
+var applyConfig = function (callback) {
   // Run all the setup routines with the latest config
   app.enable('trust proxy'); // To support proxies
   app.use(setUrls);          // Uses app.config ssl
@@ -1217,17 +1217,17 @@ var toSchemaData = function (array) {
 }
 exports.toSchemaData = toSchemaData;
 
-var startUp = function (req, res) {
+var startUp = function () {
   console.log("Starting Fluff...");
   if (app.get('config').initialize) {
     
     // Initialize db with seed data (site, admin, example page, view and vars)
-    connectDb(req, res, function (req, res) {
-      initDb(req, res, function (req, res) {
-        initPlugins(req, res, function (req, res) {
-          loadConfig (req, res, function (req, res) {
-            loadModels (req, res, function (req, res) {
-              applyConfig(req, res, Callback);
+    connectDb(function () {
+      initDb(function () {
+        initPlugins(function () {
+          loadConfig (function () {
+            loadModels (function () {
+              applyConfig(Callback);
             });
           });
         });
@@ -1235,11 +1235,11 @@ var startUp = function (req, res) {
     });
   }
   else {
-    connectDb(req, res, function (req, res) {
-      initPlugins(req, res, function (req, res) {
-        loadConfig (req, res, function (req, res) {
-          loadModels (req, res, function (req, res) {
-            applyConfig(req, res, Callback);
+    connectDb(function () {
+      initPlugins(function () {
+        loadConfig (function () {
+          loadModels (function () {
+            applyConfig(Callback);
           });
         });
       });
