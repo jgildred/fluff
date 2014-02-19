@@ -311,16 +311,13 @@ exports.toModel = toModel;
 // Force SSL
 var forceSsl = function (req, res, next) {
   if (app.get('config').ssl) { 
-    /* At the top, with other redirect methods before other routes */
-    app.get('*',function (req, res, next) {
       if (req.headers['x-forwarded-proto'] != 'https') {
         console.log("REDIRECT TO " + 'https://' + req.host + '/' + req.url);
         res.redirect('https://' + req.host + '/' + req.url);
       }
       else {
-        next(); /* Continue to other routes if we're not redirecting */
+        next();
       }
-    });
   }
   else {
     next();
@@ -1116,7 +1113,7 @@ var applyConfig = function (req, res, callback) {
 
   // Run all the setup routines with the latest config
   app.enable('trust proxy'); // To support proxies
-  //app.use(forceSsl);         // Uses app.config ssl
+  app.use(forceSsl);         // Uses app.config ssl
   app.use(allowCrossDomain); // Uses app.config cors
   setupMailer();             // Uses app.config smtp
   app.use(requireApiKey);    // Uses app.config api_key
