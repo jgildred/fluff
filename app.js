@@ -405,7 +405,7 @@ var doIfHasAccess = function (req, res, level, resourceScope, callback) {
         }
         else {
           // Special case for update site and model which require reload config
-          if (([resource.create, resource.update, resource.remove].indexOf(callback) != -1) && ([Site, Model].indexOf(resourceScope) != -1)) { 
+          if (([resource.create, resource.update, resource.findOneAndUpdate, resource.remove].indexOf(callback) != -1) && ([Site, Model].indexOf(resourceScope) != -1)) { 
             console.log("should be reloading...");
             callback(req, res, resourceScope, null, reloadConfig);
           }
