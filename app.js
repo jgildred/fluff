@@ -1116,7 +1116,7 @@ var applyConfig = function (req, res, callback) {
 
   // Run all the setup routines with the latest config
   app.enable('trust proxy'); // To support proxies
-  //app.use(forceSsl);         // Uses app.config ssl
+  app.use(forceSsl);         // Uses app.config ssl
   app.use(allowCrossDomain); // Uses app.config cors
   setupMailer();             // Uses app.config smtp
   app.use(requireApiKey);    // Uses app.config api_key
