@@ -312,9 +312,9 @@ exports.toModel = toModel;
 var forceSsl = function (req, res, next) {
   if (app.get('config').ssl) { 
     /* At the top, with other redirect methods before other routes */
-    app.get('*',function (req,res,next){
-      if(req.headers['x-forwarded-proto']!='https')
-        res.redirect('https://' + req.hostname + '/' + req.url)
+    app.get('*',function (req, res, next) {
+      if (req.headers['x-forwarded-proto'] != 'https')
+        res.redirect('https://' + req.host + '/' + req.url)
       else
         next(); /* Continue to other routes if we're not redirecting */
     });
@@ -322,7 +322,7 @@ var forceSsl = function (req, res, next) {
 }
 
 // CORS setup
-var allowCrossDomain = function(req, res, next) {
+var allowCrossDomain = function (req, res, next) {
   console.log("REQ " + req.method + ": " + req.path + " from " + req.ip);
   console.log("REQ BODY: " + JSON.stringify(req.body));
   console.log("REQ HEADERS: " + JSON.stringify(req.headers));
