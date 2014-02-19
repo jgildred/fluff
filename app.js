@@ -313,8 +313,7 @@ var forceSsl = function (req, res, next) {
   console.log("SSL IS ["+app.get('config').ssl+"]");
   if (app.get('config').ssl) {
     if (req.headers['x-forwarded-proto'] != 'https') {
-      var url = 'https://' + req.host + req.url;
-      res.redirect(url);
+      res.redirect(siteUrl);
     }
     else {
       next();
