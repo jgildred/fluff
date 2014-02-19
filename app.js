@@ -1114,6 +1114,7 @@ var setUrls = function (req, res, next) {
   Fluff.internalBaseUrl = internalBaseUrl;
   Fluff.externalBaseUrl = protocol + app.get('config').domain + externalPort;
   Fluff.externalUrl     = Fluff.externalBaseUrl + req.url;
+  console.log("EXTERNAL URL "+ Fluff.externalUrl);
   next();
 }
 
