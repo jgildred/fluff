@@ -313,7 +313,7 @@ var forceSsl = function (req, res, next) {
   console.log("SSL IS ["+app.get('config').ssl+"]");
   if (app.get('config').ssl) {
     if (req.headers['x-forwarded-proto'] != 'https') {
-      res.redirect('https://' + req.host + req.url);
+      res.redirect(Fluff.externalUrl);
     }
     else {
       next();
@@ -1099,25 +1099,29 @@ var staticFiles = function () {
     express.static(__dirname + '/admin'));
 }
 
-// Every time the site config changes this is run. Could be more efficient.
-var applyConfig = function (req, res, callback) {
+var setUrls = function (req, res, next) {
   // Site url is useful for email notifications which link back to the site
   var protocol  = app.get('config').ssl  ? "https://" : "http://";
-  var port      = app.get('config').port ? ":" + app.get('config').port : "";
-  var externalPort = port;
-  var siteUrl   = protocol + app.get('config').domain;
+  var externalPort = app.get('config').port ? ":" + app.get('config').port : "";
+  var internalBaseUrl = protocol + app.get('config').domain;
 
   // Heroku and other paas will not expose the internal server port
   if (app.get('config').app_service != "Custom") {
-    siteUrl += port;
+    internalBaseUrl += externalPort;
     externalPort = "";
   }
-  exports.siteUrl = siteUrl; // Used by some routes
-  Fluff.siteUrl   = siteUrl;
-  //Fluff.externalUrl = protocol + app.get('config').domain + externalPort + req.url;
+  exports.siteUrl       = internalBaseUrl; // Used by some routes
+  Fluff.internalBaseUrl = internalBaseUrl;
+  Fluff.externalBaseUrl = protocol + app.get('config').domain + externalPort;
+  Fluff.externalUrl     = Fluff.externalBaseUrl + req.url;
+  next();
+}
 
+// Every time the site config changes this is run. Could be more efficient.
+var applyConfig = function (req, res, callback) {
   // Run all the setup routines with the latest config
   app.enable('trust proxy'); // To support proxies
+  app.use(setUrls);          // Uses app.config ssl
   app.use(forceSsl);         // Uses app.config ssl
   app.use(allowCrossDomain); // Uses app.config cors
   setupMailer();             // Uses app.config smtp
