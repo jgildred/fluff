@@ -4,7 +4,8 @@
 var app      = require('../../app'),
     Fluff    = app.Fluff,
     resource = require('../../routes/resource'),
-    Plug     = require('./plug');
+    Plug     = require('./plug'),
+    Knwl     = require('./knwl');
 
 // React to an utterance
 exports.react = function(req, res, utterance){

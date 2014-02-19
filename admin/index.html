@@ -890,7 +890,7 @@
           <div class="checkbox col-lg-9">
             <label>
               <input type="checkbox" value="" <%= (site && site.get('ssl')) ? 'checked' : '' %> onchange="setCheckVal(document.getElementsByName('ssl')[0],this.checked);" />
-                Secure HTTP (SSL)
+                Require Secure HTTP (SSL)
               <input type="hidden" name="ssl" value="<%= site ? site.get('ssl') : 'false' %>" />
             </label>
           </div>
