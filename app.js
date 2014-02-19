@@ -312,10 +312,7 @@ exports.toModel = toModel;
 var forceSsl = function (req, res, next) {
   if (app.get('config').ssl) { 
       if (req.headers['x-forwarded-proto'] != 'https') {
-        var url = 'https://' + req.host;
-        if (req.url != '') {
-          url += '/' + req.url;
-        }
+        var url = 'https://' + req.host + req.url;
         res.redirect(url);
       }
       else {
