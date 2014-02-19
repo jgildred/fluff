@@ -313,7 +313,7 @@ var forceSsl = function (req, res, next) {
   console.log("SSL IS ["+app.get('config').ssl+"]");
   if (app.get('config').ssl) {
     if (req.headers['x-forwarded-proto'] != 'https') {
-      res.redirect(externalUrl);
+      res.redirect('https://' + req.host + req.url);
     }
     else {
       next();
@@ -1114,7 +1114,7 @@ var applyConfig = function (req, res, callback) {
   }
   exports.siteUrl = siteUrl; // Used by some routes
   Fluff.siteUrl   = siteUrl;
-  Fluff.externalUrl = protocol + app.get('config').domain + externalPort + req.url;
+  //Fluff.externalUrl = protocol + app.get('config').domain + externalPort + req.url;
 
   // Run all the setup routines with the latest config
   app.enable('trust proxy'); // To support proxies
