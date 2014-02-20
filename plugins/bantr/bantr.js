@@ -86,7 +86,7 @@ var nlResponse = function (req, res, utterance) {
   var result = "";
   for (i in taggedWords) {
     var taggedWord = taggedWords[i];
-    if (taggedWord[1] == 'VBZ') {
+    if (/^VB/.test(taggedWord[1])) {
       result += taggedWord[0];
     }
   }
