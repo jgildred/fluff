@@ -65,29 +65,33 @@ exports.react = function(req, res, utterance){
               utteranceResponse(res, text, url);
             }
             else {
-              // Do something smart
-              wordpos = new WordPos();
-              wordpos.getVerbs(utterance.text, function(result){
-                console.log("verbs found in utterance: "+result.length);
-                if (result.length > 0) {
-                  var text = "Did you say " + result[0] + "?";
-                  var url  = Plug.iSpeechUrlPrefix + encodeURIComponent(text);
-                  utteranceResponse(res, text, url);
-                }
-                else {
-                  fallBackResponse(req, res);
-                }
-              });
+              nlResponse(req, res, utterance);
             }
           });
         }
         else {
-          fallBackResponse(req, res);
+          nlResponse(req, res, utterance);
         }
       }
     });
   }
 };
+
+var nlResponse = function (req, res, utterance) {
+  // Do something smart
+  wordpos = new WordPos();
+  wordpos.getVerbs(utterance.text, function(result){
+    console.log("verbs found in utterance: "+result.length);
+    if (result.length > 0) {
+      var text = "Did you say " + result[0] + "?";
+      var url  = Plug.iSpeechUrlPrefix + encodeURIComponent(text);
+      utteranceResponse(res, text, url);
+    }
+    else {
+      fallBackResponse(req, res);
+    }
+  });
+}
 
 var fallBackResponse = function (req, res) {
   // Provide canned response if no match
