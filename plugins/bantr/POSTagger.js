@@ -8,6 +8,9 @@
  * Enhanced by Toby Rahilly to use a compressed lexicon format as of version 0.2.
  */
 
+ var POSTAGGER_LEXICON = require('./lexicon').POSTAGGER_LEXICON,
+     LEXICON_TAG_MAP = require('./lexicon').LEXICON_TAG_MAP;
+
 function POSTagger(){
     this.lexicon = POSTAGGER_LEXICON;
     this.tagsMap = LEXICON_TAG_MAP;
