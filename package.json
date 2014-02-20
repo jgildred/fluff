@@ -17,6 +17,7 @@
     "inflection": "*",
     "ursa": "*",
     "x509": "*",
-    "recaptcha-async": "*"
+    "recaptcha-async": "*",
+    "wordpos": "*"
   }
 }

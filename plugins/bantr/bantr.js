@@ -5,7 +5,8 @@ var app      = require('../../app'),
     Fluff    = app.Fluff,
     resource = require('../../routes/resource'),
     Plug     = require('./plug'),
-    Knwl     = require('./knwl');
+    Knwl     = require('./knwl'),
+    WordPos  = require('wordpos');
 
 // React to an utterance
 exports.react = function(req, res, utterance){
@@ -64,7 +65,18 @@ exports.react = function(req, res, utterance){
               utteranceResponse(res, text, url);
             }
             else {
-              fallBackResponse(req, res);
+              // Do something smart
+              wordpos = new WordPos();
+              wordpos.getVerbs(utterance.text, function(result){
+                if (result.length > 0) {
+                  var text = "Did you say " + result[0] + "?";
+                  var url  = Plug.iSpeechUrlPrefix + encodeURIComponent(text);
+                  utteranceResponse(res, text, url);
+                }
+                else {
+                  fallBackResponse(req, res);
+                }
+              });
             }
           });
         }
