@@ -41,7 +41,7 @@ exports.react = function(req, res, utterance){
   }
   else {
     // Next check if it matches any existing rules
-    var condition = new RegExp(utterance.text, 'gi');
+    var condition = new RegExp(app.escapeRegExp(utterance.text), 'gi');
     var filter = {"condition" : condition};
     Plug.Rule.find(filter).exec(function (err, rules) {
       console.log("Rule matches: " + rules.length);
@@ -55,7 +55,7 @@ exports.react = function(req, res, utterance){
         var condition = new RegExp('(^banter|banter$)', 'i');
         if (condition.test(utterance.text)) {
           var phrase = utterance.text.replace(condition, "").trim();
-          var condition = new RegExp(phrase, 'gi');
+          var condition = new RegExp(app.escapeRegExp(phrase), 'gi');
           var filter = {"condition" : condition};
           Plug.Rule.find(filter).exec(function (err, rules) {
             console.log("Rule matches: " + rules.length);

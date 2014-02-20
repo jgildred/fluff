@@ -74,6 +74,11 @@ var dehumanize = function (string) {
 }
 exports.dehumanize = dehumanize;
 
+function escapeRegExp(str) {
+  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+}
+exports.escapeRegExp = escapeRegExp;
+
 var initDb = function (callback) {
   console.log("Initialize DB...");
   var crypto = require('crypto')
