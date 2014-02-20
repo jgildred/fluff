@@ -7,8 +7,8 @@ var app      = require('../../app'),
     Plug     = require('./plug'),
     Knwl     = require('./knwl'),
     WordPos  = require('wordpos'),
-    Lexer    = require('./jspos/lexer').Lexer,
-    PosTagger= require('./jspos/POSTagger').POSTagger;
+    Lexer    = require('./lexer').Lexer,
+    PosTagger= require('./POSTagger').POSTagger;
 
 // React to an utterance
 exports.react = function(req, res, utterance){
