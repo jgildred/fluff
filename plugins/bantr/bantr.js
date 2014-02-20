@@ -68,6 +68,7 @@ exports.react = function(req, res, utterance){
               // Do something smart
               wordpos = new WordPos();
               wordpos.getVerbs(utterance.text, function(result){
+                console.log("verbs found in utterance: "+result.length);
                 if (result.length > 0) {
                   var text = "Did you say " + result[0] + "?";
                   var url  = Plug.iSpeechUrlPrefix + encodeURIComponent(text);
