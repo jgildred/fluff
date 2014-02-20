@@ -6,7 +6,9 @@ var app      = require('../../app'),
     resource = require('../../routes/resource'),
     Plug     = require('./plug'),
     Knwl     = require('./knwl'),
-    WordPos  = require('wordpos');
+    WordPos  = require('wordpos'),
+    Lexer    = require('./jspos/lexer').Lexer,
+    PosTagger= require('./jspos/POSTagger').POSTagger;
 
 // React to an utterance
 exports.react = function(req, res, utterance){
@@ -78,6 +80,27 @@ exports.react = function(req, res, utterance){
 };
 
 var nlResponse = function (req, res, utterance) {
+  // Do something smart
+  var words = new Lexer().lex(utterance.text);
+  var taggedWords = new PosTagger().tag(words);
+  var result = "";
+  for (i in taggedWords) {
+    var taggedWord = taggedWords[i];
+    if (taggedWord[1] == 'VBZ') {
+      result += taggedWord[0];
+    }
+  }
+  if (result != "") {
+    var text = "Did you say " + result + "?";
+    var url  = Plug.iSpeechUrlPrefix + encodeURIComponent(text);
+    utteranceResponse(res, text, url);
+  }
+  else {
+    fallBackResponse(req, res);
+  }
+}
+
+var nl2Response = function (req, res, utterance) {
   // Do something smart
   wordpos = new WordPos();
   wordpos.getVerbs(utterance.text, function(result){
