@@ -91,7 +91,7 @@ var nlResponse = function (req, res, utterance) {
   for (i in taggedWords) {
     var taggedWord = taggedWords[i];
     if (/^VB/.test(taggedWord[1])) {
-      result += taggedWord[0];
+      result = result || taggedWord[0];
       wordPos.lookupVerb(result, function (synset) {
         if (synset.length > 0) {
           match = synset[0].synonyms[0];
