@@ -1130,17 +1130,17 @@ var setUrls = function (req, res, next) {
 // Every time the site config changes this is run. Could be more efficient.
 var applyConfig = function (callback) {
   // Run all the setup routines with the latest config
+  setupMailer();             // Uses app.config smtp
   app.enable('trust proxy'); // To support proxies
   app.use(setUrls);          // Uses app.config ssl
   app.use(forceSsl);         // Uses app.config ssl
   app.use(allowCrossDomain); // Uses app.config cors
-  setupMailer();             // Uses app.config smtp
   app.use(requireApiKey);    // Uses app.config api_key
   app.use(csrf.check);       // Uses app.config fluff_path
   loadPlugins(function () {  // Load plugins last to allow overriding config
-    notFoundRoute();     // Uses app.config fluff_path
     adminRoutes();       // Uses app.config fluff_path
     modelRoutes();       // Uses app.config fluff_path
+    notFoundRoute();     // Uses app.config fluff_path
     app.use(app.router); // Routes are processed before cmsPages
     app.use(cmsPages);   // Doesn't use app.config, but runs on every request
     staticFiles();       // Static files are processed last
