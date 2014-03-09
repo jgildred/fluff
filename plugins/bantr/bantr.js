@@ -92,8 +92,10 @@ var nlResponse = function (req, res, utterance) {
     var taggedWord = taggedWords[i];
     if (/^VB/.test(taggedWord[1])) {
       result += taggedWord[0];
-      wordPos.lookupVerb(result, function(synset) {
-        match = synset[0].synonyms[0];
+      wordPos.lookupVerb(result, function (synset) {
+        if (synset.length > 0) {
+          match = synset[0].synonyms[0];
+        }
       });
     }
   }
