@@ -92,17 +92,20 @@ var nlResponse = function (req, res, utterance) {
     var taggedWord = taggedWords[i];
     if (/^VB/.test(taggedWord[1])) {
       result = result || taggedWord[0];
-      wordPos.lookupVerb(result, function (synset) {
-        if (synset.length > 0) {
-          match = synset[0].synonyms[0];
-        }
-      });
     }
   }
   if (result != "") {
-    var text = "Did you say " + result + ", as in " + match +"?";
-    var url  = Plug.iSpeechUrlPrefix + encodeURIComponent(text);
-    utteranceResponse(res, text, url);
+    wordPos.lookupVerb(result, function (synset) {
+      if (synset.length > 0) {
+        match = synset[0].synonyms[0];
+        var text = "Did you say " + result + ", as in " + match +"?";
+        var url  = Plug.iSpeechUrlPrefix + encodeURIComponent(text);
+        utteranceResponse(res, text, url);
+      }
+      else {
+        fallBackResponse(req, res);
+      }
+    });
   }
   else {
     fallBackResponse(req, res);
