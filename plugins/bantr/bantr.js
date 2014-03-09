@@ -93,7 +93,7 @@ var nlResponse = function (req, res, utterance) {
     if (/^VB/.test(taggedWord[1])) {
       result += taggedWord[0];
       wordPos.lookupVerb(result, function(synset) {
-        match = synset.synonyms[0];
+        match = synset[0].synonyms[0];
       });
     }
   }
