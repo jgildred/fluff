@@ -2,9 +2,13 @@
 // MAIN APP
 
 // Dependencies
-var express    = require('express'),
-    http       = require('http'),
-    mongoose   = require('mongoose');
+var express       = require('express'),
+    http          = require('http'),
+    bodyParser    = require('body-parser'),
+    cookieParser  = require('cookie-parser'),
+    staticFavicon = require('static-favicon'),
+    session       = require('express-session'),
+    mongoose      = require('mongoose');
 
 // Setup globals
 var Fluff  = {},
@@ -1133,10 +1137,10 @@ var applyConfig = function (callback) {
   setupMailer();             // Uses app.config smtp
   app.use(requireApiKey);    // Uses app.config api_key
   app.use(csrf.check);       // Uses app.config fluff_path
-  adminRoutes();             // Uses app.config fluff_path
-  modelRoutes();             // Uses app.config fluff_path
   loadPlugins(function () {  // Load plugins last to allow overriding config
     notFoundRoute();     // Uses app.config fluff_path
+    adminRoutes();       // Uses app.config fluff_path
+    modelRoutes();       // Uses app.config fluff_path
     app.use(app.router); // Routes are processed before cmsPages
     app.use(cmsPages);   // Doesn't use app.config, but runs on every request
     staticFiles();       // Static files are processed last
@@ -1265,11 +1269,11 @@ exports.msgResponse = msgResponse;
 
 // JSON body, sessions and other setup
 var preLaunch = function () {
-  app.use(express.bodyParser());
-  app.use(express.cookieParser());
-  app.use(express.session({
+  app.use(bodyParser());
+  app.use(cookieParser('abracadabra'));
+  app.use(session({
     secret : "abracadabra",
-    maxAge : new Date(Date.now() + 3600000) // 1 hr, should move to per user setting
+    maxAge : new Date(Date.now() + (3600000 * 24 * 7)) // 1wk, should move to per user setting
   }));
   app.use(express.methodOverride());
 }

@@ -11,12 +11,14 @@
   },
   "dependencies": {
     "express": "*",
+    "body-parser": "*",
+    "cookie-parser": "*",
+    "static-favicon": "*",
+    "express-session": "*",
     "mongoose": "*",
     "mime": "*",
     "nodemailer": "*",
     "inflection": "*",
-    "ursa": "*",
-    "x509": "*",
     "recaptcha-async": "*",
     "wordpos": "*"
   }

@@ -1,14 +1,16 @@
 
 // BANTR BRAIN FUNCTIONS
 
-var app      = require('../../app'),
-    Fluff    = app.Fluff,
-    resource = require('../../routes/resource'),
-    Plug     = require('./plug'),
-    Knwl     = require('./knwl'),
-    WordPos  = require('wordpos'),
-    Lexer    = require('./lexer').Lexer,
-    PosTagger = require('./POSTagger').POSTagger;
+var app       = require('../../app'),
+    Fluff     = app.Fluff,
+    resource  = require('../../routes/resource'),
+    Plug      = require('./plug'),
+    Knwl      = require('./knwl'), // detects dates, emails, urls, etc.
+    Lexer     = require('./lexer').Lexer, // needed for POS parser
+    PosTagger = require('./POSTagger').POSTagger, // POS parser
+    WordPos   = require('wordpos'), // simple POS parser
+    WnDb      = WordPos.WNdb, // WordNet DB
+    Natural   = WordPos.natural; // Natural lang parser
 
 // React to an utterance
 exports.react = function(req, res, utterance){
@@ -80,40 +82,28 @@ exports.react = function(req, res, utterance){
 };
 
 var nlResponse = function (req, res, utterance) {
-  // Do something smart
+  // Do something smart, right now it just confirms the verb
   var words = new Lexer().lex(utterance.text);
   var taggedWords = new PosTagger().tag(words);
   var result = "";
+  var match = "";
   for (i in taggedWords) {
     var taggedWord = taggedWords[i];
     if (/^VB/.test(taggedWord[1])) {
       result += taggedWord[0];
+      WordPos.lookupVerb(result, function(synset) {
+        match = synset.synonyms[0];
+      });
     }
   }
   if (result != "") {
-    var text = "Did you say " + result + "?";
+    var text = "Did you say " + result + ", as in " + match +"?";
     var url  = Plug.iSpeechUrlPrefix + encodeURIComponent(text);
     utteranceResponse(res, text, url);
   }
   else {
     fallBackResponse(req, res);
   }
-}
-
-var nl2Response = function (req, res, utterance) {
-  // Do something smart
-  wordpos = new WordPos();
-  wordpos.getVerbs(utterance.text, function(result){
-    console.log("verbs found in utterance: "+result.length);
-    if (result.length > 0) {
-      var text = "Did you say " + result[0] + "?";
-      var url  = Plug.iSpeechUrlPrefix + encodeURIComponent(text);
-      utteranceResponse(res, text, url);
-    }
-    else {
-      fallBackResponse(req, res);
-    }
-  });
 }
 
 var fallBackResponse = function (req, res) {
@@ -148,5 +138,5 @@ exports.learn = function(utterance, rules){
 
 // Naughty bits
 var censored = [
-  "fuck","shit","shits","cock","cocks","dick","dicks","asshole","assholes","pussy","pussies","cunt","cunts","kunt","kunts","fucker","fuckers","shitty","fucking","twat","twats","twot","twots","tit","tits","titty","titties","anal","butthole","buttholes"
+  "shit","shits","cock","cocks","dick","dicks","asshole","assholes","pussy","pussies","cunt","cunts","kunt","kunts","fuck","fucks","fucker","fuckers","shitty","fucking","twat","twats","twot","twots","tit","tits","titty","titties","anal","butthole","buttholes","nigger","niggers"
 ];
