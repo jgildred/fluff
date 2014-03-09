@@ -10,7 +10,8 @@ var app       = require('../../app'),
     PosTagger = require('./POSTagger').POSTagger, // POS parser
     WordPos   = require('wordpos'), // simple POS parser
     WnDb      = WordPos.WNdb, // WordNet DB
-    Natural   = WordPos.natural; // Natural lang parser
+    Natural   = WordPos.natural, // Natural lang parser
+    wordpos   = new WordPos(); // initialize simple POS parser
 
 // React to an utterance
 exports.react = function(req, res, utterance){
