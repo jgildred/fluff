@@ -97,7 +97,7 @@ var nlResponse = function (req, res, utterance) {
   if (result != "") {
     wordPos.lookupVerb(result, function (synset) {
       if (synset.length > 0) {
-        match = synset[0].synonyms[0];
+        match = synset.last.synonyms[0];
         var text = "Did you say " + result + ", as in " + match +"?";
         var url  = Plug.iSpeechUrlPrefix + encodeURIComponent(text);
         utteranceResponse(res, text, url);
