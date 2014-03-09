@@ -10,8 +10,7 @@ var app       = require('../../app'),
     PosTagger = require('./POSTagger').POSTagger, // POS parser
     WordPos   = require('wordpos'), // simple POS parser
     WnDb      = WordPos.WNdb, // WordNet DB
-    Natural   = WordPos.natural, // Natural lang parser
-    wordpos   = new WordPos(); // initialize simple POS parser
+    Natural   = WordPos.natural; // Natural lang parser
 
 // React to an utterance
 exports.react = function(req, res, utterance){
@@ -86,13 +85,14 @@ var nlResponse = function (req, res, utterance) {
   // Do something smart, right now it just confirms the verb
   var words = new Lexer().lex(utterance.text);
   var taggedWords = new PosTagger().tag(words);
+  var wordPos = new WordPos();
   var result = "";
   var match = "";
   for (i in taggedWords) {
     var taggedWord = taggedWords[i];
     if (/^VB/.test(taggedWord[1])) {
       result += taggedWord[0];
-      WordPos.lookupVerb(result, function(synset) {
+      wordPos.lookupVerb(result, function(synset) {
         match = synset.synonyms[0];
       });
     }
