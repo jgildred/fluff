@@ -20,6 +20,7 @@
     "nodemailer": "*",
     "inflection": "*",
     "recaptcha-async": "*",
-    "wordpos": "*"
+    "wordpos": "*",
+    "coffee-script": "*"
   }
 }
