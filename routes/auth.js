@@ -69,9 +69,15 @@ exports.attach = function(req, res){
             req.session.site    = {
               name       : app.App.get('config').name,
               fluff_path : app.App.get('config').fluff_path,
-              apikey    : {
+              apikey     : {
                 required : app.App.get('config').apikey.required
               }
+            };
+            app.Fluff.user = {
+              id          : user._id, 
+              email       : user.email, 
+              role        : user.role,
+              displayname : user.displayname
             };
             var body = {
               auth     : req.session.auth,
@@ -131,5 +137,6 @@ exports.detach = function(req, res){
       res.send({auth: false, _csrf: req.session._csrf});
     });
     req.session.auth = false;
+    app.Fluff.user = null;
   });
 };

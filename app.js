@@ -2,13 +2,17 @@
 // MAIN APP
 
 // Dependencies
-var express       = require('express'),
-    http          = require('http'),
-    bodyParser    = require('body-parser'),
-    cookieParser  = require('cookie-parser'),
-    staticFavicon = require('static-favicon'),
-    session       = require('express-session'),
-    mongoose      = require('mongoose');
+var express        = require('express'),
+    http           = require('http'),
+    bodyParser     = require('body-parser'),
+    cookieParser   = require('cookie-parser'),
+    methodOverride = require('method-override'),
+    staticFavicon  = require('static-favicon'),
+    session        = require('express-session'),
+    mongoose       = require('mongoose'),
+    mime           = require('mime'),
+    nodemailer     = require('nodemailer'),
+    fs             = require('fs');
 
 // Setup globals
 var Fluff  = {},
@@ -32,10 +36,7 @@ exports.Server = Server;
 exports.Models = Models;
 
 // Remaining dependencies
-var mime       = require('mime'),
-    nodemailer = require('nodemailer'),
-    fs         = require('fs');
-    config     = require('./config'),
+var config     = require('./config'),
     schemas    = require('./schemas'),
     csrf       = require('./csrf'),
     site       = require('./routes/site'),
@@ -424,6 +425,7 @@ var allowCrossDomain = function (req, res, next) {
   console.log("REQ " + req.method + ": " + req.path + " from " + req.ip);
   console.log("REQ BODY: " + JSON.stringify(req.body));
   console.log("REQ HEADERS: " + JSON.stringify(req.headers));
+  console.log("REQ QUERY: " + JSON.stringify(req.query));
   // intercept OPTIONS method
 
   if (app.get('config').cors.restricted) { 
@@ -480,21 +482,28 @@ var doIfHasAccess = function (req, res, level, resourceScope, callback) {
     else {
       if (HasAccess(req, res, level, resourceScope)) {
         // if restricted to owner then positive result still needs to match user_id or be admin
-        if ((level == "Owner") && req.params.id) {
+        if (level == "Owner") {
           if ((req.session.role) && (req.session.role == 'Admin')) {
-            console.log(data.user_id + " has access to the requested item.");
+            console.log(req.session.user_id + " has access to the requested item.");
             callback(req, res, resourceScope);
           }
           else {
-            resourceScope.findOne({_id: req.params.id}).exec(function (err, data) {
-              if (data && (req.session.user_id == data.user_id)) {
-                console.log(data.user_id + " has access to the requested item.");
-                callback(req, res, resourceScope);
-              }
-              else {
-                msgResponse(req, res, 404, "You must be the owner.");
-              }
-            });
+            if (req.params.id) {
+              resourceScope.findOne({_id: req.params.id}).exec(function (err, data) {
+                if (data && (req.session.user_id == data.user_id)) {
+                  console.log(req.session.user_id + " has access to the requested item.");
+                  callback(req, res, resourceScope);
+                }
+                else {
+                  msgResponse(req, res, 404, "You must be the owner.");
+                }
+              });
+            }
+            else {
+              // Allowed
+              console.log(req.session.user_id + " has access to the requested item.");
+              callback(req, res, resourceScope);
+            }
           }
         }
         else {
@@ -503,6 +512,7 @@ var doIfHasAccess = function (req, res, level, resourceScope, callback) {
             callback(req, res, resourceScope, null, reloadConfig);
           }
           else {
+            // Allowed
             callback(req, res, resourceScope);
           }
         }
@@ -738,7 +748,7 @@ var setupMailer = function () {
   else {
     mailerData.service = Fluff.app.get('config').smtp.service;
   }
-  Fluff.mailer = nodemailer.createTransport("SMTP", mailerData);
+  Fluff.mailer = nodemailer.createTransport(mailerData);
 }
 
 Fluff.emailToUser = function(mailinfo) {
@@ -1141,7 +1151,7 @@ var applyConfig = function (callback) {
     adminRoutes();       // Uses app.config fluff_path
     modelRoutes();       // Uses app.config fluff_path
     notFoundRoute();     // Uses app.config fluff_path
-    app.use(app.router); // Routes are processed before cmsPages
+    //app.use(app.router); // Routes are processed before cmsPages
     app.use(cmsPages);   // Doesn't use app.config, but runs on every request
     staticFiles();       // Static files are processed last
     // Restart the server if the port is changed
@@ -1257,7 +1267,7 @@ var startUp = function () {
 }
 
 var reloadConfig = function (req, res) {
-  loadConfig(req, res, applyConfig);
+  loadConfig(applyConfig);
 }
 
 var msgResponse = function (req, res, status, msg) {
@@ -1269,13 +1279,18 @@ exports.msgResponse = msgResponse;
 
 // JSON body, sessions and other setup
 var preLaunch = function () {
-  app.use(bodyParser());
+  app.use(bodyParser.urlencoded({
+    extended: true
+  }));
+  app.use(bodyParser.json());
   app.use(cookieParser('abracadabra'));
   app.use(session({
     secret : "abracadabra",
-    maxAge : new Date(Date.now() + (3600000 * 24 * 7)) // 1wk, should move to per user setting
+    maxAge : new Date(Date.now() + (3600000 * 24 * 7)), // 1wk, should move to per user setting
+    saveUninitialized : true,
+    resave : true
   }));
-  app.use(express.methodOverride());
+  app.use(methodOverride());
 }
 
 // Start listening

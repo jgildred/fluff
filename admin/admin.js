@@ -36,15 +36,24 @@ var init = function () {
       loadnavbar();
       Backbone.history.start();
       break;
+    case /#\/login/i.test(window.location.href):
+      loadnavbar();
+      Backbone.history.start();
+      break;
     default:
       session.fetch({
         success: function () {
           if (!session.get('auth')) {
-            loginView.render(window.location.pathname);
+            loginView.render();
+            Backbone.history.start();
           }
           else {
             if (session.get('user') && (session.get('user').role != "Admin")) {
-              alertView.render({label:"Restricted", msg: "Sorry, you need to be an admin to access this.", cantclose: true});
+              alertView.render({
+                label:"Restricted", 
+                msg: "Sorry, you need to be an admin to access this.", 
+                onclose: 'login'
+              });
             }
             else {
               $('title').html((session.get('site').name ? session.get('site').name : 'Site') + ' Admin');
@@ -124,6 +133,7 @@ var log_events = function (event, model) {
     .scrollTop(0);
 }
 
+// Binds or unbinds a key to a function
 var metaSave = function(on, callback) {
   if (on && callback) {
     $(window).bind('keydown',function(e){
@@ -248,7 +258,7 @@ function renderEditor(element_id, content, cursor, mode, view, fullscreen) {
 function navselect (type) {
   if (type) {
     // if the navbar is already loaded then just select the tab
-    if ($(".navbar-inner li#" + type.toLowerCase() + "-tab").length > 0) {
+    if ($(".nav li#" + type.toLowerCase() + "-tab").length > 0) {
       $("li.active").removeClass("active");
       $("li#" + type.toLowerCase() + "-tab").addClass("active");
     }
@@ -266,7 +276,7 @@ function loadnavbar (selection) {
     var template = _.template($('#authbar-template').html(), {session: session});
     $(".authbar").html(template);
     var template = _.template($('#navbar-template').html(), {auth: session.get('auth'), admin: (session.get('user').role == 'Admin')}); 
-    $(".navbar-inner").html(template);
+    $("nav").html(template);
     if (selection) {
       navselect(selection);
     }
@@ -409,7 +419,7 @@ var LoginView = Backbone.View.extend({
           default:
             $('#login-modal').modal('hide');
             if (session.get("user").role == "Admin") {
-              if (/#\/login/i.test(window.location.href)) {
+              if (/#\/login/i.test(window.location.href) || /#login/i.test(window.location.href)) {
                 loadnavbar();
                 router.navigate('pages', {trigger: true});
               }
@@ -431,9 +441,11 @@ var LoginView = Backbone.View.extend({
     return false;
   },
   close: function () {
-    this.$el.html('');
+    //this.$el.html('');
+    document.location.href = "/";
   },
-  render: function () {
+  render: function (destination) {
+    // destination is ignored for now
     // make sure not to have a double backdrop
     $(".modal-backdrop").remove();
     var template = $('#login-template').html();
@@ -1790,7 +1802,11 @@ router.on('route:home', function() {
       pageListView.render();
     }
     else {
-      alertView.render({label:"Restricted", msg: "Sorry, you need to be an admin to access this.", cantclose: true});
+      alertView.render({
+        label: "Restricted", 
+        msg: "Sorry, you need to be an admin to access this.", 
+        onclose: 'login'
+      });
     }
   }
   else {
@@ -1804,6 +1820,7 @@ router.on('route:signup', function() {
 router.on('route:login', function() {
   // Render login view
   loginView.render();
+  Backbone.history.start();
 });
 router.on('route:logout', function() {
   session.logout();

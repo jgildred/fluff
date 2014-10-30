@@ -50,7 +50,7 @@ a.navbar-brand {
   height: 420px !important;
 }
 .authbar {
-  margin-top: -28px !important;
+  margin-top: -32px !important;
   margin-right: 6px !important;
 }
 .navbar-toggle {
@@ -75,10 +75,11 @@ a.navbar-brand {
   margin-left: 10px;
 }
 .btn-fse {
-  margin-top: -38px;
+  height: 30px;
 }
 .btn-fse-container {
-  width: 100px;
+  width: 150px;
+  height: 30px;
 }
 .x-overflow-scroll {
   overflow-x: scroll;

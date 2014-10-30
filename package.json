@@ -13,6 +13,7 @@
     "express": "*",
     "body-parser": "*",
     "cookie-parser": "*",
+    "method-override": "*",
     "static-favicon": "*",
     "express-session": "*",
     "mongoose": "*",
@@ -21,6 +22,6 @@
     "inflection": "*",
     "recaptcha-async": "*",
     "wordpos": "*",
-    "coffee-script": "*"
+    "xml2js": "*"
   }
 }

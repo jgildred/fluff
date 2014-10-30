@@ -106,6 +106,21 @@ var addArrayOrString = function(object, name, text) {
   }
 }
 
+// Binds or unbinds a keyboard key to a function
+var listenKeydown = function(on, key, callback) {
+  if (on && callback) {
+    $(window).bind('keydown',function(e){
+      if (!( String.fromCharCode(e.which).toLowerCase() == key && e.metaKey)) return true;
+      e.preventDefault();
+      callback();
+      return false;
+    });
+  }
+  else {
+    $(window).unbind('keydown');
+  }
+}
+
 // Grabs all form data and puts it into an object.
 // Form elements with a name like 'item.subitem' will be put into an 'item' subobject.
 // Form elements with a name like 'items[]' will be parsed into an 'items' array of text.
@@ -143,9 +158,9 @@ Fluff.addCollection = function (options) {
 		path = name;
 	}
 	else {
-		if (options.filter && Fluff.filters[options.filter]) {
-			name += ":" + options.filter;
-			path += "?filter=" + Fluff.filters[options.filter];
+		if (options.query) {
+			name += ":" + options.query;
+			path += "?" + options.query;
 		}
 	}
 	if (Fluff.collections[name] == undefined) {
@@ -173,7 +188,7 @@ Fluff.addModel = function (name, callback) {
 			url: Fluff.path + '/admin/api/' + name + '/info',
 			dataType: 'json',
 			success : function (data, status, xhr) {
-				if (data && (Fluff.models[name] == undefined)) {
+				if (data && data.schema_data) {
 					var Schema = Fluff.dataToSchema(data.schema_data);
 					Fluff.models[name] = {
 						schema          : Schema,
@@ -181,6 +196,9 @@ Fluff.addModel = function (name, callback) {
 						column_sort     : data.column_sort
 					};
 			  	Fluff.log("ADDED MODEL: " + name);
+				}
+				else {
+					Fluff.log("Failed to add model: " + name);
 				}
 				if (callback) {
 					callback();
@@ -303,18 +321,18 @@ Fluff.harvestElements = function (element) {
   	var type = this.nodeName.toLowerCase();
   	var modelName = element.attr('model');
   	var modelId   = null;
-  	var filter    = null;
+  	var query     = null;
   	if (modelName.split("/").length > 1) {
   		modelId   = modelName.split("/")[1];
   		modelName = modelName.split("/")[0].toLowerCase();
   	}
-		if (element.attr('filter')) {
-			filter = element.attr('filter');
+		if (element.attr('query')) {
+			query = element.attr('query');
 		}
 		var collection = Fluff.addCollection({
 			modelName : modelName,
 			id        : modelId,
-			filter    : filter
+			query     : query
 		});
 		var View = Backbone.View.extend({
 			el: element,
@@ -364,36 +382,66 @@ Fluff.harvestTables = function (table) {
     var tables = $(table);
   }
   else {
-	  var tables = $("table[model]");
+	  var tables = $("table[model]").not("table[noharvest]");
 	}
   tables.each(function (t) {
   	var table = $(this);
   	var modelName = table.attr('model');
   	var modelId   = null;
-  	var filter    = null;
+  	var query     = null;
   	if (modelName.split("/").length > 1) {
   		modelId   = modelName.split("/")[1];
   		modelName = modelName.split("/")[0].toLowerCase();
   	}
-		if (table.attr('filter')) {
-			filter = table.attr('filter');
+		if (table.attr('query')) {
+			query = table.attr('query');
 		}
-		var collection = Fluff.addCollection({
-			modelName : modelName,
-			id        : modelId,
-			filter    : filter
-		});
 		var View = Backbone.View.extend({
 			el: table,
 			initialize: function() {
-			  this.rowTemplate = null;
 				var that = this;
-				this.collection = collection;
+			  this.rowTemplate = null;
+				this.collection = Fluff.addCollection({
+					modelName : modelName,
+					id        : modelId,
+					query     : query
+				});
+				if (table.attr('norender') == undefined) {
+					this.collection.fetch({
+				  	success: function () {
+				  		Fluff.addModel(modelName, function () {
+				  			that.render();
+				  		});
+				  	}
+				  });
+				}
+				else {
+					Fluff.addModel(modelName, function () {
+		  			that.setRowTemplate();
+		  		});
+				}
+			},
+			clear: function() {
+				var elementObj = $(this.el);
+				// Build the header if none
+				var tbody = elementObj.find('tbody');
+				if (tbody.toArray().length > 0) {
+					tbody.html('\n');
+				}
+				else {
+					elementObj.append("<tbody>\n</tbody>");
+				}
+			},
+			changeQuery: function(newquery, callback) {
+				var that = this;
+				this.collection = Fluff.addCollection({
+					modelName : modelName,
+					id        : modelId,
+					query     : newquery
+				});
 				this.collection.fetch({
 			  	success: function () {
-			  		Fluff.addModel(modelName, function () {
-			  			that.render();
-			  		});
+			  		if (callback) { callback() }
 			  	}
 			  });
 			},
@@ -407,6 +455,35 @@ Fluff.harvestTables = function (table) {
 			  var elementObj = $(this.el).find('tr[id=' + id + ']');
 			  elementObj.remove();
 			},
+			// If no template specified, then the first data row will be used and tbody cleared
+			setRowTemplate: function(template) {
+				if (template) {
+					this.rowTemplate = template;
+				}
+				else {
+					var elementObj = $(this.el);
+					var tds = elementObj.find('tr td');
+					if (tds.toArray().length > 0) {
+					  tds.first().parent().attr('id', '{{id}}');
+						this.rowTemplate = tds.first().parent().get(0).outerHTML;
+						tds.parent().remove();
+					}
+					if (elementObj.find('tbody').toArray().length == 0) {
+						elementObj.append("<tbody>\n</tbody>");
+					}
+				}
+			},
+			refresh: function(callback) {
+				var that = this;
+				this.collection.fetch({
+			  	success: function () {
+			  		that.render();
+			  		if (callback) {
+			  			callback();
+			  		}
+			  	}
+			  });
+			},
 			render: function() {
 			  var that = this;
 				var elementObj = $(this.el);
@@ -417,7 +494,7 @@ Fluff.harvestTables = function (table) {
 				}
 				else {
 					var headHtml = ths.first().parent().get(0).outerHTML;
-					ths.first().parent().remove();
+					ths.parent().remove();
 				}
 				// If there is already one or more theads, then insert into the first one
 				var thead = elementObj.find('thead');
@@ -427,18 +504,11 @@ Fluff.harvestTables = function (table) {
 				else {
 					elementObj.append("\n<thead>\n" + headHtml + "\n</thead>\n");
 				}
-				// If there is at least one data row then use the first one as a template
-				var tds = elementObj.find('tr td');
-				if (tds.toArray().length > 0) {
-				  tds.first().parent().attr('id', '{{_id}}');
-					this.rowTemplate = tds.first().parent().get(0).outerHTML;
-					tds.first().parent().remove();
+				// Make sure there is a data row template
+				if (!this.rowTemplate) {
+					this.setRowTemplate();
 				}
-				else {
-					if (elementObj.find('tbody').toArray().length == 0) {
-						elementObj.append("<tbody>\n</tbody>");
-					}
-				}
+				this.clear();
 				// Build the body rows
 				var bodyHtml = "\n";
 				this.collection.forEach(function(model) {
@@ -611,7 +681,8 @@ Fluff.harvestForms = function (form, template, callback) {
 				// Hitting enter key while in the form will submit.
 				elementObj.bind('keypress', function(e){
    				if (e.keyCode == 13) {
-     				elementObj.find('.submit:first').click();
+     				e.preventDefault();
+     				that.submitForm();
    				}
  				});
  				console.log("Rendered form for " + modelName + ": " + html);
@@ -636,18 +707,18 @@ Fluff.harvestSelects = function (select) {
   	var type = this.nodeName.toLowerCase();
   	var modelName = select.attr('model');
   	var modelId   = null;
-  	var filter    = null;
+  	var query     = null;
   	if (modelName.split("/").length > 1) {
   		modelId   = modelName.split("/")[1];
   		modelName = modelName.split("/")[0].toLowerCase();
   	}
-		if (select.attr('filter')) {
-			filter = select.attr('filter');
+		if (select.attr('query')) {
+			query = select.attr('query');
 		}
 		var collection = Fluff.addCollection({
 			modelName : modelName,
 			id        : modelId,
-			filter    : filter
+			query     : query
 		});
 		var View = Backbone.View.extend({
 			el: select,
@@ -707,35 +778,58 @@ Fluff.Session = Backbone.Model.extend({
   },
   login: function(credentials, options) {
     // Do a POST to /auth and send the serialized form creds
+    var that = this;
     this.save(credentials, {
-      success: options.success,
-      error: options.error
+      success: function () {
+      	that.unset('password', {silent:true});
+      	that.unset('email', {silent:true});
+      	if (options && options.success) {
+      		options.success();
+      	}
+      },
+      error: function () {
+      	if (options && options.error) {
+      		options.error();
+      	}
+      }
     });
   },
-  logout: function(callback) {
+  logout: function(options) {
     // Do a DELETE to /auth and clear the clientside data
     var that = this;
     this.destroy({
       success: function (model, resp) {
         model.clear();
         model.id = null;
-        callback();
+        if (options && options.success) {
+        	options.success();
+        }
       },
-      error: callback
+      error: function () {
+      	if (options && options.error) {
+      		options.error();
+      	}
+      }
     });
   }
 });
 
-Fluff.checkSession = function () {
+Fluff.checkSession = function (options) {
 	Fluff.session = new Fluff.Session();
 	Fluff.session.fetch({
     success: function () {
     	Fluff.log("Logged in as " + Fluff.session.get('user').email);
       Backbone.history.start();
+      if (options && options.success) {
+      	options.success();
+      }
     },
     error: function (xhr) {
       Fluff.log("check session error:", xhr);
       Backbone.history.start();
+      if (options && options.error) {
+      	options.error();
+      }
     }
   });
 }
@@ -755,30 +849,46 @@ Fluff.harvestLogins = function () {
 				var that = this;
 				this.render();
 			},
+			onsuccess: null,
+			onerror:null,
 			submit: function (ev) {
-				var loginDetails = getFormData($(ev.currentTarget).parents("form:first"));
+				//var loginDetails = getFormData($(ev.currentTarget).parents("form:first"));
+				var loginDetails = getFormData(form);
 				if ($.isEmptyObject(Fluff.session)) {
 					Fluff.session = new Fluff.Session();
 				}
+				var that = this;
 				Fluff.session.login(loginDetails, {
       		success: function (model) {
       			Fluff.log("Logged in.");
+      			if (that.onsuccess) {
+      				that.onsuccess();
+      			}
 		      },
 		      error: function (model, xhr) {
 		        Fluff.log("login error:". xhr);
+		        if (that.onerror) {
+      				that.onerror();
+      			}
 					}
 				});
 			},
 			render: function () {
+				var that = this;
 				var elementObj = $(this.el);
-				var html = '<input type="text" name="email" value="" placeholder="Email" />\n';
-				html += '<input type="password" name="password" value="" placeholder="Password" />\n';
-				html += '<button type="button" class="submit">Login</button>';
-				elementObj.append(html + "\n");
+				var inputEmail = elementObj.find('input[name=email]');
+				if (inputEmail.toArray().length == 0) {
+					elementObj.append('<input type="text" name="email" value="" placeholder="Email" />\n');
+				}
+				var inputPassword = elementObj.find('input[name=password]');
+				if (inputPassword.toArray().length == 0) {
+					inputEmail.first().append('<input type="password" name="password" value="" placeholder="Password" />\n');
+				}
 				// Hitting enter key while in the form will submit.
 				elementObj.bind('keypress', function(e){
    				if (e.keyCode == 13) {
-     				$(this).find('.submit:first').click();
+   					e.preventDefault();
+     				that.submit();
    				}
  				});
 			}
@@ -797,13 +907,19 @@ Fluff.init = function (options) {
 	    options.headers['X-API-Key'] = encodeURIComponent(Fluff.apikey);
 	  });
 	}
-	this.harvestElements();
-	this.harvestTables();
-	this.harvestForms();
-	this.harvestSelects();
-	this.harvestLogins();
+	if (!(options && (options.harvest == false))) {
+		this.harvestElements();
+		this.harvestTables();
+		this.harvestForms();
+		this.harvestSelects();
+		this.harvestLogins();
+	}
 	// Run the ready state callback
   if (options && options.ready) {
     options.ready();
+  }
+  // Define this function in the main page to run after Fluff is loaded
+  if (Fluff.onload) {
+  	Fluff.onload();
   }
 }

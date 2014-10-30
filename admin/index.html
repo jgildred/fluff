@@ -20,10 +20,8 @@
 
   <header class="hidden">
     <br/>
-    <div class="navbar">
-      <div class="navbar-inner">
-      </div>
-    </div>
+    <nav class="navbar navbar-default" role="navigation">
+    </nav>
     <div class="authbar">
     </div>
     <br/>
@@ -75,25 +73,29 @@
   </script>
 
   <script type="text/template" id="navbar-template">
-    <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
-    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-    </button>
-    <a class="navbar-brand pull-left" href="#/"><img class="brand" src="../images/fluff-logo.png" /></a>
-    <!-- Everything hidden at 480px or less is placed within here -->
-    <div class="nav-collapse collapse navbar-responsive-collapse">
-      <ul class="nav navbar-nav">
-        <% if(auth && admin) { %>
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#/"><img class="brand" src="../images/fluff-logo.png" /></a>
+      </div>
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <% if(auth && admin) { %>
           <li id="pages-tab"><a href="#/pages">Pages</a></li>
           <li id="views-tab"><a href="#/views">Views</a></li>
           <li id="vars-tab"><a href="#/vars">Vars</a></li>
           <li id="models-tab"><a href="#/models">Models</a></li>
           <li id="users-tab"><a href="#/users">Users</a></li>
           <li id="site-tab"><a href="#/site">Site</a></li>
-        <% } %>
-      </ul>
+          <% } %>
+        </ul>
+      </div>
     </div>
   </script>
 
@@ -258,7 +260,7 @@
   </script>
 
   <script type="text/template" id="editor-controlbar-template">
-    <div class="label-fse-container">
+    <div class="label-fse-container pull-left">
       <h4 class="label-fse">Full Screen Editor</h4>
     </div>
     <div class="btn-fse-container pull-right">

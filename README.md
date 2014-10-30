@@ -15,7 +15,7 @@ INSTALL on local machine:
 3. cd to the root dir of the app
 4. type "npm install"
 5. edit config.js: db_uri should point to an empty Mongo DB, and set initialize to "true"
-6. type "node launch"
+6. type "node fluff"
 7. open http://localhost:3000/fluff/admin in your browser
 8. login with "admin@domain.com", password "fluff"
 
@@ -50,7 +50,7 @@ ADMIN GUIDE:
 
 FLUFF.JS:
 
-The fluff.js library is an easy way to get automatic scaffolding of data into your pages. By simply adding model=[model name] attribute to elements like tables, you can auto-populate the table with data from that model. There is an example page created upon initialization which includes the fluff.js library. It requires jQuery and Backbone.js which are also included for convenience.
+The fluff.js library is an easy way to get automatic scaffolding of data into your pages. By simply adding model=[model name] attribute to elements like tables, you can auto-populate the table with data from that model. You can also include query=[query params] attribute with the model attribute to specify necessary query params. There is also the option to include 'noharvest' attribute to avoid initial harvest, and 'norender' attribute to avoid render on initial harvest. Some sub elements can accept a field=[field name] attribute when nested within an element containing a model attribute. There is an example page created upon initialization which includes the fluff.js library. It requires jQuery and Backbone.js which are also included for convenience.
 
 REST API:
 

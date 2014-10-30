@@ -67,8 +67,20 @@ exports.verify = function(req, res){
 exports.pwreset = function(req, res){
   if (req.params.email) {
     var filter = {email: req.params.email, status: "Active" };
-    resource.findone(req, res, app.User, filter, SendResetEmail);
-    res.json({msg:"Password reset instructions sent to " + req.params.email + "."});
+    app.User.findOne(filter).exec(function (err, data) {
+      if (err) {
+        app.msgResponse(req, res, 500, JSON.stringify(err));
+      }
+      else {
+        if (data) {
+          SendResetEmail(req, res, data);
+          res.json({msg:"Password reset instructions sent to " + req.params.email + "."});
+        }
+        else {
+          res.json({msg:"Can't find user " + req.params.email + "."});
+        }
+      }
+    });
   }
   else {
     app.msgResponse(req, res, 400, "Email address is missing from your request.");
@@ -146,7 +158,7 @@ var updateSession = function(req, res, user) {
 
 var SendVerifyEmail = function(req, res, user) {
   if (user) {
-    var link  = Fluff.app.siteUrl + Fluff.app.get('config').fluff_path + "/admin/#/verify/" + user.verifytoken;
+    var link  = Fluff.externalBaseUrl + Fluff.app.get('config').fluff_path + "/admin/#/verify/" + user.verifytoken;
     Fluff.emailToUser({
       user: user,
       subject: "Verify Your Email Address",
@@ -159,7 +171,7 @@ var SendVerifyEmail = function(req, res, user) {
 
 var SendResetEmail = function(req, res, user) {
   if (user) {
-    var link  = Fluff.app.siteUrl + Fluff.app.get('config').fluff_path + "/admin/#/pwchange/" + user.verifytoken;
+    var link  = Fluff.externalBaseUrl + Fluff.app.get('config').fluff_path + "/admin/#/pwchange/" + user.verifytoken;
     Fluff.emailToUser({
       user: user,
       subject: "Request to Reset Your Password",
@@ -172,7 +184,7 @@ var SendResetEmail = function(req, res, user) {
 
 var SendWelcomeEmail = function(req, res, user) {
   if (user) {
-    var link  = Fluff.app.siteUrl + Fluff.app.get('config').fluff_path + "/admin/#/pwchange/" + user.verifytoken;
+    var link  = Fluff.externalBaseUrl + Fluff.app.get('config').fluff_path + "/admin/#/pwchange/" + user.verifytoken;
     Fluff.emailToUser({
       user: user,
       subject: "Your Account is Ready",

@@ -5,8 +5,8 @@ var app     = require('../app'),
     Fluff   = app.Fluff,
     schemas = require('../schemas');
 
-// Handler for GET
-exports.find = function(req, res, resource, filter, callback){
+// Handler for GET   NEED TO FIX SORT POSITION - MOVE TO OBJECT
+exports.find = function(req, res, resource, filter, callback, sort){
   // First check if the query has a filter, and if so, use it
   var query_filter = {};
   for (param in req.query) {
@@ -19,7 +19,7 @@ exports.find = function(req, res, resource, filter, callback){
   console.log("USING FILTER: ");
   console.log(filter);
   var limit = req.query.limit || 100;
-  var sort = '-creation';
+  sort = sort ? sort : '-creation';
   if (req.query.sort) {
     if (req.query.sort.split('-')[1] == 'desc') {
       sort = '-';

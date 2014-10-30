@@ -10,7 +10,7 @@ exports.enums = enums;
 
 var matchfield = {
   Utterance: ['text'],
-  Rule:     ['condition']
+  Rule:      ['condition']
 }
 exports.matchfield = matchfield;
 
