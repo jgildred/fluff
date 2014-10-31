@@ -142,7 +142,7 @@ exports.refresh = function(req, res){
 // Run after each episode is recorded
 var loopNext = function (array, index, callback) {
   // Delay on each set of requests to comply with rate limited Amazon API
-  var delay = 1000;
+  var delay = 1500;
   // If there are more items left, do the next
   if ((index != null) && (array.length > (index + 1))) {
     setTimeout(function () {
