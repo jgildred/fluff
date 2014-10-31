@@ -42,10 +42,11 @@ exports.findbykeyword = function(req, res){
             }
             var asinString = seasonASINs.join(',');
             // Get the series info from the season lookup
-            prodAdv.call("ItemLookup", {IdType: "ASIN", ItemId: asinString, ResponseGroup: "ItemAttributes, RelatedItems", RelationshipType: "Season"}, function(err, result) {
+            prodAdv.call("ItemLookup", {IdType: "ASIN", ItemId: asinString, ResponseGroup: "ItemAttributes, RelatedItems, Images", RelationshipType: "Season"}, function(err, result) {
               console.log("Looking up related items for seasons...");
               result.ItemLookupResponse.Items[0].Item.forEach(function (item) {
                 console.log("season == " + item.ItemAttributes[0].Title[0]);
+                var seasonImage = item.SmallImage ? item.SmallImage[0].URL[0] : "";
                 if ((item.ItemAttributes[0].ProductTypeName[0] == "DOWNLOADABLE_TV_SEASON") &&
                   (item.RelatedItems[0].Relationship[0] == "Parents") && 
                   (item.RelatedItems[0].RelationshipType[0] == "Season")) {
@@ -54,6 +55,10 @@ exports.findbykeyword = function(req, res){
                     // Make sure it's related item is a series we haven't seen before
                     if ((series.ItemAttributes[0].ProductTypeName[0] == "DOWNLOADABLE_TV_SERIES") && (seriesASINs.indexOf(series.ASIN[0]) == -1)) {
                       seriesASINs.push(series.ASIN[0]);
+                      matchedSeries.push({
+                        asin: series.ASIN[0],
+                        imageurl: item.SmallImage ? item.SmallImage[0].URL[0] : ""
+                      });
                     }
                   });
                 }
@@ -67,19 +72,14 @@ exports.findbykeyword = function(req, res){
                   console.log("Getting series metadata...");
                   result.ItemLookupResponse.Items[0].Item.forEach(function (item) {
                     console.log("series == " + item.ItemAttributes[0].Title[0]);
-                    //console.log("data: ");
-                    //console.log("ASIN: "+item.ASIN[0]);
-                    //console.log("studio: "+item.ItemAttributes[0].Studio[0]);
-                    //console.log("image: "+item.SmallImage[0].URL[0]);
-                    //console.log("page: "+item.DetailPageURL[0]);
-                    //console.log("title: "+item.ItemAttributes[0].Title[0]);
-                    //console.log("image data: " + JSON.stringify(item.SmallImage));
-                    matchedSeries.push({
-                      asin: item.ASIN[0],
-                      networkname: item.ItemAttributes[0].Studio[0],
-                      imageurl: item.SmallImage ? item.SmallImage[0].URL[0] : "",
-                      pageurl: item.DetailPageURL[0],
-                      seriesname: item.ItemAttributes[0].Title[0]
+                    // Fill in the rest of the data
+                    matchedSeries.forEach(function (series) {
+                      if (series.asin == item.ASIN[0]) {
+                        series.networkname = item.ItemAttributes[0].Studio[0];
+                        series.imageurl = item.SmallImage ? item.SmallImage[0].URL[0] : series.imageurl;
+                        series.pageurl = item.DetailPageURL[0];
+                        series.seriesname = item.ItemAttributes[0].Title[0];
+                      }
                     });
                   });
                   console.log("Sending back the series data...");

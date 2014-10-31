@@ -81,14 +81,14 @@ exports.findone = function(req, res){
 
 // Preprocessor for POST /watchlist
 exports.create = function(req, res){
-  app.doIfHasAccess(req, res, 'Users', Plug.Watchlist, function (req, res) {
+  app.doIfHasAccess(req, res, 'Users', Plug.Watchlist, function (req, res, resourceScope) {
     var filter = {user_id: req.session.user_id, asin: req.body.asin};
-    Plug.Watchlist.findOne(filter, function (err, watchlistItem) {
+    resourceScope.findOne(filter, function (err, watchlistItem) {
       if (watchlistItem) {
         app.msgResponse(req, res, 403, 'Series is already in your watchlist.');
       }
       else {
-        resource.create(req, res, resource);
+        resource.create(req, res, resourceScope);
       }
     });
   });

@@ -110,38 +110,32 @@ exports.findone = function(req, res){
 
 // Preprocessor for POST /nowplaying/refresh
 exports.refresh = function(req, res){
-  app.doIfHasAccess(req, res, 'Owner', Plug.NowPlaying, function(req, res) {
-    // get watchlist for current user
-    // loop thru to get latest episode for each
-    // delete nowplaying list for current user
-    // save new nowplaying list for current user
-    Plug.Watchlist.find({user_id: req.session.user_id}).exec(function (err, watchlist) {
-      if (err) {
-        app.msgResponse(req, res, 500, 'Could not get the watchlist.');
-      }
-      else {
-        Plug.NowPlaying.remove({user_id: req.session.user_id}, function (err, data) {
-          if (err) {
-            app.msgResponse(req, res, 500, 'Could not clear the now playing list.');
+  Plug.Watchlist.find({user_id: req.session.user_id}).exec(function (err, watchlist) {
+    if (err) {
+      app.msgResponse(req, res, 500, 'Could not get the watchlist.');
+    }
+    else {
+      Plug.NowPlaying.remove({user_id: req.session.user_id}, function (err, data) {
+        if (err) {
+          app.msgResponse(req, res, 500, 'Could not clear the now playing list.');
+        }
+        else { 
+          if (watchlist && watchlist.length > 0) {
+            var asins = watchlist.map(function(item){
+              return item.asin;
+            });
+            nowPlayingLoop(asins, 0);
+            res.json({
+              msg: "Refresh started, see 'wait' value for expected wait time in seconds.",
+              wait: watchlist.length * 3
+            });
           }
-          else { 
-            if (watchlist && watchlist.length > 0) {
-              var asins = watchlist.map(function(item){
-                return item.asin;
-              });
-              nowPlayingLoop(asins, 0);
-              res.json({
-                msg: "Refresh started, see 'wait' value for expected wait time in seconds.",
-                wait: watchlist.length * 3
-              });
-            }
-            else {
-              app.msgResponse(req, res, 200, 'Nothing in the watchlist yet.');
-            }
+          else {
+            app.msgResponse(req, res, 200, 'Nothing in the watchlist yet.');
           }
-        });
-      }
-    });
+        }
+      });
+    }
   });
 };
 
