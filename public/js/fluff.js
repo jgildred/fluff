@@ -400,7 +400,7 @@ Fluff.harvestTables = function (table) {
 			el: table,
 			initialize: function() {
 				var that = this;
-			  this.rowTemplate = null;
+			  this.setRowTemplate();
 				this.collection = Fluff.addCollection({
 					modelName : modelName,
 					id        : modelId,
@@ -414,11 +414,6 @@ Fluff.harvestTables = function (table) {
 				  		});
 				  	}
 				  });
-				}
-				else {
-					Fluff.addModel(modelName, function () {
-		  			that.setRowTemplate();
-		  		});
 				}
 			},
 			clear: function() {
@@ -490,6 +485,8 @@ Fluff.harvestTables = function (table) {
 				// Build the header if none
 				var ths = elementObj.find('tr th');
 				if (ths.toArray().length == 0) {
+					console.log("build header for: ");
+					console.log(this.el);
 					var headHtml = "<tr>" + Fluff.drawTableHeader(Fluff.models[modelName]) + "</tr>";
 				}
 				else {

@@ -399,7 +399,10 @@ var loadDefaults = function (custom_config) {
       active_config.port = process.env.VMC_APP_PORT ? process.env.VMC_APP_PORT : 3000;
       break;
     default:
-      active_config.port = 3000;
+      if ((active_config.db_service == "MongoLab") && process.env.MONGOLAB_URI) {
+        active_config.db_uri = process.env.MONGOLAB_URI;
+      }
+      active_config.port = process.env.PORT ? process.env.PORT : 3000;
   }
   app.set('config', active_config);
 }
