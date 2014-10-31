@@ -8,6 +8,51 @@ var app    = require('../../app'),
     Plug   = require('./plug'),
     aws    = require('./aws-lib-0.2.1/lib/aws');
 
+// Run after each series is checked - NOT USED YET
+var loopNext = function (options, callback) {
+  // Delay on each set of requests to comply with rate limited Amazon API
+  var delay = 1000;
+  // If there are more items left, do the next
+  if ((options.index != null) && (options.array.length > (options.index + 1))) {
+    setTimeout(function () {
+      options.index++;
+      checkSeriesLoop(options, callback);
+    }, delay);
+  }
+  else {
+    // This is called at the end of the loop
+    if (callback) {
+      callback();
+    }
+  }
+}
+
+// Check each series in an array of series asins - NOT USED YET
+var checkSeriesLoop = function(options, callback){
+  if (options && options.asins && options.series) {
+    options.index = options.index ? options.index : 0;
+    var asin = options.asins[index];
+    var item = options.series[index];
+    console.log('Check series loop on ASIN ' + asin);
+    http.get(item.pageurl, function(res) {
+      if (res.statusCode != 200) {
+        options.asins.splice(options.index, 1);
+        options.series.splice(options.index, 1);
+        options.index--;
+      }
+      console.log("Series check response: " + res.statusCode);
+      loopNext(options);
+    }).on('error', function(e) {
+      console.log("Error checking series: " + e.message);
+      loopNext(options, callback);
+    });
+  }
+  else {
+    console.log('No ARRAY for checkSeriesLoop.');
+    loopNext(options, callback);
+  }
+};
+
 // Preprocessor for GET /aiv-series?keyword=:keyword
 exports.findbykeyword = function(req, res){
   app.doIfHasAccess(req, res, 'Users', null, function(){
@@ -76,7 +121,6 @@ exports.findbykeyword = function(req, res){
                     matchedSeries.forEach(function (series) {
                       if (series.asin == item.ASIN[0]) {
                         series.networkname = item.ItemAttributes[0].Studio[0];
-                        series.imageurl = item.SmallImage ? item.SmallImage[0].URL[0] : series.imageurl;
                         series.pageurl = item.DetailPageURL[0];
                         series.seriesname = item.ItemAttributes[0].Title[0];
                       }
