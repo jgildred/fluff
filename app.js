@@ -528,19 +528,28 @@ var HasAccess = function(req, res, level, resourceScope){
     switch (level) {
     case 'Users':
       console.log("Restricted to users only.");
-      if (resourceScope && (resourceScope.modelName != "User")) {
-        return true;
-      }
-      else {
-        if ((req.params && (req.session.user_id == req.params.id))
-          || ((req.session.role) && (req.session.role == 'Admin')))
-        {        
-          return true;
+      if (resourceScope) {
+        // Handle the special case of user access to users
+        if (resourceScope.modelName == "User") {
+          if (req.params && (req.session.user_id == req.params.id)) {
+            return true;
+          }
+          else {
+            if ((req.session.role) && (req.session.role == 'Admin')) {
+              return true;
+            }
+            else {
+              msgResponse(req, res, 403, "You must be the correct user or admin.");
+              return false;
+            }
+          }
         }
         else {
-          msgResponse(req, res, 403, "You must be the correct user or admin.");
-          return false;
+          return true;
         }
+      }
+      else {
+        return true;
       }
       break;
     case 'Owner':

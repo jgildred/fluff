@@ -25,7 +25,64 @@ var loopNext = function (options, callback) {
       callback();
     }
   }
-}
+};
+
+var schema = "{\n\
+  seriesname     : { type: String, required: true},   // No notes.\n\
+  asin           : { type: String, required: true},   // No notes.\n\
+  imageurl       : String,                            // No notes.\n\
+  pageurl        : String,                            // No notes.\n\
+  networkname    : String,                            // The cable or TV network.\n\
+  creator_id     : ObjectId,                          // Required by Fluff.\n\
+  lastupdater_id : ObjectId,                          // Required by Fluff.\n\
+  creation       : { type: Date, default: Date.now }, // Required by Fluff.\n\
+  lastupdate     : { type: Date, default: Date.now }  // Required by Fluff.\n\
+}";
+
+var display_columns = [{
+  name:  'networkname',
+  title: 'Network',
+  size:  20
+},
+{
+  name:  'seriesname',
+  title: 'Series',
+  size:  20
+},
+{
+  name:  'imageurl',
+  title: 'Image',
+  type: 'image',
+  size:  20
+},
+{
+  name:  'pageurl',
+  title: 'Page',
+  size:  20
+},
+{
+  name:  'asin',
+  title: 'ID',
+  size:  10
+}];
+
+var sort_column = { name:'seriesname', order:false };
+
+// These may be used in plug.js for DB setup
+exports.matchfields = ['seriesname'];
+exports.schema = schema;
+
+// Preprocessor for GET /aiv-series/info
+exports.getinfo = function(req, res){
+  app.doIfHasAccess(req, res, 'Users', null, function(){
+    var data = {
+      schema_data     : schema,
+      display_columns : display_columns,
+      sort_column     : sort_column
+    }
+    res.json(data);
+  });
+};
 
 // Check each series in an array of series asins - NOT USED YET
 var checkSeriesLoop = function(options, callback){
@@ -149,39 +206,4 @@ exports.findbykeyword = function(req, res){
       res.json({message: "no keyword"});
     }
   });
-}
-
-// Preprocessor for GET /aiv-series/info
-exports.getinfo = function(req, res){
-  app.doIfHasAccess(req, res, 'Users', null, function(){
-    res.json({
-      display_columns : [{
-        name:  'networkname',
-        title: 'Network',
-        size:  20
-      },
-      {
-        name:  'seriesname',
-        title: 'Series',
-        size:  20
-      },
-      {
-        name:  'imageurl',
-        title: 'Image',
-        type: 'image',
-        size:  20
-      },
-      {
-        name:  'pageurl',
-        title: 'Page',
-        size:  20
-      },
-      {
-        name:  'asin',
-        title: 'ID',
-        size:  10
-      }],
-      sort_column: { name:'seriesname', order:false }
-    });
-  });
-}
+};
