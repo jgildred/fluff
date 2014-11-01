@@ -124,7 +124,7 @@ exports.findbykeyword = function(req, res){
         if (result.ItemSearchResponse) {
           result.ItemSearchResponse.Items[0].Item.forEach(function (item) {
             // Make sure it's an episode
-            console.log("episode == " + item.ItemAttributes[0].Title[0]);
+            console.log("episode == " + item.ItemAttributes[0].Title[0] + " " + item.ASIN[0]);
             if ((item.ItemAttributes[0].ProductTypeName[0] == "DOWNLOADABLE_TV_EPISODE") && 
               (item.RelatedItems[0].Relationship[0] == "Parents") && 
               (item.RelatedItems[0].RelationshipType[0] == "Episode")) {
@@ -147,8 +147,7 @@ exports.findbykeyword = function(req, res){
             prodAdv.call("ItemLookup", {IdType: "ASIN", ItemId: asinString, ResponseGroup: "ItemAttributes, RelatedItems, Images", RelationshipType: "Season"}, function(err, result) {
               console.log("Looking up related items for seasons...");
               result.ItemLookupResponse.Items[0].Item.forEach(function (item) {
-                console.log("season == " + item.ItemAttributes[0].Title[0]);
-                var seasonImage = item.SmallImage ? item.SmallImage[0].URL[0] : "";
+                console.log("season == " + item.ItemAttributes[0].Title[0] + " " + item.ASIN[0]);
                 if ((item.ItemAttributes[0].ProductTypeName[0] == "DOWNLOADABLE_TV_SEASON") &&
                   (item.RelatedItems[0].Relationship[0] == "Parents") && 
                   (item.RelatedItems[0].RelationshipType[0] == "Season")) {
@@ -173,7 +172,7 @@ exports.findbykeyword = function(req, res){
                 prodAdv.call("ItemLookup", {IdType: "ASIN", ItemId: asinString, ResponseGroup: "ItemAttributes, Images"}, function(err, result) {
                   console.log("Getting series metadata...");
                   result.ItemLookupResponse.Items[0].Item.forEach(function (item) {
-                    console.log("series == " + item.ItemAttributes[0].Title[0]);
+                    console.log("series == " + item.ItemAttributes[0].Title[0] + " " + item.ASIN[0]);
                     // Fill in the rest of the data
                     matchedSeries.forEach(function (series) {
                       if (series.asin == item.ASIN[0]) {

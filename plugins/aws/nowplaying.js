@@ -194,20 +194,21 @@ var nowPlayingLoop = function(array, index, callback){
               var seasonName = result.ItemLookupResponse.Items[0].Item[0].ItemAttributes[0].Title[0];
               console.log('Got season lookup response for ' + seasonName);
               // Check if the season has any episodes
-              var latestEpisode = 0, latestEpisodeASIN = null;
+              var latestEpisodeDate = '0000-00-00', latestEpisodeASIN = null;
               result.ItemLookupResponse.Items[0].Item[0].RelatedItems.forEach(function (relateditem) {
                 if ((relateditem.Relationship[0] == "Children") && 
                   (relateditem.RelationshipType[0] == "Episode")) {
                   relateditem.RelatedItem.forEach(function (episode) {
-                    if (parseInt(episode.Item[0].ItemAttributes[0].EpisodeSequence[0]) &&
-                      (parseInt(episode.Item[0].ItemAttributes[0].EpisodeSequence[0]) > latestEpisode)) {
-                      latestEpisode = parseInt(episode.Item[0].ItemAttributes[0].EpisodeSequence[0]);
+                    console.log()
+                    if (episode.Item[0].ItemAttributes[0].ReleaseDate[0] &&
+                      (episode.Item[0].ItemAttributes[0].ReleaseDate[0] > latestEpisodeDate)) {
+                      latestEpisodeDate = parseInt(episode.Item[0].ItemAttributes[0].ReleaseDate[0]);
                       latestEpisodeASIN = episode.Item[0].ASIN[0];
                     }
                   });
                 }
               });
-              if (latestEpisode == 0) {
+              if (latestEpisodeDate == '0000-00-00') {
                 console.log('NO latest episode for ' + seasonName);
                 loopNext(array, index, callback);
               }
