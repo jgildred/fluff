@@ -232,7 +232,7 @@ Fluff.drawTableHeader = function (modelInfo) {
 	return html;
 }
 
-Fluff.renderFields = function (model, template) {
+Fluff.renderFields = function (model, template, formatters) {
 	var fields = model.toJSON();
 	if (template) {
 		var templateObj = $('<div></div>');
@@ -243,10 +243,16 @@ Fluff.renderFields = function (model, template) {
 			var element = $(this);
 			var type = this.nodeName.toLowerCase();
 			var field = fields[Fluff.dehumanize(element.attr('field'))];
+			if (formatters && formatters[Fluff.dehumanize(element.attr('field'))]) {
+				field = formatters[Fluff.dehumanize(element.attr('field'))](field);
+			}
 			if (field == undefined) {
 			  field = fields[Fluff.dehumanize(element.attr('name'))];
+			  if (formatters && formatters[Fluff.dehumanize(element.attr('field'))]) {
+					field = formatters[Fluff.dehumanize(element.attr('field'))](field);
+				}
 			}
-			if (field != undefined) {
+			else {
 				switch (type) {
 					case 'input':
 						if (element.attr('type') == 'text') {
@@ -286,7 +292,7 @@ Fluff.renderFields = function (model, template) {
 	}
 }
 
-Fluff.autoRenderFields = function (model, modelInfo, elementType, dividerHtml) {
+Fluff.autoRenderFields = function (model, modelInfo, elementType, dividerHtml, formatters) {
 	dividerHtml = dividerHtml ? dividerHtml : '';
 	var modelData = model.toJSON();
 	var html = "";
@@ -450,6 +456,8 @@ Fluff.harvestTables = function (table) {
 			  var elementObj = $(this.el).find('tr[id=' + id + ']');
 			  elementObj.remove();
 			},
+			// formatter can contain a function for each field which requires formatting
+			formatter: {},
 			// If no template specified, then the first data row will be used and tbody cleared
 			setRowTemplate: function(template) {
 				if (template) {
@@ -510,10 +518,10 @@ Fluff.harvestTables = function (table) {
 				var bodyHtml = "\n";
 				this.collection.forEach(function(model) {
 					if (that.rowTemplate) {
-						bodyHtml += Fluff.renderFields(model, that.rowTemplate) + "\n";
+						bodyHtml += Fluff.renderFields(model, that.rowTemplate, that.formatter) + "\n";
 					}
 					else {
-						bodyHtml += "<tr id='" + model.id + "'>" + Fluff.autoRenderFields(model, Fluff.models[modelName], 'td') + "</tr>\n";
+						bodyHtml += "<tr id='" + model.id + "'>" + Fluff.autoRenderFields(model, Fluff.models[modelName], 'td', null, that.formatter) + "</tr>\n";
 					}
 				});
 				elementObj.find('tbody').first().append(bodyHtml + "\n");

@@ -225,6 +225,8 @@ var nowPlayingLoop = function(options){
             result.ItemLookupResponse.Items[0].Item.forEach(function (item) {
               var seasonName = item.ItemAttributes[0].Title[0];
               console.log('Got season lookup response for ' + seasonName);
+
+              // Check bonanza season 2 and NYPD blue season 12 for data issues
               // Check if the season has any episodes
               var latestEpisodeDate = '0000-00-00', latestEpisodeASIN = null;
               item.RelatedItems.forEach(function (relateditem) {

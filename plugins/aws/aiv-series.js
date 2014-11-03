@@ -146,49 +146,59 @@ exports.findbykeyword = function(req, res){
             // Get the series info from the season lookup
             prodAdv.call("ItemLookup", {IdType: "ASIN", ItemId: asinString, ResponseGroup: "ItemAttributes, RelatedItems, Images", RelationshipType: "Season"}, function(err, result) {
               console.log("Looking up related items for seasons...");
-              result.ItemLookupResponse.Items[0].Item.forEach(function (item) {
-                console.log("season == " + item.ItemAttributes[0].Title[0] + " " + item.ASIN[0]);
-                if ((item.ItemAttributes[0].ProductTypeName[0] == "DOWNLOADABLE_TV_SEASON") &&
-                  (item.RelatedItems[0].Relationship[0] == "Parents") && 
-                  (item.RelatedItems[0].RelationshipType[0] == "Season")) {
-                  // Go through the related items to find it's series
-                  item.RelatedItems[0].RelatedItem[0].Item.forEach(function (series) {
-                    // Make sure it's related item is a series we haven't seen before
-                    if ((series.ItemAttributes[0].ProductTypeName[0] == "DOWNLOADABLE_TV_SERIES") && (seriesASINs.indexOf(series.ASIN[0]) == -1)) {
-                      seriesASINs.push(series.ASIN[0]);
-                      matchedSeries.push({
-                        asin: series.ASIN[0],
-                        imageurl: item.SmallImage ? item.SmallImage[0].URL[0] : ""
+              if (result.ItemLookupResponse) {
+                result.ItemLookupResponse.Items[0].Item.forEach(function (item) {
+                  console.log("season == " + item.ItemAttributes[0].Title[0] + " " + item.ASIN[0]);
+                  if ((item.ItemAttributes[0].ProductTypeName[0] == "DOWNLOADABLE_TV_SEASON") &&
+                    (item.RelatedItems[0].Relationship[0] == "Parents") && 
+                    (item.RelatedItems[0].RelationshipType[0] == "Season")) {
+                    // Go through the related items to find it's series
+                    item.RelatedItems[0].RelatedItem[0].Item.forEach(function (series) {
+                      // Make sure it's related item is a series we haven't seen before
+                      if ((series.ItemAttributes[0].ProductTypeName[0] == "DOWNLOADABLE_TV_SERIES") && (seriesASINs.indexOf(series.ASIN[0]) == -1)) {
+                        seriesASINs.push(series.ASIN[0]);
+                        matchedSeries.push({
+                          asin: series.ASIN[0],
+                          imageurl: item.SmallImage ? item.SmallImage[0].URL[0] : ""
+                        });
+                      }
+                    });
+                  }
+                });
+                if (seriesASINs.length > 0) {
+                  asinString = seriesASINs.join(',');
+                  // Lookup the series info
+                  // RESULTS MAY BE FALSE, MUST HIT EACH PAGE URL TO CHECK FOR 404
+                  // RESULTS MAY NOT HAVE IMAGES, IF NOT USE SEASON IMAGE
+                  prodAdv.call("ItemLookup", {IdType: "ASIN", ItemId: asinString, ResponseGroup: "ItemAttributes, Images"}, function(err, result) {
+                    console.log("Getting series metadata...");
+                    if (result.ItemLookupResponse) {
+                      result.ItemLookupResponse.Items[0].Item.forEach(function (item) {
+                        console.log("series == " + item.ItemAttributes[0].Title[0] + " " + item.ASIN[0]);
+                        // Fill in the rest of the data
+                        matchedSeries.forEach(function (series) {
+                          if (series.asin == item.ASIN[0]) {
+                            series.networkname = item.ItemAttributes[0].Studio[0];
+                            series.pageurl = item.DetailPageURL[0];
+                            series.seriesname = item.ItemAttributes[0].Title[0];
+                          }
+                        });
                       });
+                      console.log("Sending back the series data...");
+                      res.json(matchedSeries);
+                      console.log("DONE");
+                    }
+                    else {
+                      res.json({message: "problem getting series: ", error: err ? err : result.ItemLookupErrorResponse});
                     }
                   });
                 }
-              });
-              if (seriesASINs.length > 0) {
-                asinString = seriesASINs.join(',');
-                // Lookup the series info
-                // RESULTS MAY BE FALSE, MUST HIT EACH PAGE URL TO CHECK FOR 404
-                // RESULTS MAY NOT HAVE IMAGES, IF NOT USE SEASON IMAGE
-                prodAdv.call("ItemLookup", {IdType: "ASIN", ItemId: asinString, ResponseGroup: "ItemAttributes, Images"}, function(err, result) {
-                  console.log("Getting series metadata...");
-                  result.ItemLookupResponse.Items[0].Item.forEach(function (item) {
-                    console.log("series == " + item.ItemAttributes[0].Title[0] + " " + item.ASIN[0]);
-                    // Fill in the rest of the data
-                    matchedSeries.forEach(function (series) {
-                      if (series.asin == item.ASIN[0]) {
-                        series.networkname = item.ItemAttributes[0].Studio[0];
-                        series.pageurl = item.DetailPageURL[0];
-                        series.seriesname = item.ItemAttributes[0].Title[0];
-                      }
-                    });
-                  });
-                  console.log("Sending back the series data...");
-                  res.json(matchedSeries);
-                  console.log("DONE");
-                });
+                else {
+                  res.json({message: "no series found"});
+                }
               }
               else {
-                res.json({message: "no series found"});
+                res.json({message: "problem getting seasons: ", error: err ? err : result.ItemLookupErrorResponse});
               }
             });
           }
