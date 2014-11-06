@@ -1,7 +1,7 @@
 
 // The only global
 var Fluff = {
-	version     : "0.8",
+	version     : "0.9",
 	session     : {},
 	models      : {},
 	collections : {},
@@ -553,7 +553,7 @@ Fluff.harvestForms = function (form, template, callback) {
 			el: form,
   		events: {
   			'change [type=checkbox]' : 'changeCheckbox',
-    		'click  .submit'         : 'submitForm'
+    		'click  .submit'         : 'submit'
   		},
 			initialize: function() {
 				this.callback = this.callback || callback;
@@ -580,6 +580,8 @@ Fluff.harvestForms = function (form, template, callback) {
 			  	});
 				}
 			},
+			onsuccess: null,
+			onerror:null,
 			changeCheckbox: function (ev) {
 				var checkbox = $(ev.currentTarget);
 				if (checkbox.prop('checked')) {
@@ -599,9 +601,9 @@ Fluff.harvestForms = function (form, template, callback) {
 			  this.callback = callback;
 			  this.initialize();
 			},
-			submitForm: function (ev) {
+			submit: function (ev) {
 				var that = this;
-				var modelDetails = getFormData($(ev.currentTarget).parents("form:first"));
+				var modelDetails = getFormData(form);
 				console.log("THIS MODEL dets:");
 				console.log(modelDetails);
 				if (!this.model) {
@@ -623,12 +625,18 @@ Fluff.harvestForms = function (form, template, callback) {
       		patch: true,
       		success: function (model) {
       			Fluff.log(modelName + " saved.");
+      			if (that.onsuccess) {
+      				that.onsuccess();
+      			}
       			if (that.action) {
       			  that.action(that.model);
       			}
 		      },
 		      error: function (model, xhr) {
 		        Fluff.log(xhr);
+		        if (that.onerror) {
+      				that.onerror();
+      			}
 					}
 				});
 			},
@@ -687,10 +695,9 @@ Fluff.harvestForms = function (form, template, callback) {
 				elementObj.bind('keypress', function(e){
    				if (e.keyCode == 13) {
      				e.preventDefault();
-     				that.submitForm();
+     				that.submit();
    				}
  				});
- 				console.log("Rendered form for " + modelName + ": " + html);
  				if (callback) {
  				  callback();
  				}

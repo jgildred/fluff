@@ -1709,25 +1709,22 @@ var AlertView = Backbone.View.extend({
     'click .close' : 'close'
   },
   close: function () {
-    $('.modal-backdrop').remove();
-    this.$el.html('');
+    //$('.modal-backdrop').remove();
+    //this.$el.html('');
     // accepts the name of a route to go to after close
     if (this.onclose) {
       router.navigate(this.onclose);
     }
-    if (/\/api\/verify/i.test(window.location.pathname)) {
-      //loginView.render();
-    }
   },
   render: function (options) {
-    $('.modal-backdrop').remove();
+    //$('.modal-backdrop').remove();
     var template = _.template($('#alert-template').html(), {label: options.label, msg: options.msg }); 
     this.$el.html(template);
     $('#alert-modal').modal('show');
     if (options && options.onclose) {
       this.onclose = options.onclose;
-      if (options && options.callbacck) {
-        callback();
+      if (options && options.callback) {
+        options.callback();
       }
     }
     if (options && options.cantclose) {

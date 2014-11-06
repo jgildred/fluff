@@ -3,7 +3,68 @@
 
 var app      = require('../app'),
     Fluff    = app.Fluff,
-    resource = require('./resource');
+    resource = require('./resource'),
+    schemas  = require('../schemas');
+
+var schema = "{\n\
+  firstname      : String,  \n\
+  lastname       : String,  \n\
+  orgname        : String,  \n\
+  email          : { type: String, index: { unique: true } },       \n\
+  verifytoken    : { type: String, unique: true }, \n\
+  phone          : String, \n\
+  role           : { type: String, enum: [ 'User', 'Admin' ], default: 'User',       required: true }, \n\
+  status         : { type: String, enum: [ 'Active', 'Inactive', 'Unverified' ], default: 'Unverified', required: true }, \n\
+  notes          : String, \n\
+  lastlogin      : Date,   \n\
+  creator_id     : ObjectId,    \n\
+  lastupdater_id : ObjectId,    \n\
+  creation       : { type: Date, default: Date.now }, \n\
+  lastupdate     : { type: Date, default: Date.now }  \n\
+}";
+
+var display_columns = [{
+  name:  'firstname',
+  title: 'First Name',
+  size:  20
+},
+{
+  name:  'lastname',
+  title: 'Last Name',
+  size:  20
+},
+{
+  name:  'email',
+  title: 'Email',
+  size:  20
+},
+{
+  name:  'role',
+  title: 'Role',
+  size:  20
+},
+{
+  name:  'status',
+  title: 'Status',
+  size:  10
+}];
+
+var sort_column = { name:'lastname', order:true };
+
+// These may be used for DB setup
+exports.matchfields = ['firstname', 'lastname', 'orgname', 'email'];
+
+// Preprocessor for GET /users/info
+exports.getinfo = function(req, res){
+  app.doIfHasAccess(req, res, 'Public', app.User, function(){
+    var data = {
+      schema_data     : schema,
+      display_columns : display_columns,
+      sort_column     : sort_column
+    }
+    res.json(data);
+  });
+};
 
 // Preprocessor for GET /users
 exports.find = function(req, res){
@@ -18,7 +79,7 @@ exports.findone = function(req, res){
 // Preprocessor for POST /users
 exports.create = function(req, res){
   if (req.body.role || req.body.status) {
-    if (app.HasAccess(req, res, 'Admins')) {
+    if (app.HasAccess(req, res, 'Humans')) {
       if (req.body.password) {
         var callback = SendVerifyEmail;
       }

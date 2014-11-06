@@ -245,17 +245,17 @@
 
   <script type="text/template" id="alert-template">
     <div id="alert-modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="alertModalLabel" class="text-center"><%= label ? label : 'Alert' %></h3>
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="alertModalLabel" class="text-center"><%= label ? label : 'Alert' %></h3>
+          </div>
+          <div class="modal-body">
+            <p class="text-center lead"><%= msg ? msg : 'Something went wrong.' %></p>
+          </div>
+        </div>
       </div>
-      <div class="modal-body">
-        <p class="text-center lead"><%= msg ? msg : 'Something went wrong.' %></p>
-      </div>
-    </div>
-    </div>
     </div>
   </script>
 

@@ -18,6 +18,7 @@ var express        = require('express'),
 var Fluff  = {},
     app    = express(),
     Server = http.createServer(app),
+    defaultPort = 3000,
     PortChanged = false, 
     Site, User, View, Page, Var, Model, 
     Models   = {},
@@ -195,9 +196,9 @@ var connectDb = function (callback) {
   userSchema.methods.pwMatch = function (password) {
     var crypto = require('crypto');
     var hash   = crypto.createHash('md5').update(password + this.salt).digest("hex");
-    console.log('password: ' + password);
-    console.log('client hash:' + hash);
-    console.log('db hash: ' + this.pwhash);
+    //console.log('password: ' + password);
+    //console.log('client hash:' + hash);
+    //console.log('db hash: ' + this.pwhash);
     return (this.pwhash == hash) ?
       true : false;
   }
@@ -383,7 +384,7 @@ var loadDefaults = function (custom_config) {
       if ((active_config.db_service == "MongoLab") && process.env.MONGOLAB_URI) {
         active_config.db_uri = process.env.MONGOLAB_URI;
       }
-      active_config.port = process.env.PORT ? process.env.PORT : 3000;
+      active_config.port = process.env.PORT ? process.env.PORT : defaultPort;
       break;
     case "AppFog":
       if ((active_config.db_service == "MongoDB") && process.env.VCAP_SERVICES) {
@@ -396,13 +397,13 @@ var loadDefaults = function (custom_config) {
         var dburi = "mongodb://" + cred + obj.hostname + ":" + obj.port + "/" + obj.db;
         active_config.db_uri = dburi;
       }
-      active_config.port = process.env.VMC_APP_PORT ? process.env.VMC_APP_PORT : 3000;
+      active_config.port = process.env.VMC_APP_PORT ? process.env.VMC_APP_PORT : defaultPort;
       break;
     default:
       if ((active_config.db_service == "MongoLab") && process.env.MONGOLAB_URI) {
         active_config.db_uri = process.env.MONGOLAB_URI;
       }
-      active_config.port = process.env.PORT ? process.env.PORT : 3000;
+      active_config.port = process.env.PORT ? process.env.PORT : defaultPort;
   }
   app.set('config', active_config);
 }
@@ -772,14 +773,14 @@ Fluff.emailToUser = function(mailinfo) {
       to:      mailinfo.user.email,
       subject: mailinfo.subject,
       text:    mailinfo.body
-    }, function(error, response) {
+    }, function(error, info) {
       if(error){
         console.log('Mailer error occured:');
         console.log(error.message);
         return;
       }
       else {
-        console.log("Message sent: " + response.message);
+        console.log("Message sent: " + info.response);
       }
       Fluff.mailer.close();
     });
@@ -1062,6 +1063,7 @@ var adminRoutes = function () {
 
   // User routes
   app.get (base + '/users',           users.find);
+  app.get (base + '/users/info',      users.getinfo);
   app.get (base + '/users/:id',       users.findone);
   app.post(base + '/users',           users.create);
   app.put (base + '/users/:id',       users.update);
@@ -1133,17 +1135,17 @@ var staticFiles = function () {
 var setUrls = function (req, res, next) {
   // Site url is useful for email notifications which link back to the site
   var protocol  = app.get('config').ssl  ? "https://" : "http://";
-  var externalPort = app.get('config').port ? ":" + app.get('config').port : "";
+  var externalPort = app.get('config').port ? app.get('config').port : defaultPort;
   var internalBaseUrl = protocol + app.get('config').domain;
 
   // Heroku and other paas will not expose the internal server port
   if (app.get('config').app_service != "Custom") {
     internalBaseUrl += externalPort;
-    externalPort = "";
+    externalPort = defaultPort;
   }
   exports.siteUrl       = internalBaseUrl; // Used by some routes
   Fluff.internalBaseUrl = internalBaseUrl;
-  Fluff.externalBaseUrl = protocol + app.get('config').domain + externalPort;
+  Fluff.externalBaseUrl = protocol + app.get('config').domain + ":" + externalPort;
   Fluff.externalUrl     = Fluff.externalBaseUrl + req.url;
   console.log("EXTERNAL URL "+ Fluff.externalUrl);
   next();
