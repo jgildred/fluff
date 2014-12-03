@@ -1,9 +1,10 @@
 .DS_Store
+*/.DS_Store
 node_modules/
 test/node_modules
 log/*
 plugins/*
-!plugins/example/
+#!plugins/example/
 #!plugins/avb.io/
 #!plugins/bantr/
 #!plugins/keypair.io/
