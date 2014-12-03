@@ -1,14 +1,20 @@
 
+//
+// This is the fluff.js client library for Fluff
+//
+
 // The only global
-var Fluff = {
-	version     : "0.9",
-	session     : {},
-	models      : {},
-	collections : {},
-	views       : {},
-	path        : "/fluff",    // This must match the fluff site configuration.
-	apikey      : "1234567890" // Leave as null or empty string if not required.
-};
+if (!Fluff) {
+	var Fluff = {};
+}
+Fluff.version     = "0.9";
+Fluff.session     = {};
+Fluff.models      = {};
+Fluff.collections = {};
+Fluff.views       = {};
+Fluff.ui          = {};
+Fluff.path        = "/fluff";     // This must match the fluff site configuration.
+Fluff.apikey      = "1234567890"; // Leave as null or empty string if not required.
 
 // Set the id field for MongoDB
 Backbone.Model.prototype.idAttribute = "_id";
@@ -18,6 +24,7 @@ Fluff.objectType = function (obj) {
   return Object.prototype.toString.call(obj).slice(8, -1);
 }
 
+// Basic logger
 Fluff.log = function (msg, obj) {
 	if (msg) {
 		console.log(msg);
@@ -54,22 +61,6 @@ Fluff.lowerCaseObject = function (obj) {
   return newobj;
 }
 
-Fluff.dataToSchema = function (data) {
-	if (data) {
-		var ObjectId = String,
-	      Buffer   = String,
-	      Mixed    = String;
-	  eval("var schema = " + data + ";");
-	  schema = Fluff.lowerCaseObject(schema);
-	  schema._id            = ObjectId;
-	  schema.creator_id     = ObjectId;
-	  schema.lastupdater_id = ObjectId;
-	  schema.creation       = Date;
-	  schema.lastupdate     = Date;
-	  return schema;
-	}
-}
-
 $.fn.serializeObject = function() {
   var o = {};
   var a = this.serializeArray();
@@ -94,16 +85,16 @@ $.fn.serializeObject = function() {
   return o;
 };
 
+// Adds the text to the object as an array or as a string
 var addArrayOrString = function(object, name, text) {
   if (name.match(/\[\]/)) {
     name = name.replace('[]','');
     object[name] = text.replace(' ','').split(',');
-    return object;
   }
   else {
     object[name] = text;
-    return object;
   }
+  return object;
 }
 
 // Binds or unbinds a keyboard key to a function
@@ -120,6 +111,25 @@ var listenKeydown = function(on, key, callback) {
     $(window).unbind('keydown');
   }
 }
+
+// Useful for common JSON error responses
+Fluff.responseErrorMsg = function (xhr, messages) {
+	if (xhr && messages) {
+		var msg;
+		if (xhr.responseJSON && xhr.responseJSON.msg) {
+			msg = xhr.responseJSON.msg;
+		}
+		Object.keys(messages).forEach(function() {
+			if (messages.this) {
+				msg = msg || messages.this;
+			}
+		});
+		return msg;
+	}
+	else {
+		return null;
+	}
+};
 
 // Grabs all form data and puts it into an object.
 // Form elements with a name like 'item.subitem' will be put into an 'item' subobject.
@@ -147,6 +157,22 @@ var getFormData = function(form) {
   else {
     return null;
   }
+}
+
+Fluff.dataToSchema = function (data) {
+	if (data) {
+		var ObjectId = String,
+	      Buffer   = String,
+	      Mixed    = String;
+	  eval("var schema = " + data + ";");
+	  schema = Fluff.lowerCaseObject(schema);
+	  schema._id            = ObjectId;
+	  schema.creator_id     = ObjectId;
+	  schema.lastupdater_id = ObjectId;
+	  schema.creation       = Date;
+	  schema.lastupdate     = Date;
+	  return schema;
+	}
 }
 
 Fluff.addCollection = function (options) {
@@ -213,14 +239,20 @@ Fluff.addModel = function (name, callback) {
 	}
 }
 
-Fluff.addView = function (type, element, View) {
+Fluff.addView = function (type, element, View, callback) {
 	var name = type + "[model=" + element.attr('model') + "]";
+	if (element.attr('auth')) {
+		name = type + "[auth]";
+	}
 	if (element.attr('id')) {
 		name = type + "#" + element.attr('id');
 	}
 	if (Fluff.views[name] == undefined) {
 	  Fluff.views[name] = new View();
-	  console.log("ADDED VIEW: " + name);
+	  Fluff.log("ADDED VIEW: " + name);
+	}
+	if (callback) {
+		callback();
 	}
 }
 
@@ -255,17 +287,18 @@ Fluff.renderFields = function (model, template, formatters) {
 			else {
 				switch (type) {
 					case 'input':
-						if (element.attr('type') == 'text') {
-							element.attr('value', field);
-						}
-						if (element.attr('type') == 'checkbox') {
-							element.attr('value', field);
-							if (field) {
-								this.checked = true;
-							}
-							else {
-								this.checked = false;
-							}
+						switch (element.attr('type')) {
+							case 'checkbox':
+								element.attr('value', field);
+								if (field) {
+									this.checked = true;
+								}
+								else {
+									this.checked = false;
+								}
+								break;
+							default:
+								element.attr('value', field);
 						}
 						break;
 					case 'a':
@@ -320,7 +353,7 @@ Fluff.harvestElements = function (element) {
     var elements = $(element);
   }
   else {
-	  var elements = $(tags.join("[model], ") + "[model]");
+	  var elements = $(tags.join("[model], ") + "[model]").not(tags.join("[noharvest], ") + "[noharvest]");
 	}
   elements.each(function (e) {
   	var element = $(this);
@@ -493,8 +526,7 @@ Fluff.harvestTables = function (table) {
 				// Build the header if none
 				var ths = elementObj.find('tr th');
 				if (ths.toArray().length == 0) {
-					console.log("build header for: ");
-					console.log(this.el);
+					Fluff.log("build header for: ", this.el);
 					var headHtml = "<tr>" + Fluff.drawTableHeader(Fluff.models[modelName]) + "</tr>";
 				}
 				else {
@@ -531,12 +563,12 @@ Fluff.harvestTables = function (table) {
   });
 }
 
-Fluff.harvestForms = function (form, template, callback) {
-  if (form) {
-    var forms = $(form);
+Fluff.harvestForms = function (options) {
+  if (options && options.form) {
+    var forms = $(options.form);
   }
   else {
-	  var forms = $("form[model]");
+	  var forms = $("form[model]").not("form[noharvest]");
 	}
   forms.each(function (f) {
   	var form = $(this);
@@ -556,11 +588,16 @@ Fluff.harvestForms = function (form, template, callback) {
     		'click  .submit'         : 'submit'
   		},
 			initialize: function() {
-				this.callback = this.callback || callback;
-				this.template = this.template || template;
+				if (options) {
+					this.callback = this.callback || options.callback;
+					this.template = this.template || options.template;
+				}
 				this.modelId = this.modelId || modelId;
+				this.modelName = this.modelName || modelName;
 				var that = this;
-				console.log("modelId: "+modelId);
+				if (modelId) {
+					Fluff.log("Form with model=" + modelName + " and ID " + modelId);
+				}
 				if (this.modelId) {
 					this.model = new Model({
 						_id: this.modelId
@@ -568,7 +605,7 @@ Fluff.harvestForms = function (form, template, callback) {
 					this.model.fetch({
 				  	success: function () {
 				  		Fluff.addModel(modelName, function () {
-			  				that.render(that.template, that.callback);
+			  				that.render(that.callback);
 			  			});
 				  	}
 				  });
@@ -576,12 +613,12 @@ Fluff.harvestForms = function (form, template, callback) {
 				else {
 				  this.model = null;
 					Fluff.addModel(modelName, function () {
-			  		that.render(that.template, that.callback);
+			  		that.render(that.callback);
 			  	});
 				}
 			},
-			onsuccess: null,
-			onerror:null,
+			success: null,
+			error:null,
 			changeCheckbox: function (ev) {
 				var checkbox = $(ev.currentTarget);
 				if (checkbox.prop('checked')) {
@@ -604,8 +641,6 @@ Fluff.harvestForms = function (form, template, callback) {
 			submit: function (ev) {
 				var that = this;
 				var modelDetails = getFormData(form);
-				console.log("THIS MODEL dets:");
-				console.log(modelDetails);
 				if (!this.model) {
 					this.model = new Model();
 					if (modelDetails.hasOwnProperty('_id')) {
@@ -613,37 +648,36 @@ Fluff.harvestForms = function (form, template, callback) {
 					}
 				}
 				else {
-				  console.log("THIS MODEL: ");
-				  console.log(this.model);
+				  // Make sure the data your saving includes ID
 				  if (!modelDetails.hasOwnProperty('_id')) {
 						modelDetails._id = this.model.get('_id');
 					}
 				}
-				console.log("THIS MODEL dets again:");
-				console.log(modelDetails);
 				this.model.save(modelDetails, {
       		patch: true,
+      		wait: true,
       		success: function (model) {
       			Fluff.log(modelName + " saved.");
-      			if (that.onsuccess) {
-      				that.onsuccess();
+      			if (that.success) {
+      				that.success(model);
       			}
       			if (that.action) {
       			  that.action(that.model);
       			}
 		      },
 		      error: function (model, xhr) {
-		        Fluff.log(xhr);
-		        if (that.onerror) {
-      				that.onerror();
+		        Fluff.log("XHR error while trying to save:", xhr);
+		        if (that.error) {
+      				that.error(model,xhr);
       			}
 					}
 				});
 			},
-			render: function (template, callback) {
+			render: function (callback) {
 			  var that = this;
-				var elementObj = $(that.el);
-				var modelInfo = Fluff.models[modelName];
+				var elementObj = that.$el;
+				
+				var modelInfo = Fluff.models[that.modelName];
 				var schema = Fluff.lowerCaseObject(modelInfo.schema);
 				var filltag = 'input[name]';
 				var fts = elementObj.find(filltag);
@@ -670,6 +704,9 @@ Fluff.harvestForms = function (form, template, callback) {
 						switch (type) {
 							case 'String':
 								html += '<input type="text" name="' + field.name + '" value="' + ((that.model && that.model.get(field.name)) ? that.model.get(field.name) : '') + '" placeholder="' + field.title + '" />\n';
+								break;
+							case 'String':
+								html += '<input type="email" name="' + field.name + '" value="' + ((that.model && that.model.get(field.name)) ? that.model.get(field.name) : '') + '" placeholder="' + field.title + '" />\n';
 								break;
 							case 'Number':
 								html += '<input type="number" name="' + field.name + '" value="' + ((that.model && that.model.get(field.name)) ? that.model.get(field.name) : '') + '" placeholder="' + field.title + '" />\n';
@@ -703,16 +740,20 @@ Fluff.harvestForms = function (form, template, callback) {
  				}
 			}
 		});
-		Fluff.addView("form", form, View);
+		Fluff.addView("form", form, View, function () {
+			if (options && options.callback) {
+				options.callback();
+			}
+		});
 	});
 }
 
-Fluff.harvestSelects = function (select) {
-  if (select) {
-    var selects = $(select);
+Fluff.harvestSelects = function (options) {
+  if (options && options.select) {
+    var selects = $(options.select);
   }
   else {
-    var selects = $("select[model]");
+    var selects = $("select[model]").not("select[noharvest]");
   }
   selects.each(function (e) {
   	var select = $(this);
@@ -772,6 +813,78 @@ Fluff.harvestSelects = function (select) {
 	});
 }
 
+Fluff.harvestLogins = function (options) {
+	if (options && options.form) {
+    var forms = $(options.form);
+  }
+  else {
+    var forms = $("form[auth]").not("form[noharvest]");
+  }
+  forms.each(function (f) {
+  	var form = $(this);
+		var View = Backbone.View.extend({
+			el: form,
+			template: null,
+  		events: {
+    		'click .submit' : 'submit'
+  		},
+			initialize: function() {
+				this.render();
+			},
+			success: null,
+			error:null,
+			submit: function (ev) {
+				var loginDetails = getFormData(form);
+				if ($.isEmptyObject(Fluff.session)) {
+					Fluff.session = new Fluff.Session();
+				}
+				var that = this;
+				Fluff.session.login(loginDetails, {
+      		success: function (model) {
+      			Fluff.log("Logged in.");
+      			if (that.success) {
+      				that.success(model);
+      			}
+		      },
+		      error: function (model, xhr) {
+		        Fluff.log("login error:", xhr);
+		        if (that.error) {
+      				that.error(model, xhr);
+      			}
+					}
+				});
+			},
+			render: function (callback) {
+				var that = this;
+				var elementObj = this.$el;
+				var inputEmail = elementObj.find('input[name=email]');
+				if (inputEmail.toArray().length == 0) {
+					elementObj.append('<input type="text" name="email" value="" placeholder="Email" />\n');
+				}
+				var inputPassword = elementObj.find('input[name=password]');
+				if (inputPassword.toArray().length == 0) {
+					inputEmail.first().append('<input type="password" name="password" value="" placeholder="Password" />\n');
+				}
+				// Hitting enter key while in the form will submit.
+				elementObj.bind('keypress', function(e){
+   				if (e.keyCode == 13) {
+   					e.preventDefault();
+     				that.submit();
+   				}
+ 				});
+ 				if (callback) {
+ 					callback();
+ 				}
+			}
+		});		
+		Fluff.addView("form", form, View, function () {
+			if (options && options.callback) {
+				options.callback();
+			}
+		});
+	});
+}
+
 Fluff.Session = Backbone.Model.extend({
   urlRoot: Fluff.path + '/admin/api/auth',
   initialize: function () {
@@ -792,16 +905,16 @@ Fluff.Session = Backbone.Model.extend({
     // Do a POST to /auth and send the serialized form creds
     var that = this;
     this.save(credentials, {
-      success: function () {
-      	that.unset('password', {silent:true});
-      	that.unset('email', {silent:true});
+      success: function (data) {
+      	that.unset('password', {silent: true});
+      	that.unset('email', {silent: true});
       	if (options && options.success) {
-      		options.success();
+      		options.success(data);
       	}
       },
-      error: function () {
+      error: function (data, xhr) {
       	if (options && options.error) {
-      		options.error();
+      		options.error(data, xhr);
       	}
       }
     });
@@ -826,88 +939,143 @@ Fluff.Session = Backbone.Model.extend({
   }
 });
 
+// Check if the session is still active
 Fluff.checkSession = function (options) {
 	Fluff.session = new Fluff.Session();
 	Fluff.session.fetch({
     success: function () {
-    	Fluff.log("Logged in as " + Fluff.session.get('user').email);
-      Backbone.history.start();
+    	if (Fluff.session.get('user')) {
+    		var msg = "Logged in as " + Fluff.session.get('user').email;
+    	}
+    	else {
+    		if (Fluff.session.get('human')) {
+    			var msg = "Not logged in, but human.";
+    		}
+	      else {
+	      	var msg = "Not logged in.";
+	      }
+    	}
+    	Fluff.log(msg);
+    	Backbone.history.start();
       if (options && options.success) {
       	options.success();
       }
     },
-    error: function (xhr) {
-      Fluff.log("check session error:", xhr);
-      Backbone.history.start();
+    error: function (data, xhr) {
+    	Fluff.log("Error checking session:", xhr);
+    	Backbone.history.start();
       if (options && options.error) {
       	options.error();
       }
     }
   });
-}
+};
 
-Fluff.harvestLogins = function () {
-	var forms = $("form[auth]");
-  forms.each(function (f) {
-  	Fluff.log("Processing an auth form...");
-  	var form = $(this);
-		var View = Backbone.View.extend({
-			el: form,
-			template: null,
-  		events: {
-    		'click .submit' : 'submit'
-  		},
-			initialize: function() {
-				var that = this;
-				this.render();
-			},
-			onsuccess: null,
-			onerror:null,
-			submit: function (ev) {
-				//var loginDetails = getFormData($(ev.currentTarget).parents("form:first"));
-				var loginDetails = getFormData(form);
-				if ($.isEmptyObject(Fluff.session)) {
-					Fluff.session = new Fluff.Session();
-				}
-				var that = this;
-				Fluff.session.login(loginDetails, {
-      		success: function (model) {
-      			Fluff.log("Logged in.");
-      			if (that.onsuccess) {
-      				that.onsuccess();
-      			}
-		      },
-		      error: function (model, xhr) {
-		        Fluff.log("login error:". xhr);
-		        if (that.onerror) {
-      				that.onerror();
-      			}
-					}
-				});
-			},
-			render: function () {
-				var that = this;
-				var elementObj = $(this.el);
-				var inputEmail = elementObj.find('input[name=email]');
-				if (inputEmail.toArray().length == 0) {
-					elementObj.append('<input type="text" name="email" value="" placeholder="Email" />\n');
-				}
-				var inputPassword = elementObj.find('input[name=password]');
-				if (inputPassword.toArray().length == 0) {
-					inputEmail.first().append('<input type="password" name="password" value="" placeholder="Password" />\n');
-				}
-				// Hitting enter key while in the form will submit.
-				elementObj.bind('keypress', function(e){
-   				if (e.keyCode == 13) {
-   					e.preventDefault();
-     				that.submit();
-   				}
- 				});
-			}
-		});
-		Fluff.addView("form", form, View);
-	});
-}
+// See if the user is human
+Fluff.checkCaptcha = function(options) {
+  $.ajax({
+    type: 'POST',
+    url: Fluff.path + '/admin/api/captcha',
+    dataType: 'json',
+    data: {
+      recaptcha_challenge_field: Recaptcha.get_challenge(), 
+      recaptcha_response_field:  Recaptcha.get_response()
+    },
+    success : function (data, status, xhr) {
+      if (data) {
+      	Fluff.session.auth  = data.auth;
+        Fluff.session.human = data.human;
+        Fluff.session._csrf = data._csrf;
+      }
+      if (options && options.success) {
+      	options.success(data, status, xhr);
+      }
+    },
+    error : function (xhr) {
+      Fluff.log("Error checking captcha: " + xhr.status);
+      if (options && options.error) {
+      	options.error(xhr);
+      }
+    }
+  });
+  return false;
+};
+
+// Verify that the user has an email address using a token
+Fluff.verifyEmail = function (options) {
+	if (options && options.token) {
+	  $.ajax({
+	    type: 'PUT',
+	    url: Fluff.path + '/admin/api/verify/' + options.token,
+	    dataType: 'json',
+	    success: function (data, status, xhr) {
+	      if (options.success) {
+	      	options.success(data, status, xhr);
+	      }
+	    },
+	    error: function (xhr) {
+	      Fluff.log("Error verifying email: " + xhr.status);
+	      if (options.error) {
+	      	options.error(xhr);
+	      }
+	    }
+	  });
+	}
+  return false;
+};
+
+// Request to reset password for a given user email
+Fluff.passwordReset = function (options) {
+	if (options && options.email) {
+	  $.ajax({
+	    type: 'PUT',
+	    url: Fluff.path + '/admin/api/pwreset/' + options.email,
+	    dataType: 'json',
+	    success : function (data, status, xhr) {
+	      if (options.success) {
+	      	options.success(data, status, xhr);
+	      }
+	    },
+	    error : function (xhr) {
+	      Fluff.log("Error requesting password reset: " + xhr.status);
+	      if (options.error) {
+	      	options.error(xhr);
+	      }
+	    }
+	  });
+	}
+  return false;
+};
+
+// Change the user password using a token
+Fluff.passwordChange = function (options) {
+	if (options && options.token && options.password) {
+	  $.ajax({
+	    type: 'PUT',
+	    url: Fluff.path + '/admin/api/pwchange/' + options.token,
+	    data: {password: options.password},
+	    dataType: 'json',
+	    success : function (data, status, xhr) {
+	      if (data) {
+	      	// TBD fix for session backbone model 
+	      	Fluff.session.auth  = data.auth;
+	        Fluff.session.human = data.human;
+	        Fluff.session._csrf = data._csrf;
+	      }
+	      if (options.success) {
+	      	options.success(data, status, xhr);
+	      }
+	    },
+	    error : function (xhr) {
+	      Fluff.log("Error trying to change password: " + xhr.status);
+	      if (options.error) {
+	      	options.error(xhr);
+	      }
+	    }
+	  });
+	}
+  return false;
+};
 
 // Build the models and collections and render the views
 Fluff.init = function (options) {
@@ -915,16 +1083,27 @@ Fluff.init = function (options) {
 		// prefilter for all ajax calls
 	  $.ajaxPrefilter( function( options, originalOptions, jqXHR ) {
 	    // Modify options, control originalOptions, store jqXHR, etc
-	    options.headers = options.headers ? options.headers : {};
+	    options.headers = options.headers || {};
 	    options.headers['X-API-Key'] = encodeURIComponent(Fluff.apikey);
 	  });
+	}
+	// Define this function in the main page to run before Fluff is loaded
+	if (Fluff.preload) {
+		Fluff.preload();
+	}
+	// Initialize Fluff UI if exists
+	if (Fluff.ui.init) {
+		Fluff.ui.init();
 	}
 	if (!(options && (options.harvest == false))) {
 		this.harvestElements();
 		this.harvestTables();
-		this.harvestForms();
 		this.harvestSelects();
-		this.harvestLogins();
+		// No need to harvest again if Fluff UI did it already
+		if (!Fluff.ui.init) {
+			this.harvestLogins();
+			this.harvestForms();
+		}
 	}
 	// Run the ready state callback
   if (options && options.ready) {

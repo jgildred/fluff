@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node app"
+    "start": "node fluff"
   },
   "engines": {
     "node": "0.10.x",
@@ -14,7 +14,7 @@
     "body-parser": "*",
     "cookie-parser": "*",
     "method-override": "*",
-    "static-favicon": "*",
+    "serve-favicon": "*",
     "express-session": "*",
     "mongoose": "*",
     "mime": "*",
@@ -22,6 +22,9 @@
     "inflection": "*",
     "recaptcha-async": "*",
     "wordpos": "*",
-    "xml2js": "*"
+    "xml2js": "*",
+    "winston": "*",
+    "supertest": "*",
+    "mandrill-api": "*"
   }
 }

@@ -29,6 +29,31 @@
   <div class="container">
     <div class="page"></div>
     <div class="popup"></div>
+    <div class="pages">
+      <div class="pageListView"></div>
+      <div class="pageDetailView"></div>
+      <div class="fullScreenEditView"></div>
+      <div class="viewListView"></div>
+      <div class="viewDetailView"></div>
+      <div class="varListView"></div>
+      <div class="modelListView"></div>
+      <div class="modelDetailView"></div>
+      <div class="modelBrowseView"></div>
+      <div class="userListView"></div>
+      <div class="userDetailView"></div>
+      <div class="notificationsView"></div>
+      <div class="siteDetailView"></div>
+    </div>
+    <div class="popups">
+      <div class="signUpView"></div>
+      <div class="loginView"></div>
+      <div class="pwresetView"></div>
+      <div class="pwchangeView"></div>
+      <div class="alertView"></div>
+      <div class="varAddView"></div>
+      <div class="arrangeColumnsView"></div>
+      <div class="importView"></div>
+    </div>
   </div>
   <footer role="contentinfo" class="hidden">
     <div id="inner-footer" class="clearfix">
@@ -86,14 +111,13 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
-          <% if(auth && admin) { %>
           <li id="pages-tab"><a href="#/pages">Pages</a></li>
           <li id="views-tab"><a href="#/views">Views</a></li>
-          <li id="vars-tab"><a href="#/vars">Vars</a></li>
           <li id="models-tab"><a href="#/models">Models</a></li>
+          <li id="vars-tab"><a href="#/vars">Vars</a></li>
+          <li id="notifications-tab"><a href="#/notifications">Notifications</a></li>
           <li id="users-tab"><a href="#/users">Users</a></li>
           <li id="site-tab"><a href="#/site">Site</a></li>
-          <% } %>
         </ul>
       </div>
     </div>
@@ -144,33 +168,33 @@
   
   <script type="text/template" id="login-template">
     <div id="login-modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="text-center" id="loginModalLabel">Welcome back.</h3>
-      </div>
-      <div class="modal-body">
-        <div class="alert hide login-fail">
-          <span class="alert-msg"></span>
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="text-center" id="loginModalLabel">Welcome back.</h3>
+          </div>
+          <div class="modal-body">
+            <div class="alert hide login-fail">
+              <span class="alert-msg"></span>
+            </div>
+            <form class="login-form form-horizontal">
+              <div class="form-group">
+                <label class="control-label col-lg-4 col-sm-4" for="inputEmail">Email</label>
+                <div class="col-lg-6 col-sm-6">
+                  <input type="email" class="form-control" id="inputEmail" name="email" placeholder="" required />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label col-lg-4 col-sm-4" for="inputPassword">Password</label>
+                <div class="col-lg-6 col-sm-6">
+                  <input type="password" class="form-control" id="inputPassword" name="password" placeholder="" required /><br/>
+                  <button type="submit" class="btn btn-primary login">Login</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:$('.modal').modal('hide');pwresetView.render();">I forgot</a>
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
-        <form class="login-form form-horizontal">
-          <div class="form-group">
-            <label class="control-label col-lg-4 col-sm-4" for="inputEmail">Email</label>
-            <div class="col-lg-6 col-sm-6">
-              <input type="email" class="form-control" id="inputEmail" name="email" placeholder="" required />
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label col-lg-4 col-sm-4" for="inputPassword">Password</label>
-            <div class="col-lg-6 col-sm-6">
-              <input type="password" class="form-control" id="inputPassword" name="password" placeholder="" required /><br/>
-              <button type="submit" class="btn btn-primary login">Login</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#/pwreset">I forgot</a>
-            </div>
-          </div>
-        </form>
       </div>
-    </div>
-    </div>
     </div>
   </script>
 
@@ -225,15 +249,17 @@
             <div class="col-lg-6">
               <input type="password" class="form-control" id="inputConfirmPassword" name="confirmpassword" placeholder="" />
           <% if (token) { %>
-            <input type="hidden" name="token" value="<%= htmlEncode(token) %>" />
+              <input type="hidden" name="token" value="<%= htmlEncode(token) %>" />
           <% } else { %>
+            </div>
+          </div>
           <div class="form-group">
             <label class="control-label col-lg-4" for="inputToken">Token</label>
             <div class="col-lg-6">
               <input type="text" class="form-control" id="inputToken" name="token" placeholder="" />
           <% } %>
-              <br/>
-              <button type="submit" class="btn btn-primary pwchange">Save and login</button>
+          <br/>
+            <button type="submit" class="btn btn-primary pwchange">Save and login</button>
             </div>
           </div>
         </form>
@@ -861,7 +887,53 @@
     </form>
   </script>
 
+  <script type="text/template" id="edit-notifications-template">
+    <br/>
+    <form class="edit-notifications-form form-horizontal">
+      <legend>Email Notifications</legend>
+      <br/>
+      <div class="col-lg-4">
+        <select class="form-control" id="selectNotification">
+          <% _(notifications).each(function(option) { %>
+          <option value="<%= option.slug %>"<%= (option.slug == 'signup') ? ' selected' : '' %>><%= option.name %></option>
+          <% }); %>
+        </select>
+      </div>
+      <br/><br/><br/>
+      <% _(notifications).each(function(option, index) { %>
+      <div id="<%= 'notification-' + option.slug %>" class="well col-lg-12 notification-info <%= (option.slug == 'signup') ? '' : 'hidden' %>">
+        <div class="form-group">
+          <h3 class="text-center"><%= option.name %></h3>
+          <br/>
+          <label class="control-label col-lg-1" for="inputNotify<%= option.slug.humanize() %>Subject">Subject</label>
+          <div class="col-lg-11">
+            <input type="text" class="form-control" id="inputNotify<%= option.slug.humanize() %>Subject" name="notifications[<%= index %>].subject" value="<%= option.subject %>" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-lg-1" for="inputNotify<%= option.slug.humanize() %>Body">Body</label>
+          <div class="col-lg-11">
+            <textarea id="inputNotify<%= option.slug.humanize() %>Body" class="form-control" name="notifications[<%= index %>].body" rows="10"><%= option.body %></textarea>
+            <input type="hidden" name="notifications[<%= index %>].name" value="<%= option.name %>" />
+            <input type="hidden" name="notifications[<%= index %>].slug" value="<%= option.slug %>" />
+          </div>
+        </div>
+      </div>
+      <% }); %>
+      <div class="col-lg-12">
+        <fieldset>
+          <hr />
+          <button type="submit" class="btn btn-primary">Update</button>
+          <% if (site) { %>
+          <input type="hidden" name="id" value="<%= site.id %>" />
+          <% } %>
+        </fieldset>
+      </div>
+    </form>
+  </script>
+
   <script type="text/template" id="edit-site-template">
+    <br/>
     <form class="edit-site-form form-horizontal">
       <legend>Site Configuration</legend>
       <br/>
@@ -876,7 +948,7 @@
         <div class="form-group">
           <label class="control-label col-lg-3" for="inputDomain">Domain</label>
           <div class="col-lg-9">
-            <input type="text" id="inputDomain" class="form-control" name="domain" value="<%= site ? site.get('domain') : '' %>" placeholder="www.yourdomain.com" />
+            <input type="text" id="inputDomain" class="form-control" name="domain_name" value="<%= site ? site.get('domain_name') : '' %>" placeholder="www.yourdomain.com" />
           </div>
         </div>
         <div class="form-group">
@@ -937,12 +1009,38 @@
             <textarea id="inputApikeys" class="form-control" name="apikey.keychain[]" placeholder="comma separated list"><%= site ? site.get('apikey').keychain : '' %></textarea>
           </div>
         </div>
+        <div class="form-group">
+          <div class="col-lg-3">
+          </div>
+          <div class="checkbox col-lg-9">
+            <label>
+              <input type="checkbox" value="" <%= (site && site.get('captcha').required) ? 'checked' : '' %> onchange="setCheckVal(document.getElementsByName('captcha.required')[0],this.checked);" />
+                Require Captcha on Sign Up
+              <input type="hidden" name="captcha.required" value="<%= site ? site.get('captcha').required : 'false' %>" />
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-lg-3" for="inputRecaptchaPrivateKey">reCaptcha Private Key</label>
+          <div class="col-lg-9">
+            <input type="text" id="inputRecaptchaPrivateKey" class="form-control" name="captcha.recaptcha_private_key" value="<%= site ? site.get('captcha').recaptcha_private_key : '' %>" placeholder="" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-lg-3" for="inputRecaptchaPublicKey">reCaptcha Public Key</label>
+          <div class="col-lg-9">
+            <input type="text" id="inputRecaptchaPublicKey" class="form-control" name="captcha.recaptcha_public_key" value="<%= site ? site.get('captcha').recaptcha_public_key : '' %>" placeholder="" />
+          </div>
+        </div>
       </fieldset>
       </div>
       <div class="col-lg-1">
       </div>
-      <div class="well col-lg-5">
+      <div class="col-lg-5">
+      <div class="well">
       <fieldset>
+        <h3 class="text-center">Email Gateway</h3>
+        <br/>
         <div class="form-group">
           <label class="control-label col-lg-3" for="inputEmailFrom">Email Address</label>
           <div class="col-lg-9">
@@ -996,11 +1094,11 @@
         </div>
         </fieldset>
       </div>
+      </div>
       <div class="col-lg-12">
         <fieldset>
           <hr />
           <button type="submit" class="btn btn-primary">Update</button>
-          <button type="button" class="btn cancel">Cancel</button>
           <% if (site) { %>
           <input type="hidden" name="id" value="<%= site.id %>" />
           <% } %>

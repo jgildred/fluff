@@ -1,8 +1,102 @@
 
 // MODEL RESOURCE PREPROCESSOR
 
-var app = require('../app');
-var resource = require('./resource');
+var app      = require('../app'),
+    Fluff    = app.Fluff,
+    resource = require('./resource');
+
+var schema = "{ \n\
+  name        : { type: String, unique: true }, \n\
+  model_id    : { type: String, unique: true }, \n\
+  schema_data : String, \n\
+  cursor : { \n\
+    row       : { type: Number, default: 0 }, \n\
+    column    : { type: Number, default: 0 } \n\
+  }, \n\
+  access : { \n\
+    view      : { type: String, enum: [ 'Public', 'Humans', 'Users', 'Owner', 'Admins' ], default: 'Public', required: true }, \n\
+    create    : { type: String, enum: [ 'Public', 'Humans', 'Users', 'Owner', 'Admins' ], default: 'Users',  required: true }, \n\
+    update    : { type: String, enum: [ 'Public', 'Humans', 'Users', 'Owner', 'Admins' ], default: 'Users',  required: true }, \n\
+    remove    : { type: String, enum: [ 'Public', 'Humans', 'Users', 'Owner', 'Admins' ], default: 'Users',  required: true } \n\
+  }, \n\
+  browse_cursor : { \n\
+    item_id     : ObjectId, \n\
+    attribute   : String \n\
+  }, \n\
+  display_columns : [ { \n\
+    name  : String, \n\
+    title : String, \n\
+    size  : Number \n\
+  } ], \n\
+  sort_column : { \n\
+    name      : String, \n\
+    order     : Boolean \n\
+  }, \n\
+  match_fields : [ String ], \n\
+  creator_id     : ObjectId, \n\
+  lastupdater_id : ObjectId, \n\
+  creation       : { type: Date, default: Date.now }, \n\
+  lastupdate     : { type: Date, default: Date.now } \n\
+}";
+exports.schema = schema;
+
+var display_columns = [{
+  name:  'name',
+  title: 'Name',
+  size:  20
+},
+{
+  name:  'model_id',
+  title: 'Model ID',
+  size:  20
+}];
+
+var sort_column = { name:'name', order:true };
+
+// Searchable fields
+var match_fields = ['name'];
+exports.match_fields = match_fields;
+
+// Preprocessor for GET /models/info
+exports.getinfo = function(req, res){
+  app.doIfHasAccess(req, res, 'Admins', app.Model, function(){
+    var data = {
+      schema_data     : schema,
+      display_columns : display_columns,
+      sort_column     : sort_column,
+      match_fields    : match_fields
+    }
+    res.json(data);
+  });
+};
+
+// Preprocessor for GET /:modelName/info
+exports.getModelInfo = function (req, res, modelName) {
+  if (modelName) {
+    Model.where('name', modelName).exec(function (err, data) {
+      if (err) { 
+        Fluff.msgResponse(req, res, 500, JSON.stringify(err));
+      }
+      else { 
+        if (data) {
+          var responseData = {
+            schema_data     : data[0].schema_data,
+            display_columns : data[0].display_columns,
+            sort_column     : data[0].sort_column,
+            match_fields    : data[0].match_fields
+          }
+          res.json(responseData);
+        }
+        else {
+          Fluff.msgResponse(req, res, 404, modelName + ' not found.');
+        }
+      }
+    });
+  }
+  else {
+    Fluff.msgResponse(req, res, 500, "Cannot provide the schema for " + modelName + ".");
+  }
+}
 
 // Preprocessor for GET /models
 exports.find = function (req, res) {
@@ -33,7 +127,7 @@ exports.create = function (req, res) {
         else {
           req.body.model_id = app.dehumanize(req.body.model_id);
         }
-        if (app.flattenArray(app.App.get('models'), 'model_id').indexOf(req.body.model_id) != -1) {
+        if (app.flattenArray(Fluff.app.get('models'), 'model_id').indexOf(req.body.model_id) != -1) {
           app.msgResponse(req, res, 400, 'The model name is already in use.');
         }
         else {
@@ -117,16 +211,16 @@ exports.update = function (req, res) {
         app.msgResponse(req, res, 400, 'Sorry, you can\'t change the model id through the API.');
       }
       else {
-        if (req.body.name && (app.dehumanize(req.body.name) != app.dehumanize(app.App.get('models')[index].name))) {
+        if (req.body.name && (app.dehumanize(req.body.name) != app.dehumanize(Fluff.app.get('models')[index].name))) {
           // Make sure the new name is not stepping on another one
           if (modelIndexFromName(req.body.name) != null) {
             app.msgResponse(req, res, 400, 'Sorry, there\'s already a model named ' + req.body.name + '.');
           }
           // Put the mongoose model under the new name
           else {
-            app.Models[req.body.name] = app.Models[app.App.get('models')[index].name];
-            delete app.Models[app.App.get('models')[index].name];
-            app.App.get('models').splice(index, 1);
+            app.Models[req.body.name] = app.Models[Fluff.app.get('models')[index].name];
+            delete app.Models[Fluff.app.get('models')[index].name];
+            Fluff.app.get('models').splice(index, 1);
             checkSchemaAndUpdate(req, res);
           }
         }
@@ -143,25 +237,25 @@ exports.remove = function (req, res) {
   app.doIfHasAccess(req, res, 'Admins', app.Model, function () {
     app.Model.findById(req.params.id).exec(function(err, model) {
       if (!err && model) {
-        // Remove from Models, app.App.get('models'), db collection and routes
-        var regex = new RegExp("\/" + app.App.get('config').fluff_path + "\/api\/" + app.dehumanize(model.name), "gi");
+        // Remove from Models, Fluff.app.get('models'), db collection and routes
+        var regex = new RegExp("\/" + Fluff.app.get('config').fluff_path + "\/api\/" + app.dehumanize(model.name), "gi");
         app.removeRoutes(regex);
-        app.App.get('models').splice([modelIndexFromId(model._id)], 1);
-        console.log("collections:");
-        console.log(app.mongooseCollection(model));
+        Fluff.app.get('models').splice([modelIndexFromId(model._id)], 1);
+        Fluff.log.info("collections:");
+        Fluff.log.info(app.mongooseCollection(model));
         if (app.mongooseCollection(model)) {
           app.mongooseCollection(model).drop(function(err) {
             if (err) {
-              console.log('Error dropping collection ' + model.model_id);
-              console.log(err);
+              Fluff.log.info('Error dropping collection ' + model.model_id);
+              Fluff.log.info(err);
             }
             else {
-              console.log('Dropped collection ' + model.model_id);
+              Fluff.log.info('Dropped collection ' + model.model_id);
             }
           });
         }
         else {
-          console.log("No need to drop collection " + model.model_id + ".");
+          Fluff.log.info("No need to drop collection " + model.model_id + ".");
         }
         app.Models[model.name] = null;
         delete app.Models[model.name];
@@ -181,9 +275,9 @@ var checkSchemaAndUpdate = function (req, res) {
     if (req.body.schema_data && (req.body.schema_data != model.schema_data)) {
       // Test the schema, if ok then go ahead and update the db then restart the server
       if (app.toModel({model_id: model.model_id + '_test_fluff', schema_data: req.body.schema_data})) {
-        console.log("New schema seems ok, updating model " + model.name + "...");
+        Fluff.log.info("New schema seems ok, updating model " + model.name + "...");
         resource.update(req, res, app.Model, null, function (req, res, model) {
-          app.loadOneModel(req, res, model);
+          app.loadOneModel(model);
         });
       }
       else {
@@ -191,9 +285,9 @@ var checkSchemaAndUpdate = function (req, res) {
       }
     }
     else {
-      console.log("Updating model " + model.name + "...");
+      Fluff.log.info("Updating model " + model.name + "...");
       resource.update(req, res, app.Model, null, function (req, res, model) {
-        app.loadOneModel(req, res, model);
+        app.loadOneModel(model);
       });
     }
   }
@@ -203,11 +297,11 @@ var checkSchemaAndUpdate = function (req, res) {
 });
 }
 
-// This will return the hash from app.App.get('models') matching _id
+// This will return the hash from Fluff.app.get('models') matching _id
 var modelIndexFromId = function (id) {
-  if (id && app.App.get('models')) {
+  if (id && Fluff.app.get('models')) {
     var modelIndex = null;
-    app.App.get('models').forEach(function (model, index) {
+    Fluff.app.get('models').forEach(function (model, index) {
       if (model._id == id.toString()) {
         modelIndex = index;
       }
@@ -225,11 +319,11 @@ var modelIndexFromId = function (id) {
 }
 exports.modelIndexFromId = modelIndexFromId;
 
-// This will return the hash from app.App.get('models') matching name
+// This will return the hash from Fluff.app.get('models') matching name
 var modelIndexFromName = function (name) {
-  if (name && app.App.get('models')) {
+  if (name && Fluff.app.get('models')) {
     var modelIndex = null;
-    app.App.get('models').forEach(function (model, index) {
+    Fluff.app.get('models').forEach(function (model, index) {
       if (model.name == name) {
         modelIndex = index;
       }

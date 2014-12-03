@@ -1,0 +1,42 @@
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept\":\"*/*\",\"connection\":\"keep-alive\",\"cookie\":\"connect.sid=s%3AMV4Ky3NGO7roWMdpxNq_J0If306shdZU.0IBYFHQpd49gVrdckWtSBBmMy%2Fb7ltdHVfQcCCl1Yz8\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/600.3.5 (KHTML, like Gecko) Version/8.0.2 Safari/600.3.5\",\"accept-language\":\"en-us\",\"referer\":\"http://localhost:3000/fluff/user/\",\"accept-encoding\":\"gzip, deflate\"}","timestamp":"2014-11-24T08:27:22.167Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-24T08:27:22.167Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/jquery-2.0.3.min.map","timestamp":"2014-11-24T08:27:22.167Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-24T08:27:22.167Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-24T08:27:22.167Z"}
+{"level":"info","message":"CSRF on server: R2grgffpC3Y2IAI5Ok2pjcyq for session MV4Ky3NGO7roWMdpxNq_J0If306shdZU for unknown user","timestamp":"2014-11-24T08:27:22.167Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-24T08:27:22.167Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-24T08:27:22.167Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-24T08:27:22.168Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-24T08:27:22.169Z"}
+{"level":"info","message":"REQ GET: /fluff/js/underscore-min.map from 127.0.0.1","timestamp":"2014-11-24T08:27:22.170Z"}
+{"level":"info","message":"REQ BODY: {}","timestamp":"2014-11-24T08:27:22.170Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept\":\"*/*\",\"connection\":\"keep-alive\",\"cookie\":\"connect.sid=s%3AMV4Ky3NGO7roWMdpxNq_J0If306shdZU.0IBYFHQpd49gVrdckWtSBBmMy%2Fb7ltdHVfQcCCl1Yz8\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/600.3.5 (KHTML, like Gecko) Version/8.0.2 Safari/600.3.5\",\"accept-language\":\"en-us\",\"referer\":\"http://localhost:3000/fluff/user/\",\"accept-encoding\":\"gzip, deflate\"}","timestamp":"2014-11-24T08:27:22.170Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-24T08:27:22.170Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/underscore-min.map","timestamp":"2014-11-24T08:27:22.170Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-24T08:27:22.170Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-24T08:27:22.170Z"}
+{"level":"info","message":"CSRF on server: R2grgffpC3Y2IAI5Ok2pjcyq for session MV4Ky3NGO7roWMdpxNq_J0If306shdZU for unknown user","timestamp":"2014-11-24T08:27:22.170Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-24T08:27:22.170Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-24T08:27:22.170Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-24T08:27:22.171Z"}
+{"level":"info","message":"MIME type is text/html","timestamp":"2014-11-24T08:27:22.172Z"}
+{"level":"info","message":"MIME type is text/html","timestamp":"2014-11-24T08:27:22.172Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-24T08:27:22.179Z"}
+{"level":"info","message":"REQ GET: /fluff/js/backbone-min.map from 127.0.0.1","timestamp":"2014-11-24T08:27:22.179Z"}
+{"level":"info","message":"REQ BODY: {}","timestamp":"2014-11-24T08:27:22.179Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept\":\"*/*\",\"connection\":\"keep-alive\",\"cookie\":\"connect.sid=s%3AMV4Ky3NGO7roWMdpxNq_J0If306shdZU.0IBYFHQpd49gVrdckWtSBBmMy%2Fb7ltdHVfQcCCl1Yz8\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/600.3.5 (KHTML, like Gecko) Version/8.0.2 Safari/600.3.5\",\"accept-language\":\"en-us\",\"referer\":\"http://localhost:3000/fluff/user/\",\"accept-encoding\":\"gzip, deflate\"}","timestamp":"2014-11-24T08:27:22.179Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-24T08:27:22.179Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/backbone-min.map","timestamp":"2014-11-24T08:27:22.179Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-24T08:27:22.179Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-24T08:27:22.180Z"}
+{"level":"info","message":"CSRF on server: R2grgffpC3Y2IAI5Ok2pjcyq for session MV4Ky3NGO7roWMdpxNq_J0If306shdZU for unknown user","timestamp":"2014-11-24T08:27:22.180Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-24T08:27:22.180Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-24T08:27:22.180Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-24T08:27:22.181Z"}
+{"level":"info","message":"MIME type is text/html","timestamp":"2014-11-24T08:27:22.181Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-24T08:27:32.005Z"}
+{"level":"info","message":"REQ PUT: /fluff/admin/api/pwreset/john@gildred.com from 127.0.0.1","timestamp":"2014-11-24T08:27:32.005Z"}
+{"level":"info","message":"REQ BODY: {}","timestamp":"2014-11-24T08:27:32.005Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"x-requested-with\":\"XMLHttpRequest\",\"accept-encoding\":\"gzip, deflate\",\"x-api-key\":\"1234567890\",\"accept-language\":\"en-us\",\"accept\":\"application/json, text/javascript, */*; q=0.01\",\"origin\":\"http://localhost:3000\",\"content-length\":\"0\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/600.3.5 (KHTML, like Gecko) Version/8.0.2 Safari/600.3.5\",\"referer\":\"http://localhost:3000/fluff/user/\",\"connection\":\"keep-alive\",\"x-csrf-token\":\"\",\"cookie\":\"connect.sid=s%3AMV4Ky3NGO7roWMdpxNq_J0If306shdZU.0IBYFHQpd49gVrdckWtSBBmMy%2Fb7ltdHVfQcCCl1Yz8\"}","timestamp":"2014-11-24T08:27:32.005Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-24T08:27:32.005Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/api/pwreset/john@gildred.com","timestamp":"2014-11-24T08:27:32.005Z"}

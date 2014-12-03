@@ -1,7 +1,7 @@
 Fluff
 =====
 
-The CMS that stays out of your way.
+Web app management system.
 
 REQUIREMENTS: 
 
@@ -41,6 +41,7 @@ INSTALL on AppFog:
 
 ADMIN GUIDE:
 
+Fluff Admin is located at /fluff/admin by default. Within the admin app you can manage most of what Fluff does.
 - PAGES tab manages pages. Each page must use a view template. When editing a page (or view), you can hit Esc to toggle full screen edit view.
 - VIEWS tab manages templates for page layout. Just drop {{content}} into a view's template, right where you want your page content to render, then assign that view to your page. That is the extent of the page design tools. Let the multitude of Javascript UI toolkits do the rest; that's what they're there for.
 - VARS tab manages custom variables. Vars are an easy way to manage strings you use often. Drop {{var.[name]}} into any page or view, where [name] is the name of the var.
@@ -50,7 +51,11 @@ ADMIN GUIDE:
 
 FLUFF.JS:
 
-The fluff.js library is an easy way to get automatic scaffolding of data into your pages. By simply adding model=[model name] attribute to elements like tables, you can auto-populate the table with data from that model. You can also include query=[query params] attribute with the model attribute to specify necessary query params. There is also the option to include 'noharvest' attribute to avoid initial harvest, and 'norender' attribute to avoid render on initial harvest. Some sub elements can accept a field=[field name] attribute when nested within an element containing a model attribute. There is an example page created upon initialization which includes the fluff.js library. It requires jQuery and Backbone.js which are also included for convenience.
+The fluff.js library is an easy way to get automatic scaffolding of data into your pages. By simply adding model=[model name] attribute to elements like tables, you can auto-populate the table with data from that model. You can also include query=[query params] attribute with the model attribute to specify necessary query params. There is also the option to include 'noharvest' attribute to avoid initial harvest, and 'norender' attribute to avoid render on initial harvest. Some sub elements can accept a field=[field name] attribute when nested within an element containing a model attribute. There is an example page created upon initialization which includes the fluff.js library. The fluff.js library requires jQuery and Backbone.js which are also included for convenience.
+
+FLUFF-UI.JS
+
+The fluff-ui.js library reusable set of UI components for basic user-facing functions including user signup, user login, password reset, profile editing, user email verification, and basic alerts. The fluff-ui.js library requires fluff.js.
 
 REST API:
 
@@ -64,20 +69,27 @@ TESTS:
 
 Currently there is only a basic smoke test. Feel free to add more test cases if you're feeling testy. To run the smoke test, in the root dir of the app type "mocha".
 
+LICENSE:
+
+The Fluff project, including the source code, documentation and example plugin, is provided under the MIT License. Plugins other than the example plugin may be licensed under a different license, check the plugin code for more info.
+
 TO DO:
 
-- fluff.js harvest all collections before building
+- optimize fluff.js to harvest all collections before rendering
 - paging of api GET results
 - paged display in admin
 - sort in admin list views
-- search users
+- search users in admin
+- fluff-ui.js support for signup, password reset, email verification and profile editing
 
 WOULD BE NICE:
 
-- an easy way to add admin tabs for plugins
+- an easy way to add admin tabs for plugins, or at least a way to edit configs for plugins via admin
 - list of domains to redirect in site config (for cmspages)
 - manage email templates
 - manage error pages
 - page versioning
 - move session timeout to be user specific
-- meteor-style auto client updates (maybe)
+- move apikeys to be tied to users
+- move CORS domains to be tied to users
+- client data updates auto-propogated using fluff.js and web sockets or socket.io

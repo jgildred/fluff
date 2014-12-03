@@ -1,0 +1,584 @@
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:36:36.132Z"}
+{"level":"info","message":"REQ GET: /fluff/js/backbone-min.map from 127.0.0.1","timestamp":"2014-11-21T06:36:36.132Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:36:36.132Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept\":\"*/*\",\"connection\":\"keep-alive\",\"cookie\":\"connect.sid=s%3AMpzk6K3mt4mjLxL6AENzUVeiHgJLBSjw.jEPhnt3n41Z22q9ZCzR5EcnFnWxldrQIVmD73gqv0OY\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.2 (KHTML, like Gecko) Version/8.0.1 Safari/600.2.2\",\"accept-language\":\"en-us\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip, deflate\"}","timestamp":"2014-11-21T06:36:36.132Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:36:36.132Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/backbone-min.map","timestamp":"2014-11-21T06:36:36.133Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:36:36.133Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:36:36.133Z"}
+{"level":"info","message":"CSRF on server: qKHhbQ1vyGIQwhM2c7+1niUY for session Mpzk6K3mt4mjLxL6AENzUVeiHgJLBSjw for user null","timestamp":"2014-11-21T06:36:36.133Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:36:36.133Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:36:36.133Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:36:36.133Z"}
+{"level":"info","message":"MIME type is text/html","timestamp":"2014-11-21T06:36:36.134Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:36.995Z"}
+{"level":"info","message":"REQ GET: /fluff/admin from 127.0.0.1","timestamp":"2014-11-21T06:41:36.996Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:36.996Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\"}","timestamp":"2014-11-21T06:41:36.996Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:36.996Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin","timestamp":"2014-11-21T06:41:36.996Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:36.996Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:36.996Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:36.997Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:36.997Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:36.997Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:36.997Z"}
+{"level":"info","message":"MIME type is text/html","timestamp":"2014-11-21T06:41:36.998Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:37.004Z"}
+{"level":"info","message":"REQ GET: /fluff/admin/ from 127.0.0.1","timestamp":"2014-11-21T06:41:37.004Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:37.004Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"c1de-539142888\\\"\",\"if-modified-since\":\"Sun, 16 Nov 2014 19:56:02 GMT\"}","timestamp":"2014-11-21T06:41:37.004Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:37.004Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/","timestamp":"2014-11-21T06:41:37.004Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:37.004Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:37.004Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:37.006Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:37.007Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:37.007Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:37.007Z"}
+{"level":"info","message":"MIME type is text/html","timestamp":"2014-11-21T06:41:37.009Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:37.072Z"}
+{"level":"info","message":"REQ GET: /fluff/css/jquery-ui.css from 127.0.0.1","timestamp":"2014-11-21T06:41:37.072Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:37.072Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"text/css,*/*;q=0.1\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"4fe8-1287238481\\\"\",\"if-modified-since\":\"Tue, 17 Dec 2013 17:22:02 GMT\"}","timestamp":"2014-11-21T06:41:37.072Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:37.072Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/css/jquery-ui.css","timestamp":"2014-11-21T06:41:37.072Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:37.072Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:37.072Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:37.073Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:37.073Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:37.073Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:37.073Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:37.074Z"}
+{"level":"info","message":"REQ GET: /fluff/css/bootstrap-glyphicons.css from 127.0.0.1","timestamp":"2014-11-21T06:41:37.074Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:37.074Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"text/css,*/*;q=0.1\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"1da3-394994219\\\"\",\"if-modified-since\":\"Sat, 27 Jul 2013 03:11:00 GMT\"}","timestamp":"2014-11-21T06:41:37.074Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:37.075Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/css/bootstrap-glyphicons.css","timestamp":"2014-11-21T06:41:37.075Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:37.075Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:37.075Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:37.075Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:37.075Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:37.075Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:37.075Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:37.076Z"}
+{"level":"info","message":"REQ GET: /fluff/css/bootstrap.css from 127.0.0.1","timestamp":"2014-11-21T06:41:37.076Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:37.076Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"text/css,*/*;q=0.1\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"1abce-1246558897\\\"\",\"if-modified-since\":\"Thu, 26 Jun 2014 16:14:11 GMT\"}","timestamp":"2014-11-21T06:41:37.076Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:37.076Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/css/bootstrap.css","timestamp":"2014-11-21T06:41:37.076Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:37.076Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:37.076Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:37.076Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:37.076Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:37.076Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:37.077Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:37.077Z"}
+{"level":"info","message":"REQ GET: /fluff/css/handsontable.css from 127.0.0.1","timestamp":"2014-11-21T06:41:37.077Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:37.077Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"text/css,*/*;q=0.1\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"2de2-4015568500\\\"\",\"if-modified-since\":\"Tue, 20 Aug 2013 13:42:20 GMT\"}","timestamp":"2014-11-21T06:41:37.077Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:37.077Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/css/handsontable.css","timestamp":"2014-11-21T06:41:37.077Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:37.077Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:37.078Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:37.078Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:37.078Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:37.078Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:37.078Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:37.078Z"}
+{"level":"info","message":"REQ GET: /fluff/css/admin.css from 127.0.0.1","timestamp":"2014-11-21T06:41:37.078Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:37.078Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"text/css,*/*;q=0.1\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"a72-718765201\\\"\",\"if-modified-since\":\"Tue, 28 Oct 2014 05:50:25 GMT\"}","timestamp":"2014-11-21T06:41:37.079Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:37.079Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/css/admin.css","timestamp":"2014-11-21T06:41:37.079Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:37.079Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:37.079Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:37.079Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:37.079Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:37.079Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:37.079Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:37.079Z"}
+{"level":"info","message":"REQ GET: /fluff/js/jquery.js from 127.0.0.1","timestamp":"2014-11-21T06:41:37.079Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:37.079Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"*/*\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"1469c-2638489029\\\"\",\"if-modified-since\":\"Thu, 01 Aug 2013 00:20:50 GMT\"}","timestamp":"2014-11-21T06:41:37.080Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:37.080Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/jquery.js","timestamp":"2014-11-21T06:41:37.080Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:37.080Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:37.080Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:37.080Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:37.080Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:37.080Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:37.080Z"}
+{"level":"info","message":"MIME type is text/css","timestamp":"2014-11-21T06:41:37.080Z"}
+{"level":"info","message":"MIME type is text/css","timestamp":"2014-11-21T06:41:37.081Z"}
+{"level":"info","message":"MIME type is text/css","timestamp":"2014-11-21T06:41:37.081Z"}
+{"level":"info","message":"MIME type is text/css","timestamp":"2014-11-21T06:41:37.082Z"}
+{"level":"info","message":"MIME type is text/css","timestamp":"2014-11-21T06:41:37.082Z"}
+{"level":"info","message":"MIME type is application/javascript","timestamp":"2014-11-21T06:41:37.083Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:37.086Z"}
+{"level":"info","message":"REQ GET: /fluff/js/underscore.js from 127.0.0.1","timestamp":"2014-11-21T06:41:37.086Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:37.086Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"*/*\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"373b-2931244539\\\"\",\"if-modified-since\":\"Thu, 01 Aug 2013 00:22:57 GMT\"}","timestamp":"2014-11-21T06:41:37.086Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:37.086Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/underscore.js","timestamp":"2014-11-21T06:41:37.086Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:37.086Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:37.086Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:37.086Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:37.086Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:37.086Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:37.087Z"}
+{"level":"info","message":"MIME type is application/javascript","timestamp":"2014-11-21T06:41:37.094Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:37.096Z"}
+{"level":"info","message":"REQ GET: /fluff/js/bootstrap.js from 127.0.0.1","timestamp":"2014-11-21T06:41:37.097Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:37.097Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"*/*\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"7c4b-1246558897\\\"\",\"if-modified-since\":\"Thu, 26 Jun 2014 16:14:11 GMT\"}","timestamp":"2014-11-21T06:41:37.097Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:37.097Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/bootstrap.js","timestamp":"2014-11-21T06:41:37.097Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:37.097Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:37.097Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:37.097Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:37.097Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:37.097Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:37.097Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:37.098Z"}
+{"level":"info","message":"REQ GET: /fluff/js/backbone.js from 127.0.0.1","timestamp":"2014-11-21T06:41:37.098Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:37.098Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"*/*\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"4c01-2537161022\\\"\",\"if-modified-since\":\"Thu, 01 Aug 2013 00:21:57 GMT\"}","timestamp":"2014-11-21T06:41:37.098Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:37.098Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/backbone.js","timestamp":"2014-11-21T06:41:37.098Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:37.098Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:37.098Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:37.099Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:37.099Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:37.099Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:37.099Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:37.099Z"}
+{"level":"info","message":"REQ GET: /fluff/js/inflection.js from 127.0.0.1","timestamp":"2014-11-21T06:41:37.099Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:37.100Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"*/*\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"589e-3684380307\\\"\",\"if-modified-since\":\"Sat, 03 Aug 2013 19:53:09 GMT\"}","timestamp":"2014-11-21T06:41:37.100Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:37.100Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/inflection.js","timestamp":"2014-11-21T06:41:37.100Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:37.100Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:37.100Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:37.100Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:37.100Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:37.100Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:37.100Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:37.101Z"}
+{"level":"info","message":"REQ GET: /fluff/js/jquery-ui.js from 127.0.0.1","timestamp":"2014-11-21T06:41:37.101Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:37.101Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"*/*\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"25945-1287238481\\\"\",\"if-modified-since\":\"Tue, 17 Dec 2013 17:22:02 GMT\"}","timestamp":"2014-11-21T06:41:37.101Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:37.101Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/jquery-ui.js","timestamp":"2014-11-21T06:41:37.101Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:37.101Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:37.101Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:37.101Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:37.102Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:37.102Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:37.102Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:37.102Z"}
+{"level":"info","message":"REQ GET: /fluff/js/handsontable.js from 127.0.0.1","timestamp":"2014-11-21T06:41:37.102Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:37.102Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"*/*\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"68ac5-3545647216\\\"\",\"if-modified-since\":\"Fri, 23 Aug 2013 06:32:07 GMT\"}","timestamp":"2014-11-21T06:41:37.102Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:37.102Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/handsontable.js","timestamp":"2014-11-21T06:41:37.102Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:37.102Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:37.103Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:37.103Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:37.103Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:37.103Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:37.103Z"}
+{"level":"info","message":"MIME type is application/javascript","timestamp":"2014-11-21T06:41:37.103Z"}
+{"level":"info","message":"MIME type is application/javascript","timestamp":"2014-11-21T06:41:37.104Z"}
+{"level":"info","message":"MIME type is application/javascript","timestamp":"2014-11-21T06:41:37.104Z"}
+{"level":"info","message":"MIME type is application/javascript","timestamp":"2014-11-21T06:41:37.105Z"}
+{"level":"info","message":"MIME type is application/javascript","timestamp":"2014-11-21T06:41:37.105Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:37.106Z"}
+{"level":"info","message":"REQ GET: /fluff/js/ace/ace.js from 127.0.0.1","timestamp":"2014-11-21T06:41:37.106Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:37.106Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"*/*\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"51ab6-1219181983\\\"\",\"if-modified-since\":\"Thu, 23 Jan 2014 05:06:06 GMT\"}","timestamp":"2014-11-21T06:41:37.106Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:37.106Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/ace/ace.js","timestamp":"2014-11-21T06:41:37.107Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:37.107Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:37.107Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:37.107Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:37.107Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:37.107Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:37.109Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:37.112Z"}
+{"level":"info","message":"REQ GET: /fluff/admin/admin.js from 127.0.0.1","timestamp":"2014-11-21T06:41:37.112Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:37.112Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"*/*\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"f58c-1299732668\\\"\",\"if-modified-since\":\"Thu, 06 Nov 2014 08:17:06 GMT\"}","timestamp":"2014-11-21T06:41:37.112Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:37.112Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/admin.js","timestamp":"2014-11-21T06:41:37.112Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:37.112Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:37.112Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:37.112Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:37.112Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:37.112Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:37.123Z"}
+{"level":"info","message":"MIME type is application/javascript","timestamp":"2014-11-21T06:41:37.124Z"}
+{"level":"info","message":"MIME type is application/javascript","timestamp":"2014-11-21T06:41:37.125Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:37.336Z"}
+{"level":"info","message":"REQ GET: /fluff/admin/admin.js from 127.0.0.1","timestamp":"2014-11-21T06:41:37.336Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:37.336Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"*/*\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"10829-1102215481\\\"\",\"if-modified-since\":\"Fri, 21 Nov 2014 06:38:40 GMT\"}","timestamp":"2014-11-21T06:41:37.336Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:37.336Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/admin.js","timestamp":"2014-11-21T06:41:37.337Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:37.337Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:37.337Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:37.337Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:37.337Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:37.337Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:37.337Z"}
+{"level":"info","message":"MIME type is application/javascript","timestamp":"2014-11-21T06:41:37.338Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:37.361Z"}
+{"level":"info","message":"REQ GET: /fluff/admin/api/auth from 127.0.0.1","timestamp":"2014-11-21T06:41:37.361Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:37.361Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"application/json, text/javascript, */*; q=0.01\",\"x-requested-with\":\"XMLHttpRequest\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"x-api-key\":\"1234567890\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"af-bb16a16f\\\"\"}","timestamp":"2014-11-21T06:41:37.362Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:37.362Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/api/auth","timestamp":"2014-11-21T06:41:37.362Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:37.362Z"}
+{"level":"info","message":"API keys are 1234567890","timestamp":"2014-11-21T06:41:37.362Z"}
+{"level":"info","message":"client API key is 1234567890","timestamp":"2014-11-21T06:41:37.362Z"}
+{"level":"info","message":"API key OK.","timestamp":"2014-11-21T06:41:37.362Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:37.362Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:37.362Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:37.362Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:37.416Z"}
+{"level":"info","message":"REQ GET: /fluff/images/favicon.ico from 127.0.0.1","timestamp":"2014-11-21T06:41:37.416Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:37.416Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"*/*\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"47e-3048042664\\\"\",\"if-modified-since\":\"Fri, 12 Jul 2013 08:08:27 GMT\"}","timestamp":"2014-11-21T06:41:37.416Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:37.416Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/images/favicon.ico","timestamp":"2014-11-21T06:41:37.416Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:37.416Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:37.416Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:37.416Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:37.416Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:37.416Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:37.416Z"}
+{"level":"info","message":"MIME type is image/x-icon","timestamp":"2014-11-21T06:41:37.417Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:45.605Z"}
+{"level":"info","message":"REQ GET: /fluff/css/jquery-ui.css from 127.0.0.1","timestamp":"2014-11-21T06:41:45.605Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:45.605Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"text/css,*/*;q=0.1\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"4fe8-1287238481\\\"\",\"if-modified-since\":\"Tue, 17 Dec 2013 17:22:02 GMT\"}","timestamp":"2014-11-21T06:41:45.605Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:45.606Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/css/jquery-ui.css","timestamp":"2014-11-21T06:41:45.606Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:45.606Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:45.606Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:45.606Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:45.606Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:45.606Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:45.606Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:45.611Z"}
+{"level":"info","message":"REQ GET: /fluff/css/bootstrap.css from 127.0.0.1","timestamp":"2014-11-21T06:41:45.611Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:45.611Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"text/css,*/*;q=0.1\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"1abce-1246558897\\\"\",\"if-modified-since\":\"Thu, 26 Jun 2014 16:14:11 GMT\"}","timestamp":"2014-11-21T06:41:45.611Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:45.611Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/css/bootstrap.css","timestamp":"2014-11-21T06:41:45.611Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:45.612Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:45.612Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:45.612Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:45.612Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:45.612Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:45.612Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:45.614Z"}
+{"level":"info","message":"REQ GET: /fluff/css/bootstrap-glyphicons.css from 127.0.0.1","timestamp":"2014-11-21T06:41:45.614Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:45.614Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"text/css,*/*;q=0.1\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"1da3-394994219\\\"\",\"if-modified-since\":\"Sat, 27 Jul 2013 03:11:00 GMT\"}","timestamp":"2014-11-21T06:41:45.615Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:45.615Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/css/bootstrap-glyphicons.css","timestamp":"2014-11-21T06:41:45.615Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:45.615Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:45.617Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:45.617Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:45.617Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:45.617Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:45.617Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:45.618Z"}
+{"level":"info","message":"REQ GET: /fluff/css/handsontable.css from 127.0.0.1","timestamp":"2014-11-21T06:41:45.618Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:45.618Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"text/css,*/*;q=0.1\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"2de2-4015568500\\\"\",\"if-modified-since\":\"Tue, 20 Aug 2013 13:42:20 GMT\"}","timestamp":"2014-11-21T06:41:45.618Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:45.618Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/css/handsontable.css","timestamp":"2014-11-21T06:41:45.618Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:45.618Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:45.618Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:45.619Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:45.619Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:45.619Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:45.619Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:41:45.619Z"}
+{"level":"info","message":"REQ GET: /fluff/css/admin.css from 127.0.0.1","timestamp":"2014-11-21T06:41:45.619Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:41:45.619Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"connection\":\"keep-alive\",\"accept\":\"text/css,*/*;q=0.1\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip,deflate,sdch\",\"accept-language\":\"en-US,en;q=0.8\",\"cookie\":\"connect.sid=s%3A6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF.LEuc9pRuqdDTR5Sgv12oE9pRgmV8lVZxZzhUCa7Dcgs\",\"if-none-match\":\"W/\\\"a72-2505059885\\\"\",\"if-modified-since\":\"Tue, 18 Nov 2014 20:22:27 GMT\"}","timestamp":"2014-11-21T06:41:45.620Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:41:45.620Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/css/admin.css","timestamp":"2014-11-21T06:41:45.620Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:41:45.620Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:41:45.620Z"}
+{"level":"info","message":"CSRF on server: c606fuKNlDqN5yF6EqE5olRk for session 6qbUwiBAf8PbJJ8BfuCqxSBZF8yTVdjF for user undefined","timestamp":"2014-11-21T06:41:45.620Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:41:45.620Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:41:45.620Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:41:45.620Z"}
+{"level":"info","message":"MIME type is text/css","timestamp":"2014-11-21T06:41:45.621Z"}
+{"level":"info","message":"MIME type is text/css","timestamp":"2014-11-21T06:41:45.621Z"}
+{"level":"info","message":"MIME type is text/css","timestamp":"2014-11-21T06:41:45.621Z"}
+{"level":"info","message":"MIME type is text/css","timestamp":"2014-11-21T06:41:45.622Z"}
+{"level":"info","message":"MIME type is text/css","timestamp":"2014-11-21T06:41:45.622Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:42:00.384Z"}
+{"level":"info","message":"REQ GET: / from 127.0.0.1","timestamp":"2014-11-21T06:42:00.385Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:42:00.385Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept\":\"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\",\"accept-language\":\"en-us\",\"connection\":\"keep-alive\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.2 (KHTML, like Gecko) Version/8.0.1 Safari/600.2.2\"}","timestamp":"2014-11-21T06:42:00.385Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:42:00.385Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/","timestamp":"2014-11-21T06:42:00.385Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:42:00.385Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:42:00.385Z"}
+{"level":"info","message":"CSRF on server: 8+Io7hvsKSp3F3ASKlURhh/n for session cKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R for user undefined","timestamp":"2014-11-21T06:42:00.385Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:42:00.385Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:42:00.385Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:42:00.386Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:42:04.193Z"}
+{"level":"info","message":"REQ GET: /fluff/admin/ from 127.0.0.1","timestamp":"2014-11-21T06:42:04.193Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:42:04.193Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"cookie\":\"connect.sid=s%3AcKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R.FeUxe4Z1l6YDBF%2FP7WxDxY%2B08PrMSKKF4kJJvnOchgg\",\"if-none-match\":\"W/\\\"ce75-2204866476\\\"\",\"accept\":\"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\",\"if-modified-since\":\"Thu, 20 Nov 2014 17:37:39 GMT\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.2 (KHTML, like Gecko) Version/8.0.1 Safari/600.2.2\",\"accept-language\":\"en-us\",\"accept-encoding\":\"gzip, deflate\",\"connection\":\"keep-alive\"}","timestamp":"2014-11-21T06:42:04.193Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:42:04.193Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/","timestamp":"2014-11-21T06:42:04.193Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:42:04.193Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:42:04.193Z"}
+{"level":"info","message":"CSRF on server: 8+Io7hvsKSp3F3ASKlURhh/n for session cKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R for user undefined","timestamp":"2014-11-21T06:42:04.193Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:42:04.193Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:42:04.193Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:42:04.194Z"}
+{"level":"info","message":"MIME type is text/html","timestamp":"2014-11-21T06:42:04.194Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:42:04.210Z"}
+{"level":"info","message":"REQ GET: /fluff/css/jquery-ui.css from 127.0.0.1","timestamp":"2014-11-21T06:42:04.211Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:42:04.211Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept\":\"text/css,*/*;q=0.1\",\"connection\":\"keep-alive\",\"cookie\":\"connect.sid=s%3AcKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R.FeUxe4Z1l6YDBF%2FP7WxDxY%2B08PrMSKKF4kJJvnOchgg\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.2 (KHTML, like Gecko) Version/8.0.1 Safari/600.2.2\",\"accept-language\":\"en-us\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip, deflate\"}","timestamp":"2014-11-21T06:42:04.211Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:42:04.212Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/css/jquery-ui.css","timestamp":"2014-11-21T06:42:04.212Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:42:04.212Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:42:04.212Z"}
+{"level":"info","message":"CSRF on server: 8+Io7hvsKSp3F3ASKlURhh/n for session cKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R for user undefined","timestamp":"2014-11-21T06:42:04.213Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:42:04.213Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:42:04.213Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:42:04.214Z"}
+{"level":"info","message":"MIME type is text/css","timestamp":"2014-11-21T06:42:04.216Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:42:04.219Z"}
+{"level":"info","message":"REQ GET: /fluff/css/bootstrap.css from 127.0.0.1","timestamp":"2014-11-21T06:42:04.220Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:42:04.220Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept\":\"text/css,*/*;q=0.1\",\"connection\":\"keep-alive\",\"cookie\":\"connect.sid=s%3AcKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R.FeUxe4Z1l6YDBF%2FP7WxDxY%2B08PrMSKKF4kJJvnOchgg\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.2 (KHTML, like Gecko) Version/8.0.1 Safari/600.2.2\",\"accept-language\":\"en-us\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip, deflate\"}","timestamp":"2014-11-21T06:42:04.220Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:42:04.220Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/css/bootstrap.css","timestamp":"2014-11-21T06:42:04.220Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:42:04.220Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:42:04.220Z"}
+{"level":"info","message":"CSRF on server: 8+Io7hvsKSp3F3ASKlURhh/n for session cKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R for user undefined","timestamp":"2014-11-21T06:42:04.220Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:42:04.220Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:42:04.220Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:42:04.220Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:42:04.221Z"}
+{"level":"info","message":"REQ GET: /fluff/css/handsontable.css from 127.0.0.1","timestamp":"2014-11-21T06:42:04.221Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:42:04.222Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept\":\"text/css,*/*;q=0.1\",\"connection\":\"keep-alive\",\"cookie\":\"connect.sid=s%3AcKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R.FeUxe4Z1l6YDBF%2FP7WxDxY%2B08PrMSKKF4kJJvnOchgg\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.2 (KHTML, like Gecko) Version/8.0.1 Safari/600.2.2\",\"accept-language\":\"en-us\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip, deflate\"}","timestamp":"2014-11-21T06:42:04.222Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:42:04.222Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/css/handsontable.css","timestamp":"2014-11-21T06:42:04.222Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:42:04.222Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:42:04.222Z"}
+{"level":"info","message":"CSRF on server: 8+Io7hvsKSp3F3ASKlURhh/n for session cKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R for user undefined","timestamp":"2014-11-21T06:42:04.222Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:42:04.222Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:42:04.222Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:42:04.223Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:42:04.224Z"}
+{"level":"info","message":"REQ GET: /fluff/css/bootstrap-glyphicons.css from 127.0.0.1","timestamp":"2014-11-21T06:42:04.224Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:42:04.224Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept\":\"text/css,*/*;q=0.1\",\"connection\":\"keep-alive\",\"cookie\":\"connect.sid=s%3AcKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R.FeUxe4Z1l6YDBF%2FP7WxDxY%2B08PrMSKKF4kJJvnOchgg\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.2 (KHTML, like Gecko) Version/8.0.1 Safari/600.2.2\",\"accept-language\":\"en-us\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip, deflate\"}","timestamp":"2014-11-21T06:42:04.224Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:42:04.224Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/css/bootstrap-glyphicons.css","timestamp":"2014-11-21T06:42:04.224Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:42:04.224Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:42:04.224Z"}
+{"level":"info","message":"CSRF on server: 8+Io7hvsKSp3F3ASKlURhh/n for session cKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R for user undefined","timestamp":"2014-11-21T06:42:04.224Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:42:04.224Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:42:04.224Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:42:04.224Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:42:04.225Z"}
+{"level":"info","message":"REQ GET: /fluff/css/admin.css from 127.0.0.1","timestamp":"2014-11-21T06:42:04.225Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:42:04.225Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept\":\"text/css,*/*;q=0.1\",\"connection\":\"keep-alive\",\"cookie\":\"connect.sid=s%3AcKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R.FeUxe4Z1l6YDBF%2FP7WxDxY%2B08PrMSKKF4kJJvnOchgg\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.2 (KHTML, like Gecko) Version/8.0.1 Safari/600.2.2\",\"accept-language\":\"en-us\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip, deflate\"}","timestamp":"2014-11-21T06:42:04.225Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:42:04.225Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/css/admin.css","timestamp":"2014-11-21T06:42:04.225Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:42:04.225Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:42:04.226Z"}
+{"level":"info","message":"CSRF on server: 8+Io7hvsKSp3F3ASKlURhh/n for session cKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R for user undefined","timestamp":"2014-11-21T06:42:04.226Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:42:04.226Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:42:04.226Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:42:04.226Z"}
+{"level":"info","message":"MIME type is text/css","timestamp":"2014-11-21T06:42:04.227Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:42:04.227Z"}
+{"level":"info","message":"REQ GET: /fluff/js/jquery.js from 127.0.0.1","timestamp":"2014-11-21T06:42:04.227Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:42:04.227Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept\":\"*/*\",\"connection\":\"keep-alive\",\"cookie\":\"connect.sid=s%3AcKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R.FeUxe4Z1l6YDBF%2FP7WxDxY%2B08PrMSKKF4kJJvnOchgg\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.2 (KHTML, like Gecko) Version/8.0.1 Safari/600.2.2\",\"accept-language\":\"en-us\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip, deflate\"}","timestamp":"2014-11-21T06:42:04.227Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:42:04.227Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/jquery.js","timestamp":"2014-11-21T06:42:04.228Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:42:04.228Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:42:04.228Z"}
+{"level":"info","message":"CSRF on server: 8+Io7hvsKSp3F3ASKlURhh/n for session cKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R for user undefined","timestamp":"2014-11-21T06:42:04.228Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:42:04.228Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:42:04.228Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:42:04.228Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:42:04.228Z"}
+{"level":"info","message":"REQ GET: /fluff/js/underscore.js from 127.0.0.1","timestamp":"2014-11-21T06:42:04.229Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:42:04.229Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept\":\"*/*\",\"connection\":\"keep-alive\",\"cookie\":\"connect.sid=s%3AcKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R.FeUxe4Z1l6YDBF%2FP7WxDxY%2B08PrMSKKF4kJJvnOchgg\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.2 (KHTML, like Gecko) Version/8.0.1 Safari/600.2.2\",\"accept-language\":\"en-us\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip, deflate\"}","timestamp":"2014-11-21T06:42:04.229Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:42:04.229Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/underscore.js","timestamp":"2014-11-21T06:42:04.229Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:42:04.229Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:42:04.229Z"}
+{"level":"info","message":"CSRF on server: 8+Io7hvsKSp3F3ASKlURhh/n for session cKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R for user undefined","timestamp":"2014-11-21T06:42:04.229Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:42:04.229Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:42:04.229Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:42:04.230Z"}
+{"level":"info","message":"MIME type is text/css","timestamp":"2014-11-21T06:42:04.230Z"}
+{"level":"info","message":"MIME type is text/css","timestamp":"2014-11-21T06:42:04.230Z"}
+{"level":"info","message":"MIME type is text/css","timestamp":"2014-11-21T06:42:04.231Z"}
+{"level":"info","message":"MIME type is application/javascript","timestamp":"2014-11-21T06:42:04.231Z"}
+{"level":"info","message":"MIME type is application/javascript","timestamp":"2014-11-21T06:42:04.232Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:42:04.236Z"}
+{"level":"info","message":"REQ GET: /fluff/js/backbone.js from 127.0.0.1","timestamp":"2014-11-21T06:42:04.236Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:42:04.236Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept\":\"*/*\",\"connection\":\"keep-alive\",\"cookie\":\"connect.sid=s%3AcKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R.FeUxe4Z1l6YDBF%2FP7WxDxY%2B08PrMSKKF4kJJvnOchgg\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.2 (KHTML, like Gecko) Version/8.0.1 Safari/600.2.2\",\"accept-language\":\"en-us\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip, deflate\"}","timestamp":"2014-11-21T06:42:04.236Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:42:04.236Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/backbone.js","timestamp":"2014-11-21T06:42:04.236Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:42:04.237Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:42:04.237Z"}
+{"level":"info","message":"CSRF on server: 8+Io7hvsKSp3F3ASKlURhh/n for session cKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R for user undefined","timestamp":"2014-11-21T06:42:04.237Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:42:04.237Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:42:04.237Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:42:04.238Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:42:04.239Z"}
+{"level":"info","message":"REQ GET: /fluff/js/bootstrap.js from 127.0.0.1","timestamp":"2014-11-21T06:42:04.239Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:42:04.239Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept\":\"*/*\",\"connection\":\"keep-alive\",\"cookie\":\"connect.sid=s%3AcKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R.FeUxe4Z1l6YDBF%2FP7WxDxY%2B08PrMSKKF4kJJvnOchgg\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.2 (KHTML, like Gecko) Version/8.0.1 Safari/600.2.2\",\"accept-language\":\"en-us\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip, deflate\"}","timestamp":"2014-11-21T06:42:04.239Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:42:04.239Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/bootstrap.js","timestamp":"2014-11-21T06:42:04.239Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:42:04.239Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:42:04.239Z"}
+{"level":"info","message":"CSRF on server: 8+Io7hvsKSp3F3ASKlURhh/n for session cKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R for user undefined","timestamp":"2014-11-21T06:42:04.239Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:42:04.239Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:42:04.240Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:42:04.240Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:42:04.241Z"}
+{"level":"info","message":"REQ GET: /fluff/js/jquery-ui.js from 127.0.0.1","timestamp":"2014-11-21T06:42:04.242Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:42:04.242Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept\":\"*/*\",\"connection\":\"keep-alive\",\"cookie\":\"connect.sid=s%3AcKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R.FeUxe4Z1l6YDBF%2FP7WxDxY%2B08PrMSKKF4kJJvnOchgg\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.2 (KHTML, like Gecko) Version/8.0.1 Safari/600.2.2\",\"accept-language\":\"en-us\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip, deflate\"}","timestamp":"2014-11-21T06:42:04.242Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:42:04.242Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/jquery-ui.js","timestamp":"2014-11-21T06:42:04.242Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:42:04.242Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:42:04.242Z"}
+{"level":"info","message":"CSRF on server: 8+Io7hvsKSp3F3ASKlURhh/n for session cKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R for user undefined","timestamp":"2014-11-21T06:42:04.242Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:42:04.242Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:42:04.242Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:42:04.242Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:42:04.243Z"}
+{"level":"info","message":"REQ GET: /fluff/js/ace/ace.js from 127.0.0.1","timestamp":"2014-11-21T06:42:04.243Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:42:04.243Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept\":\"*/*\",\"connection\":\"keep-alive\",\"cookie\":\"connect.sid=s%3AcKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R.FeUxe4Z1l6YDBF%2FP7WxDxY%2B08PrMSKKF4kJJvnOchgg\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.2 (KHTML, like Gecko) Version/8.0.1 Safari/600.2.2\",\"accept-language\":\"en-us\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip, deflate\"}","timestamp":"2014-11-21T06:42:04.243Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:42:04.243Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/ace/ace.js","timestamp":"2014-11-21T06:42:04.243Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:42:04.243Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:42:04.243Z"}
+{"level":"info","message":"CSRF on server: 8+Io7hvsKSp3F3ASKlURhh/n for session cKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R for user undefined","timestamp":"2014-11-21T06:42:04.243Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:42:04.243Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:42:04.243Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:42:04.243Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:42:04.244Z"}
+{"level":"info","message":"REQ GET: /fluff/js/handsontable.js from 127.0.0.1","timestamp":"2014-11-21T06:42:04.244Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:42:04.244Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept\":\"*/*\",\"connection\":\"keep-alive\",\"cookie\":\"connect.sid=s%3AcKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R.FeUxe4Z1l6YDBF%2FP7WxDxY%2B08PrMSKKF4kJJvnOchgg\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.2 (KHTML, like Gecko) Version/8.0.1 Safari/600.2.2\",\"accept-language\":\"en-us\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip, deflate\"}","timestamp":"2014-11-21T06:42:04.244Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:42:04.244Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/handsontable.js","timestamp":"2014-11-21T06:42:04.244Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:42:04.244Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:42:04.244Z"}
+{"level":"info","message":"CSRF on server: 8+Io7hvsKSp3F3ASKlURhh/n for session cKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R for user undefined","timestamp":"2014-11-21T06:42:04.244Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:42:04.244Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:42:04.245Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:42:04.252Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:42:04.253Z"}
+{"level":"info","message":"REQ GET: /fluff/js/inflection.js from 127.0.0.1","timestamp":"2014-11-21T06:42:04.253Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:42:04.253Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept\":\"*/*\",\"connection\":\"keep-alive\",\"cookie\":\"connect.sid=s%3AcKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R.FeUxe4Z1l6YDBF%2FP7WxDxY%2B08PrMSKKF4kJJvnOchgg\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.2 (KHTML, like Gecko) Version/8.0.1 Safari/600.2.2\",\"accept-language\":\"en-us\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip, deflate\"}","timestamp":"2014-11-21T06:42:04.253Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:42:04.253Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/inflection.js","timestamp":"2014-11-21T06:42:04.254Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:42:04.254Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:42:04.254Z"}
+{"level":"info","message":"CSRF on server: 8+Io7hvsKSp3F3ASKlURhh/n for session cKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R for user undefined","timestamp":"2014-11-21T06:42:04.254Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:42:04.254Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:42:04.254Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:42:04.254Z"}
+{"level":"info","message":"MIME type is application/javascript","timestamp":"2014-11-21T06:42:04.254Z"}
+{"level":"info","message":"MIME type is application/javascript","timestamp":"2014-11-21T06:42:04.255Z"}
+{"level":"info","message":"MIME type is application/javascript","timestamp":"2014-11-21T06:42:04.255Z"}
+{"level":"info","message":"MIME type is application/javascript","timestamp":"2014-11-21T06:42:04.255Z"}
+{"level":"info","message":"MIME type is application/javascript","timestamp":"2014-11-21T06:42:04.256Z"}
+{"level":"info","message":"MIME type is application/javascript","timestamp":"2014-11-21T06:42:04.258Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:42:04.260Z"}
+{"level":"info","message":"REQ GET: /fluff/admin/admin.js from 127.0.0.1","timestamp":"2014-11-21T06:42:04.260Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:42:04.260Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"cookie\":\"connect.sid=s%3AcKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R.FeUxe4Z1l6YDBF%2FP7WxDxY%2B08PrMSKKF4kJJvnOchgg\",\"connection\":\"keep-alive\",\"if-none-match\":\"W/\\\"10829-1022981260\\\"\",\"accept\":\"*/*\",\"if-modified-since\":\"Fri, 21 Nov 2014 06:36:26 GMT\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.2 (KHTML, like Gecko) Version/8.0.1 Safari/600.2.2\",\"accept-language\":\"en-us\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip, deflate\"}","timestamp":"2014-11-21T06:42:04.261Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:42:04.261Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/admin.js","timestamp":"2014-11-21T06:42:04.261Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:42:04.261Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:42:04.261Z"}
+{"level":"info","message":"CSRF on server: 8+Io7hvsKSp3F3ASKlURhh/n for session cKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R for user undefined","timestamp":"2014-11-21T06:42:04.261Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:42:04.261Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:42:04.261Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:42:04.262Z"}
+{"level":"info","message":"MIME type is application/javascript","timestamp":"2014-11-21T06:42:04.263Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:42:04.366Z"}
+{"level":"info","message":"REQ GET: /fluff/admin/api/auth from 127.0.0.1","timestamp":"2014-11-21T06:42:04.366Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:42:04.367Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept-encoding\":\"gzip, deflate\",\"cookie\":\"connect.sid=s%3AcKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R.FeUxe4Z1l6YDBF%2FP7WxDxY%2B08PrMSKKF4kJJvnOchgg\",\"connection\":\"keep-alive\",\"x-api-key\":\"1234567890\",\"if-none-match\":\"W/\\\"bd-e0ac711b\\\"\",\"accept\":\"application/json, text/javascript, */*; q=0.01\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.2 (KHTML, like Gecko) Version/8.0.1 Safari/600.2.2\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-language\":\"en-us\",\"x-requested-with\":\"XMLHttpRequest\"}","timestamp":"2014-11-21T06:42:04.367Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:42:04.367Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/api/auth","timestamp":"2014-11-21T06:42:04.367Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:42:04.367Z"}
+{"level":"info","message":"API keys are 1234567890","timestamp":"2014-11-21T06:42:04.367Z"}
+{"level":"info","message":"client API key is 1234567890","timestamp":"2014-11-21T06:42:04.367Z"}
+{"level":"info","message":"API key OK.","timestamp":"2014-11-21T06:42:04.367Z"}
+{"level":"info","message":"CSRF on server: 8+Io7hvsKSp3F3ASKlURhh/n for session cKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R for user undefined","timestamp":"2014-11-21T06:42:04.367Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:42:04.367Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:42:04.367Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:42:09.561Z"}
+{"level":"info","message":"REQ GET: /fluff/js/backbone-min.map from 127.0.0.1","timestamp":"2014-11-21T06:42:09.561Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:42:09.561Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept\":\"*/*\",\"connection\":\"keep-alive\",\"cookie\":\"connect.sid=s%3AcKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R.FeUxe4Z1l6YDBF%2FP7WxDxY%2B08PrMSKKF4kJJvnOchgg\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.2 (KHTML, like Gecko) Version/8.0.1 Safari/600.2.2\",\"accept-language\":\"en-us\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip, deflate\"}","timestamp":"2014-11-21T06:42:09.561Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:42:09.561Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/backbone-min.map","timestamp":"2014-11-21T06:42:09.561Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:42:09.561Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:42:09.561Z"}
+{"level":"info","message":"CSRF on server: 8+Io7hvsKSp3F3ASKlURhh/n for session cKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R for user undefined","timestamp":"2014-11-21T06:42:09.561Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:42:09.562Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:42:09.562Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:42:09.562Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:42:09.563Z"}
+{"level":"info","message":"REQ GET: /fluff/js/underscore-min.map from 127.0.0.1","timestamp":"2014-11-21T06:42:09.563Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:42:09.563Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept\":\"*/*\",\"connection\":\"keep-alive\",\"cookie\":\"connect.sid=s%3AcKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R.FeUxe4Z1l6YDBF%2FP7WxDxY%2B08PrMSKKF4kJJvnOchgg\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.2 (KHTML, like Gecko) Version/8.0.1 Safari/600.2.2\",\"accept-language\":\"en-us\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip, deflate\"}","timestamp":"2014-11-21T06:42:09.563Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:42:09.563Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/underscore-min.map","timestamp":"2014-11-21T06:42:09.563Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:42:09.563Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:42:09.563Z"}
+{"level":"info","message":"CSRF on server: 8+Io7hvsKSp3F3ASKlURhh/n for session cKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R for user undefined","timestamp":"2014-11-21T06:42:09.563Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:42:09.563Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:42:09.564Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:42:09.564Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-11-21T06:42:09.564Z"}
+{"level":"info","message":"REQ GET: /fluff/js/jquery-2.0.3.min.map from 127.0.0.1","timestamp":"2014-11-21T06:42:09.564Z"}
+{"level":"info","message":"REQ BODY: {\"password\":\"[private]\",\"confirmPassword\":\"[private]\"}","timestamp":"2014-11-21T06:42:09.564Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"localhost:3000\",\"accept\":\"*/*\",\"connection\":\"keep-alive\",\"cookie\":\"connect.sid=s%3AcKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R.FeUxe4Z1l6YDBF%2FP7WxDxY%2B08PrMSKKF4kJJvnOchgg\",\"user-agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/600.2.2 (KHTML, like Gecko) Version/8.0.1 Safari/600.2.2\",\"accept-language\":\"en-us\",\"referer\":\"http://localhost:3000/fluff/admin/\",\"accept-encoding\":\"gzip, deflate\"}","timestamp":"2014-11-21T06:42:09.564Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-11-21T06:42:09.564Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/js/jquery-2.0.3.min.map","timestamp":"2014-11-21T06:42:09.565Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-11-21T06:42:09.565Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-11-21T06:42:09.565Z"}
+{"level":"info","message":"CSRF on server: 8+Io7hvsKSp3F3ASKlURhh/n for session cKgbWTL1UyHd-Ria23dWYZ9AMQKmQM3R for user undefined","timestamp":"2014-11-21T06:42:09.565Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-11-21T06:42:09.565Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-11-21T06:42:09.565Z"}
+{"level":"info","message":"Looking up pages...","timestamp":"2014-11-21T06:42:09.565Z"}
+{"level":"info","message":"MIME type is text/html","timestamp":"2014-11-21T06:42:09.566Z"}
+{"level":"info","message":"MIME type is text/html","timestamp":"2014-11-21T06:42:09.566Z"}
+{"level":"info","message":"MIME type is text/html","timestamp":"2014-11-21T06:42:09.567Z"}

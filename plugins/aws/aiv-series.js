@@ -69,7 +69,7 @@ var display_columns = [{
 var sort_column = { name:'seriesname', order:false };
 
 // These may be used in plug.js for DB setup
-exports.matchfields = ['seriesname'];
+exports.match_fields = ['seriesname'];
 exports.schema = schema;
 
 // Preprocessor for GET /aiv-series/info

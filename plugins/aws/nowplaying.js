@@ -80,13 +80,13 @@ var display_columns = [{
 var sort_column = { name:'releasedate', order:false };
 
 // These are used in plug.js
-exports.matchfields = ['seriesname'];
+exports.match_fields = ['seriesname'];
 exports.schema = schema;
 
 // Preprocessor for GET /nowplaying
 exports.find = function(req, res){
   app.doIfHasAccess(req, res, 'Owner', Plug.NowPlaying, function(req, res, resourceScope) {
-    var filter = {user_id: req.session.user_id};
+    var filter = {user_id: req.session.user.id};
     var sort = '-releasedate';
     resource.find(req, res, resourceScope, filter, null, sort);
   });
@@ -111,12 +111,12 @@ exports.findone = function(req, res){
 
 // Preprocessor for POST /nowplaying/refresh
 exports.refresh = function(req, res){
-  Plug.Watchlist.find({user_id: req.session.user_id}).exec(function (err, watchlist) {
+  Plug.Watchlist.find({user_id: req.session.user.id}).exec(function (err, watchlist) {
     if (err) {
       app.msgResponse(req, res, 500, 'Could not get the watchlist.');
     }
     else {
-      Plug.NowPlaying.remove({user_id: req.session.user_id}, function (err, data) {
+      Plug.NowPlaying.remove({user_id: req.session.user.id}, function (err, data) {
         if (err) {
           app.msgResponse(req, res, 500, 'Could not clear the now playing list.');
         }
@@ -270,7 +270,7 @@ var nowPlayingLoop = function(options){
                       nowPlayingItems[index].episodename   = item.ItemAttributes[0].Title[0];
                       nowPlayingItems[index].imageurl      = item.SmallImage[0].URL[0];
                       nowPlayingItems[index].pageurl       = item.DetailPageURL[0];
-                      nowPlayingItems[index].user_id       = Fluff.user.id;
+                      nowPlayingItems[index].user_id       = req.session.user.id;
                     }
                   });
                   console.log('SAVING NOWPLAYING ITEMS');

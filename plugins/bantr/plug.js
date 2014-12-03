@@ -34,8 +34,8 @@ exports.init = function (callback) {
   var ruleSchema = app.toSchema(schemas.rule);
   exports.Rule   = mongoose.model('Rule', ruleSchema);
 
-  Fluff.matchfield.Utterance = schemas.matchfield.Utterance;
-  Fluff.matchfield.Rule      = schemas.matchfield.Rule;
+  Fluff.match_fields.Utterance = schemas.matchfield.Utterance;
+  Fluff.match_fields.Rule      = schemas.matchfield.Rule;
 
   if (callback) {
     callback();
@@ -56,7 +56,7 @@ exports.load = function (callback) {
   Fluff.app.post(base + '/utterances',      utterances.create);
   Fluff.app.put (base + '/utterances/:id',  utterances.update);
   Fluff.app.patch (base + '/utterances/:id',  utterances.update);
-  Fluff.app.del (base + '/utterances/:id',  utterances.remove);
+  Fluff.app.delete (base + '/utterances/:id',  utterances.remove);
 
   Fluff.app.get (base + '/rules',      rules.find);
   Fluff.app.get (base + '/rules/info', rules.getinfo);
@@ -64,7 +64,7 @@ exports.load = function (callback) {
   Fluff.app.post(base + '/rules',      rules.create);
   Fluff.app.put (base + '/rules/:id',  rules.update);
   Fluff.app.patch (base + '/rules/:id',  rules.update);
-  Fluff.app.del (base + '/rules/:id',  rules.remove);
+  Fluff.app.delete (base + '/rules/:id',  rules.remove);
 
 	if (callback) {
 		callback();

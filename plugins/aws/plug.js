@@ -25,9 +25,9 @@ exports.init = function (callback) {
 
   // Pulls in the schema definitions from each model file that needs db storage.
   exports.NowPlaying = mongoose.model('NowPlaying', app.toSchema(nowplaying.schema));
-  Fluff.matchfield.NowPlaying = nowplaying.matchfields;
+  Fluff.match_fields.NowPlaying = nowplaying.match_fields;
   exports.Watchlist  = mongoose.model('Watchlist', app.toSchema(watchlist.schema));
-  Fluff.matchfield.Watchlist  = watchlist.matchfields;
+  Fluff.match_fields.Watchlist  = watchlist.match_fields;
 
   if (callback) {
     callback();
@@ -46,7 +46,7 @@ exports.load = function (callback) {
   Fluff.app.get   (base + '/watchlist/info',     watchlist.getinfo);
   Fluff.app.get   (base + '/watchlist/:id',      watchlist.findone);
   Fluff.app.post  (base + '/watchlist',          watchlist.create);
-  Fluff.app.del   (base + '/watchlist/:id',      watchlist.remove);
+  Fluff.app.delete   (base + '/watchlist/:id',      watchlist.remove);
   Fluff.app.get   (base + '/nowplaying',         nowplaying.find);
   Fluff.app.get   (base + '/nowplaying/info',    nowplaying.getinfo);
   Fluff.app.post  (base + '/nowplaying/refresh', nowplaying.refresh);

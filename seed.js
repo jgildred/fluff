@@ -4,7 +4,7 @@
 exports.Data = {
   "site" : {
     "name"           : 'Web Site',
-    "domain"         : 'localhost',   // used to build site url for external links
+    "domain_name"    : 'localhost',   // used to build site url for external links
     "port"           : 3000,          // ignored unless config.js app_service is 'Custom'   
     "ssl"            : false,         // used to build site url for external links
     "email_from"     : 'noreply@domain.com', // email notifications from this address
@@ -14,7 +14,7 @@ exports.Data = {
       "whitelist"    : ['http://localhost:3000']
     },
     "smtp" : {
-      "service"      : 'Gmail',       // see list in schemas.js ('' is same as 'SMTP')
+      "service"      : 'SMTP',        // see list in schemas.js ('' is same as 'SMTP')
       "host"         : 'smtp.domain.com', // ignored unless service is 'SMTP'
       "port"         : 25,            // ignored unless service is 'SMTP'
       "ssl"          : true,          // ignored unless service is 'SMTP'
@@ -49,16 +49,16 @@ exports.Data = {
   }],
   "views" : [{
     "name"         : "Basic",        // view names must be unique
-    "template"     : "<html>\n<head>\n<title>{{var.Title}}</title>\n<link rel=\"stylesheet\" href=\"/fluff/css/bootstrap.css\"/>\n<link rel=\"stylesheet\" href=\"/styles.css\"/>\n<script type=\"text/javascript\" src=\"/fluff/js/jquery.js\"></script>\n<script type=\"text/javascript\" src=\"/fluff/js/underscore.js\"></script>\n<script type=\"text/javascript\" src=\"/fluff/js/backbone.js\"></script>\n<script type=\"text/javascript\" src=\"/fluff/js/fluff.js\"></script>\n</head>\n<body>\n{{content}}\n<script>Fluff.init()</script>\n</body>\n</html>",
-    "content_type" : "text/html",
+    "template"     : "<!DOCTYPE>\n<html>\n<head>\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>{{site.name}}</title>\n<link rel=\"stylesheet\" href=\"/fluff/css/bootstrap.css\"/>\n<link rel=\"stylesheet\" href=\"/styles.css\"/>\n<script type=\"text/javascript\" src=\"/fluff/js/jquery.js\"></script>\n<script type=\"text/javascript\" src=\"/fluff/js/underscore.js\"></script>\n<script type=\"text/javascript\" src=\"/fluff/js/backbone.js\"></script>\n<script type=\"text/javascript\" src=\"/fluff/js/bootstrap.js\"></script>\n<script type=\"text/javascript\" src=\"/fluff/js/spin.js\"></script>\n<script type=\"text/javascript\" src=\"/fluff/js/fluff.js\"></script>\n<script type=\"text/javascript\" src=\"/fluff/js/fluff-ui.js\"></script>\n</head>\n<body>\n{{content}}\n<script>Fluff.init()</script>\n</body>\n</html>",
+    "content_type" : "text/html"
   },{
     "name"         : "CSS",          // view names must be unique
     "template"     : "{{content}}",
-    "content_type" : "text/css",
+    "content_type" : "text/css"
   }],
   "vars"  : [{
-    "name"  : "Title",               // var names must be unique
-    "value" : "Hello World"
+    "name"  : "Farewell",            // var names must be unique
+    "value" : "Goodbye World."
   }, {
     "name"  : "Greeting",
     "value" : "Hello world."
@@ -80,11 +80,11 @@ exports.Data = {
       "title" : "Good",
       "size"  : 50
     }],
-    "column_order" : ["name", "color", "good"], // this is replaced by display_columns
-    "sort_column"  : {
+    "sort_column" : {
       "name"  : "name",              // the name of the column by which to sort
-      "order" : true                 // the direction of the sort (true = ascending)
-    }
+      "order" : true                 // the sort direction (true = ascending)
+    },
+    "match_fields" : [ "name" ]
   }]
 }
 

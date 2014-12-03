@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <title>User Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/fluff/css/bootstrap.css"/>
+  <link rel="stylesheet" href="/styles.css"/>
+  <script type="text/javascript" src="/fluff/js/jquery.js"></script>
+  <script type="text/javascript" src="/fluff/js/underscore.js"></script>
+  <script type="text/javascript" src="/fluff/js/backbone.js"></script>
+  <script type="text/javascript" src="/fluff/js/bootstrap.js"></script>
+  <script type="text/javascript" src="/fluff/js/spin.js"></script>
+  <script type="text/javascript" src="/fluff/js/fluff.js"></script>
+  <script type="text/javascript" src="/fluff/js/fluff-ui.js"></script>
+
+</head>
+
+<body>
+
+  <style>
+  .captcha {
+    width: 300px;
+    background: transparent;
+    -webkit-background-clip: padding-box; /* for Safari */
+    background-clip: padding-box; /* for IE9+, Firefox 4+, Opera, Chrome */
+  }
+  .captcha_image {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  .login-options {
+    margin-top: 15px;
+    margin-left: 10px;
+  }
+  </style>
+
+  <div fluff-login-modal></div>
+  <div fluff-signup-modal></div>
+  <div fluff-pwreset-modal></div>
+  <div fluff-pwchange-modal></div>
+  <div fluff-profile-modal></div>
+  <div fluff-alert-modal></div>
+
+  <div onauth>
+    <div fluff-userlabel class="pull-left button-level"></div>
+    <button class="btn btn-default pull-right" onclick="Fluff.ui.login()">LOGOUT</button>
+  </div>
+
+  <div noauth>
+    <button class="btn btn-primary pull-right" onclick="Fluff.ui.login()">LOGIN</button>
+  </div>
+
+  <script>Fluff.init()</script>
+
+</body>
+
+</html>

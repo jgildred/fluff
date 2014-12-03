@@ -2,24 +2,22 @@
 // GENERIC RESOURCE HANDLER
 
 var app     = require('../app'),
-    Fluff   = app.Fluff,
-    schemas = require('../schemas');
+    Fluff   = app.Fluff;
 
 // Handler for GET   NEED TO FIX SORT POSITION - MOVE TO OBJECT
 exports.find = function(req, res, resource, filter, callback, sort){
   // First check if the query has a filter, and if so, use it
-  var query_filter = {};
+  var query_filter = null;
   for (param in req.query) {
-    if ((Fluff.matchfield.general && (Fluff.matchfield.general.indexOf(param) != -1)) 
-     || ((Fluff.matchfield[resource.modelName] && Fluff.matchfield[resource.modelName].indexOf(param) != -1))) {
+    if (Fluff.match_fields[resource.modelName] && (Fluff.match_fields[resource.modelName].indexOf(param) != -1)) {
       query_filter[param] = new RegExp(req.query[param], 'gi');
     }
   }
-  filter = filter ? filter : query_filter;
-  console.log("USING FILTER: ");
-  console.log(filter);
+  filter = filter || query_filter;
+  Fluff.log.info("USING FILTER: ");
+  Fluff.log.info(filter);
   var limit = req.query.limit || 100;
-  sort = sort ? sort : '-creation';
+  sort = sort || '-creation';
   if (req.query.sort) {
     if (req.query.sort.split('-')[1] == 'desc') {
       sort = '-';
@@ -30,12 +28,12 @@ exports.find = function(req, res, resource, filter, callback, sort){
     sort += req.query.sort.split('-')[0];
   }
   resource.find(filter).sort(sort).limit(limit).exec(function (err, data) {
-    if (err) { 
+    if (err) {
       app.msgResponse(req, res, 500, JSON.stringify(err));
     }
-    else { 
+    else {
       if (data) {
-        var dataset = []; 
+        var dataset = [];
         if (req.query.fields) {
           data.forEach(function (item) {
             var iteminfo = {_id: item.id};
@@ -69,14 +67,14 @@ exports.find = function(req, res, resource, filter, callback, sort){
 // GET /resource/count
 exports.count = function(req, res, resource, filter, callback){
   // First check if the query has a filter, and if so, use it
-  var query_filter = {};
+  var query_filter = null;
   for (param in req.query) {
-    if (schemas.enums.match_field.indexOf(param) != -1) {
-      query_filter[param] = new RegExp(req.query[param], 'i');
+    if (Fluff.match_fields[resource.modelName] && (Fluff.match_fields[resource.modelName].indexOf(param) != -1)) {
+      query_filter[param] = new RegExp(req.query[param], 'gi');
     }
   }
-  filter = filter ? filter : query_filter;
-  console.log("findfilter: " + JSON.stringify(filter));
+  filter = filter || query_filter;
+  Fluff.log.info("findfilter: " + JSON.stringify(filter));
   resource.count(filter).exec(function (err, count) {
     if (err) { 
       app.msgResponse(req, res, 500, JSON.stringify(err));
@@ -128,7 +126,17 @@ exports.where = function(req, res, resource, name, array, callback) {
 
 // Handler for GET with id
 exports.findone = function(req, res, resource, filter, callback){
-  filter = filter ? filter : {_id: req.params.id};
+  var query_filter = null;
+  for (param in req.query) {
+    if (Fluff.match_fields[resource.modelName] && (Fluff.match_fields[resource.modelName].indexOf(param) != -1)) {
+      query_filter[param] = new RegExp(req.query[param], 'gi');
+    }
+  }
+  filter = filter || query_filter;
+  if (!filter) {
+    filter = {_id: req.params.id};
+  }
+  Fluff.log.info('filter: '+ JSON.stringify(filter)); 
   resource.findOne(filter).exec(function (err, data) {
     if (err) { 
       app.msgResponse(req, res, 500, JSON.stringify(err));
@@ -154,31 +162,41 @@ exports.findone = function(req, res, resource, filter, callback){
 };
 
 // Handler for POST
-exports.create = function(req, res, resource, callback, noresponse){
+exports.create = function(req, res, resource, callback, noresponse, options){
+  // Make sure that this does not update an existing item
   if (req.body.id)  { delete req.body.id; }
   if (req.body._id) { delete req.body._id; }
+  // If a captcha was used to validate the request, then remove it before saving
+  if (req.body.recaptcha_challenge_field) { delete req.body.recaptcha_challenge_field; }
+  if (req.body.recaptcha_response_field)  { delete req.body.recaptcha_response_field; }
   var rightNow = new Date;
-  req.body.creator_id     = req.session.user_id;
-  req.body.lastupdater_id = req.session.user_id;
-  req.body.creation       = rightNow;
-  req.body.lastupdate     = rightNow;
-  // If the resource has a user_id field, then fill it on create
-  console.log("INFO " + JSON.stringify(resource.schema.path("user_id")));
-  if (resource.schema.path("user_id") && (!req.body.user_id)) {
-    req.body.user_id = req.session.user_id;
+  req.body.creation   = rightNow;
+  req.body.lastupdate = rightNow;
+  if (req.session.user) {
+    req.body.creator_id     = req.session.user.id;
+    req.body.lastupdater_id = req.session.user.id;
+    // If the resource has a user_id field, then fill it on create
+    if (resource.schema.path("user_id") && (!req.body.user_id)) {
+      req.body.user_id = req.session.user.id;
+    }
   }
-  console.log("INSERTING: "+ JSON.stringify(req.body));
-  resource.create(req.body, function (err, data) {
+  Fluff.log.info("INSERTING: "+ JSON.stringify(req.body));
+  var item = new resource(req.body);
+  if (resource == app.User) {
+    item.creator_id     = item._id;
+    item.lastupdater_id = item._id;
+  }
+  item.save(function (err, data) {
     if (err) { 
       app.msgResponse(req, res, 500, JSON.stringify(err));
     }
-    else { 
-      if (data) { 
+    else {
+      if (data) {
         if (!noresponse) {
           res.json(data);
         }
         if (callback) {
-          callback(req, res, data);
+          callback(req, res, data, options);
         }
       }
       else {
@@ -189,23 +207,22 @@ exports.create = function(req, res, resource, callback, noresponse){
 };
 
 // Handler for PUT with id or other filter
-exports.update = function(req, res, resource, filter, callback, noresponse){
-  console.log("IN UPDATE");
+exports.update = function(req, res, resource, filter, callback, noresponse, options){
+  // Make sure that only the param id is used
   if (req.body.id)  { delete req.body.id; }
   if (req.body._id) { delete req.body._id; }
-  req.body.lastupdate     = new Date;
-  if (req.session.user_id) {
-    req.body.lastupdater_id = req.session.user_id;
+  req.body.lastupdate = new Date;
+  if (req.session.user) {
+    req.body.lastupdater_id = req.session.user.id;
   }
-  filter = filter ? filter : {"_id": req.params.id}
-  console.log("FILTER: " + JSON.stringify(filter));
+  filter = filter || {"_id": req.params.id}
   resource.findOneAndUpdate(filter, req.body, function (err, data) {
     if (err) {
       app.msgResponse(req, res, 500, JSON.stringify(err));
     }
     else { 
       if (data) {
-        console.log("UPDATE ITEM:\n" + JSON.stringify(data));
+        Fluff.log.info("UPDATE ITEM:\n" + JSON.stringify(data));
         if (!noresponse) {
           res.json(data);
         }
@@ -215,7 +232,7 @@ exports.update = function(req, res, resource, filter, callback, noresponse){
       }
     }
     if (!err && callback) {
-      callback(req, res, data);
+      callback(req, res, data, options);
     }
   });
 };
@@ -225,7 +242,7 @@ exports.remove = function(req, res, resource, callback, noresponse){
   resource.remove({_id: req.params.id}, function (err, data) {
     if (err) { var body = err; }
     else { var body = { msg: "Removed."}; }
-    console.log("REMOVE ITEM:\n" + JSON.stringify(data));
+    Fluff.log.info("REMOVE ITEM:\n" + JSON.stringify(data));
     if (!noresponse) {
       res.json(body);
     }
@@ -240,7 +257,7 @@ exports.import = function(req, res, resource, callback){
   var delimiter  = (req.body && req.body.delimiter && (req.body.delimiter != "")) ? req.body.delimiter : ",";
   // If there is a file and it's 500MB or less then import it
   if (req.files && req.files.file && (req.files.file.size <= 500000000))  {
-    console.log("IMPORTING UPLOADED FILE");
+    Fluff.log.info("IMPORTING UPLOADED FILE");
     var fs = require('fs');
     fs.readFile(req.files.file.path, function (err, data) {
       if (err) {
@@ -260,7 +277,7 @@ exports.import = function(req, res, resource, callback){
   else {
     // Otherwise if there's a url then pull the data from there
     if (req.body.url) {
-      console.log("IMPORTING FROM URL: " + req.body.url);
+      Fluff.log.info("IMPORTING FROM URL: " + req.body.url);
       if (/^https:\/\//i.test(req.body.url)) {
         var request = require('https');
       }
@@ -295,9 +312,9 @@ exports.import = function(req, res, resource, callback){
 var doImport = function (req, res, resource, importData, model, callback) {
   var jsonData   = [];
   var fieldSet   = [];
-  console.log("Parsing items for import...");
+  Fluff.log.info("Parsing items for import...");
   importData.forEach (function (item, i) {
-    console.log(item);
+    Fluff.log.info(item);
     if (i == 0) {
       if (req.body && req.body.fieldset && (req.body.fieldset != "")) {
         req.body.fieldset.foreEach (function (field, f) {
@@ -314,13 +331,13 @@ var doImport = function (req, res, resource, importData, model, callback) {
       var itemObj = {};
       item.forEach (function (field, f) {
         itemObj[fieldSet[f]]   = field;
-        itemObj.creator_id     = req.session.user_id;
-        itemObj.lastupdater_id = req.session.user_id;
+        itemObj.creator_id     = req.session.user.id;
+        itemObj.lastupdater_id = req.session.user.id;
         if (itemObj._id        != undefined) delete itemObj._id;
         if (itemObj.creation   != undefined) delete itemObj.creation;
         if (itemObj.lastupdate != undefined) delete itemObj.lastupdate;
       })
-      console.log(itemObj);
+      Fluff.log.info(itemObj);
       jsonData.push(itemObj);
     }
   });

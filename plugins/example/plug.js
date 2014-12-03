@@ -15,11 +15,11 @@ var app        = require('../../app'),
 exports.init = function (callback) {
 
   // If you see this on Fluff startup, then your plugin was detected.
-	console.log("I'm the example plugin.");
+	Fluff.log.info("I'm the example plugin.");
 
   // Pulls in the schema definitions from plugthings.js.
   exports.Plugthing = mongoose.model('Plugthing', app.toSchema(plugthings.schema));
-  Fluff.matchfield.Plugthing = plugthings.matchfields;
+  Fluff.match_fields.Plugthing = plugthings.match_fields;
 
   if (callback) {
     callback();
@@ -39,7 +39,7 @@ exports.load = function (callback) {
   Fluff.app.post  (base + '/plugthings',         plugthings.create);
   Fluff.app.put   (base + '/plugthings/:id',     plugthings.update);
   Fluff.app.patch (base + '/plugthings/:id',     plugthings.update);
-  Fluff.app.del   (base + '/plugthings/:id',     plugthings.remove);
+  Fluff.app.delete   (base + '/plugthings/:id',     plugthings.remove);
 
 	if (callback) {
 		callback();

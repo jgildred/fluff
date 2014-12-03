@@ -51,13 +51,13 @@ var display_columns = [{
 var sort_column = { name:'seriesname', order:true };
 
 // These are used in plug.js
-exports.matchfields = ['seriesname'];
+exports.match_fields = ['seriesname'];
 exports.schema = schema;
 
 // Preprocessor for GET /watchlist
 exports.find = function(req, res){
   app.doIfHasAccess(req, res, 'Owner', Plug.Watchlist, function (req, res, resourceScope) {
-    var filter = {user_id: req.session.user_id};
+    var filter = {user_id: req.session.user.id};
     resource.find(req, res, resourceScope, filter);
   });
 };
@@ -82,7 +82,7 @@ exports.findone = function(req, res){
 // Preprocessor for POST /watchlist
 exports.create = function(req, res){
   app.doIfHasAccess(req, res, 'Users', Plug.Watchlist, function (req, res, resourceScope) {
-    var filter = {user_id: req.session.user_id, asin: req.body.asin};
+    var filter = {user_id: req.session.user.id, asin: req.body.asin};
     resourceScope.findOne(filter, function (err, watchlistItem) {
       if (watchlistItem) {
         app.msgResponse(req, res, 403, 'Series is already in your watchlist.');

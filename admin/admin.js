@@ -1,73 +1,82 @@
 
+// In case fluff.js is not running
+if (!Fluff) {
+  var Fluff = {admin : {}};
+}
+Fluff.admin.version = "0.9";
+
+// Make sure the api key here matches the one in the site config if required
+Fluff.apikey  = "1234567890";
+
 // automatically run upon loading this js file
-var init = function () {
-
-  // make sure the api key here matches the one in the site config if required
-  var version = '0.8.5';
-  var apikey  = '1234567890';
+Fluff.admin.init = function () {
   
-  // display the version at the footer
-  $(".attribution").html($(".attribution").html() + " " + version);
+  // Display the version at the footer
+  $(".attribution").html($(".attribution").html() + " " + Fluff.admin.version);
 
-  // prefilter for all ajax calls
-  if (apikey && (apikey != '')) {
+  // Prefilter for all ajax calls
+  if (Fluff.apikey && (Fluff.apikey != '')) {
     $.ajaxPrefilter( function( options, originalOptions, jqXHR ) {
       // Modify options, control originalOptions, store jqXHR, etc
-      options.headers = options.headers ? options.headers : {};
-      options.headers['X-API-Key'] = encodeURIComponent(apikey);
+      options.headers = options.headers || {};
+      options.headers['X-API-Key'] = encodeURIComponent(Fluff.apikey);
     });
   }
+  checkSession(startRoutes);
+}
 
-  // handle the various url cases where login is not forced
-  switch (true) {
-    case /#\/signup/i.test(window.location.href):
-      loadnavbar();
-      Backbone.history.start();
-      break;
-    case /#\/verify/i.test(window.location.href):
-      loadnavbar();
-      Backbone.history.start();
-      break;
-    case /#\/pwreset/i.test(window.location.href):
-      loadnavbar();
-      Backbone.history.start();
-      break;
-    case /#\/pwchange/i.test(window.location.href):
-      loadnavbar();
-      Backbone.history.start();
-      break;
-    case /#\/login/i.test(window.location.href):
-      loadnavbar();
-      Backbone.history.start();
-      break;
-    default:
-      session.fetch({
-        success: function () {
-          if (!session.get('auth')) {
-            loginView.render();
-            Backbone.history.start();
-          }
-          else {
-            if (session.get('user') && (session.get('user').role != "Admin")) {
-              alertView.render({
-                label:"Restricted", 
-                msg: "Sorry, you need to be an admin to access this.", 
-                onclose: 'login'
-              });
-            }
-            else {
-              $('title').html((session.get('site').name ? session.get('site').name : 'Site') + ' Admin');
-            }
-          }
-          Backbone.history.start();
-        },
-        error: function () {
-          loginView.render();
-          Backbone.history.start();
-        }
-      });
+var startRoutes = function (path) {
+  console.log("Backbone history started");
+  if (!Backbone.History.started) {
+    if (!path) {
+      path = '/fluff/admin';
+    }
+    Backbone.history.start({
+      root: path
+    });
   }
 }
+
+var checkSession = function (callback) {
+  if (!session.get('user')) {
+    session.fetch({
+      success: function () {
+        if (!session.get('user')) {
+          console.log("Not logged in.");
+          loginView.render(callback);
+        }
+        else {
+          console.log("Logged in as " + session.get('user').email);
+          if (session.get('user') && (session.get('user').role != "Admin")) {
+            alertView.render({
+              label:"Restricted", 
+              msg: "Sorry, you need to be an admin to access this.", 
+              onclose: 'login'
+            });
+          }
+          else {
+            $('title').html((session.get('site').name ? session.get('site').name : 'Site') + ' Admin');
+            if (callback) {
+              callback();
+            }
+          }
+        }
+      },
+      error: function () {
+        console.log("Check session error.");
+        loginView.render(callback);
+      }
+    });
+  }
+  else {
+    if (callback) {
+      callback();
+    }
+  }
+}
+
+// Enumerations
+var accessOptions = ['Public', 'Humans', 'Users', 'Owner', 'Admins'];
 
 // Helper functions
 var objectType = function (obj) {
@@ -160,15 +169,19 @@ var addArrayOrString = function(object, name, text) {
   }
 }
 
-// Grabs all form data and puts it into an object.
+// Grabs all form data and puts it into an object ready to update a resource.
 // Form elements with a name like 'item.subitem' will be put into an 'item' subobject.
 // Form elements with a name like 'items[]' will be parsed into an 'items' array of text.
+// Form elements with a name like 'items[0].subitem' will be parsed into an 'items' array of objects.
 var getFormData = function(form) {
   if (form) {
     var formObject = {};
     var formData = $(form).serializeObject();
+    console.log("FORM DATA:");
+    console.log(formData);
+    // Consolidate children
     for (item in formData) {
-      if (item.split('.').length>1) {
+      if (item.split('.').length > 1) {
         var item_name    = item.split('.')[0];
         var subitem_name = item.split('.')[1];
         // make sure the formObject has the subobject
@@ -178,7 +191,32 @@ var getFormData = function(form) {
         formObject[item_name] = addArrayOrString(formObject[item_name], subitem_name, formData[item]);
       }
       else {
+        // Add it to the form object as an array or string 
         formObject = addArrayOrString(formObject, item, formData[item]);
+      }
+    }
+    // Consolidate arrays of objects
+    for (item in formObject) {
+      if ((item.split('[').length > 1) && (item.split(']').length > 1)) {
+        var item_name  = item.split('[')[0];
+        var item_index = parseInt(item.split('[')[1].split(']')[0]);
+        if (item_index != NaN) {
+          // take the item and make it an array with a new item
+          // first check to see if the array already exists, if so add to it
+          if (formObject[item_name]) {
+            if (objectType(formObject[item_name]) == 'Array') {
+              formObject[item_name].push(formObject[item]);
+              delete formObject[item];
+            }
+            else {
+              console.log("Form data has an array with same name as another element.");
+            }
+          }
+          else {
+            formObject[item_name] = [formObject[item]];
+            delete formObject[item];
+          }
+        }
       }
     }
     return formObject;
@@ -255,31 +293,43 @@ function renderEditor(element_id, content, cursor, mode, view, fullscreen) {
 }
 
 // Set the nav bar item active based on id=[type]-tab
-function navselect (type) {
-  if (type) {
+function navselect (selection) {
+  if (selection) {
     // if the navbar is already loaded then just select the tab
-    if ($(".nav li#" + type.toLowerCase() + "-tab").length > 0) {
+    if ($(".nav li#" + selection.toLowerCase() + "-tab").length > 0) {
       $("li.active").removeClass("active");
-      $("li#" + type.toLowerCase() + "-tab").addClass("active");
+      $("li#" + selection.toLowerCase() + "-tab").addClass("active");
     }
     else {
-      loadnavbar(type);
+      loadnavbar(selection);
     }
   }
 }
 
 // Load the navbar and authbar
 function loadnavbar (selection) {
-  $('header').removeClass('hidden');
-  $('footer').removeClass('hidden');
   if (session.get('user') && (session.get('user').role == 'Admin')) {
-    var template = _.template($('#authbar-template').html(), {session: session});
-    $(".authbar").html(template);
-    var template = _.template($('#navbar-template').html(), {auth: session.get('auth'), admin: (session.get('user').role == 'Admin')}); 
+    $('header').removeClass('hidden');
+    $('footer').removeClass('hidden');
+    var template = _.template($('#navbar-template').html()); 
     $("nav").html(template);
+    Fluff.admin.showUserLabel();
     if (selection) {
       navselect(selection);
     }
+  }
+}
+
+// Display the user's name in the navbar
+Fluff.admin.showUserLabel = function () {
+  if ($(".authbar").length > 0) {
+    if (session.get('user') && (session.get('user').role == 'Admin')) {
+      var template = _.template($('#authbar-template').html(), {session: session});
+      $(".authbar").html(template);
+    }
+  }
+  else {
+    loadnavbar();
   }
 }
 
@@ -305,6 +355,7 @@ var Model   = Backbone.Model.extend({
 var Site    = Backbone.Model.extend({
   url: apibase + '/site',
 });
+
 var Session = Backbone.Model.extend({
   urlRoot: apibase + '/auth',
   initialize: function () {
@@ -364,7 +415,8 @@ var Models = Backbone.Collection.extend({
 
 // Setup the signup view
 var SignUpView = Backbone.View.extend({
-  el: '.popup',
+  el: '#signup-modal',
+  root: '.popup',
   events: {
     'submit .signup-form' : 'saveUser',
     'click  .close'       : 'close'
@@ -386,27 +438,27 @@ var SignUpView = Backbone.View.extend({
     return false;
   },
   close: function () {
-    this.$el.html('');
+    $(this.root).html('');
     router.navigate('login');
   },
   render: function (options) {
     var template = _.template($('#signup-template').html(), {user: null});
-    this.$el.html(template);
+    $(this.root).html(template);
     $('#signup-modal').modal('show');
   }
 });
 
 // Setup the login view
 var LoginView = Backbone.View.extend({
-  el: '.popup',
+  el: '.loginView',
   events: {
-    'submit .login-form' : 'login',
-    'click  .close'      : 'close'
+    'submit .login-form' : 'login'
   },
   login: function (ev) {
+    var that = this;
     var loginDetails = getFormData(ev.currentTarget);
     session.login(loginDetails, function () {
-      if (session.get("auth") && session.get("user")) {
+      if (session.get("user")) {
         switch (session.get("user").status) {
           case 'Inactive':
             $('.alert-msg').html('This account has been deactivated.');
@@ -419,15 +471,23 @@ var LoginView = Backbone.View.extend({
           default:
             $('#login-modal').modal('hide');
             if (session.get("user").role == "Admin") {
+              // Not sure why checking for this
               if (/#\/login/i.test(window.location.href) || /#login/i.test(window.location.href)) {
-                loadnavbar();
-                router.navigate('pages', {trigger: true});
+                pageListView.render();
               }
               else {
-                document.location.reload();
+                if (that.callback) {
+                  console.log("admin yes desti");
+                  that.callback();
+                }
+                else {
+                  console.log("admin no desti");
+                  pageListView.render();
+                }
               }
             }
             else {
+              console.log("no admin");
               document.location.href = "/";
             }
             break;
@@ -440,24 +500,24 @@ var LoginView = Backbone.View.extend({
     });
     return false;
   },
-  close: function () {
-    //this.$el.html('');
-    document.location.href = "/";
-  },
-  render: function (destination) {
-    // destination is ignored for now
+  render: function (callback) {
+    if (callback) {
+      console.log("see callback");
+      this.callback = callback;
+    }
     // make sure not to have a double backdrop
     $(".modal-backdrop").remove();
     var template = $('#login-template').html();
     this.$el.html(template);
-    $('#login-modal').modal('show');
-    $('.login-form input')[0].focus();
+    this.$el.find('.modal').modal('show');
+    this.$el.find('input[name=email]')[0].focus();
+    return this;
   }
 });
 
 // Setup the password reset view
 var PwresetView = Backbone.View.extend({
-  el: '.popup',
+  el: '.pwresetView',
   events: {
     'submit .pwreset-form' : 'requestReset',
     'click  .cancel'       : 'cancel'
@@ -504,14 +564,14 @@ var PwresetView = Backbone.View.extend({
     var msg = "Enter the email address of the user account. We will send a password reset confirmation to that address.";
     var template = _.template($('#pwreset-template').html(), {email: (options && options.email) ? options.email : null, msg: msg}); 
     this.$el.html(template);
-    $('#pwreset-modal').modal('show');
-    $('.pwreset-form input')[0].focus();
+    this.$el.find('.modal').modal('show');
+    this.$el.find('input')[0].focus();
   }
 });
 
 // Setup the password change view
 var PwchangeView = Backbone.View.extend({
-  el: '.popup',
+  el: '.pwchangeView',
   events: {
     'submit .pwchange-form' : 'changePassword',
     'click  .close'         : 'close'
@@ -546,13 +606,14 @@ var PwchangeView = Backbone.View.extend({
     return false;
   },
   close: function () {
-    this.$el.html('');
+    this.$el.find('.modal').modal('hide');
   },
   render: function (options) {
     var template = _.template($('#pwchange-template').html(), {token: (options && options.token) ? options.token : null}); 
+    $(".modal-backdrop").remove();
     this.$el.html(template);
-    $('#pwchange-modal').modal('show');
-    $('.pwchange-form input')[0].focus();
+    this.$el.find('.modal').modal('show');
+    this.$el.find('input')[0].focus();
   }
 });
 
@@ -583,6 +644,7 @@ var PageListView = Backbone.View.extend({
     return false;
   },
   render: function (keyword) {
+    navselect("pages");
     // first get the list of views for the page list view
     this.views = new Views();
     var that = this;
@@ -679,7 +741,8 @@ var VarListView = Backbone.View.extend({
 
 // Setup the var add view
 var VarAddView = Backbone.View.extend({
-  el: '.popup',
+  el: '#add-var-modal',
+  root: '.popup',
   events: {
     'submit .add-var-form' : 'saveVar',
     'click  .cancel'       : 'cancel'
@@ -708,7 +771,8 @@ var VarAddView = Backbone.View.extend({
   },
   render: function () {
     var template = _.template($('#add-var-template').html(), {vari: null});
-    this.$el.html(template);
+    $(".modal-backdrop").remove();
+    $(this.root).html(template);
     $('#add-var-modal').modal('show');
     $('.add-var-form .add-var-name')[0].focus();
   }
@@ -842,11 +906,14 @@ var UserDetailView = Backbone.View.extend({
       this.user = new User({_id: options.id});
       this.user.fetch({
         success: function (user) {
+          console.log("user");
+          console.log(user);
           var template = _.template($('#edit-user-template').html(), {user: user, role_options: that.role_options, status_options: that.status_options}); 
           that.$el.html(template);
         }
       })
-    } else {
+    } 
+    else {
       this.user = null;
       var template = _.template($('#edit-user-template').html(), {user: this.user, role_options: this.role_options, status_options: this.status_options});
       this.$el.html(template);
@@ -913,7 +980,7 @@ var PageDetailView = Backbone.View.extend({
     // first get the list of views for the edit page view
     this.views = new Views();
     // build the list of access options
-    this.access_options = ['Public', 'Users', 'Admins'];
+    this.access_options = accessOptions;
     // build the list of status options
     this.status_options = ['Published', 'Unpublished'];
     var that = this;
@@ -1171,7 +1238,7 @@ var ModelDetailView = Backbone.View.extend({
   },
   render: function (options) {
     // build the list of access options
-    this.access_options = ['Public', 'Users', 'Owner', 'Admins'];
+    this.access_options = accessOptions;
     var that = this;
     if (options.id) {
       // then get the model details
@@ -1279,7 +1346,7 @@ var ModelBrowseView = Backbone.View.extend({
   },
   render: function (options) {
     // build the list of access options
-    this.access_options = ['Public', 'Users', 'Admins'];
+    this.access_options = accessOptions;
     var that = this;
     if (options.id) {
       // then get the model details
@@ -1467,7 +1534,8 @@ var ModelBrowseView = Backbone.View.extend({
 
 // Setup the arrange columns view
 var ArrangeColumnsView = Backbone.View.extend({
-  el: '.popup',
+  el: '#arrange-columns-modal',
+  root: '.popup',
   events: {
     'submit .arrange-columns-form' : 'applyColumns',
     'click  .cancel-arrange'       : 'cancel'
@@ -1515,14 +1583,16 @@ var ArrangeColumnsView = Backbone.View.extend({
   },
   render: function (availableColumns, displayColumns) {
     var template = _.template($('#arrange-columns-template').html(), {available_columns: availableColumns, display_columns: displayColumns});
-    $('.popup').html(template);
+    $(".modal-backdrop").remove();
+    $(this.root).html(template);
     $('#arrange-columns-modal').modal('show');
   }
 });
 
 // Setup the import view
 var ImportView = Backbone.View.extend({
-  el: '.popup',
+  el: '#import-modal',
+  root: '.popup',
   events: {
     'click  input[type=radio]'   : 'pickSource',
     'change .show-options'       : 'showOptions',
@@ -1618,11 +1688,85 @@ var ImportView = Backbone.View.extend({
   },
   render: function (createModel) {
     var template = _.template($('#import-template').html());
-    $('.popup').html(template);
+    $(".modal-backdrop").remove();
+    $(this.root).html(template);
     if (createModel) {
       $('.import-form .model-name').show();
     }
     $('#import-modal').modal('show');
+  }
+});
+
+// Setup the notifications view
+var NotificationsView = Backbone.View.extend({
+  el: '.page',
+  events: {
+    'change #selectNotification'      : 'showNotification',
+    'submit .edit-notifications-form' : 'saveNotification'
+  },
+  showNotification: function () {
+    var name = $('#selectNotification').val();
+    $('.notification-info').addClass('hidden');
+    $('#notification-' + name).removeClass('hidden');
+    var focus_input = $('#notification-' + name + ' input');
+    if (focus_input.length > 0) {
+      focus_input[0].focus();
+    }
+  },
+  saveNotification: function (ev) {
+    // TBD should only save the changed notification
+    var siteDetails = getFormData(ev.currentTarget);
+    if (!this.site) {
+      this.site = new Site();
+    }
+    if (siteDetails) {
+      console.log(siteDetails);
+      this.site.save(siteDetails, {
+        patch: true,
+        success: function (notification) {
+          console.log('notification saved');
+          alertView.render({label:"OK", msg: "Notification has been updated.", onclose: "notifications"});
+        },
+        error: function (model, xhr) {
+          console.log(xhr);
+          if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
+            alertView.render({label:"Problem", msg: $.parseJSON(xhr.responseText).msg});
+          }
+        }
+      });
+    }
+    else {
+      alertView.render({label:"Update Site", msg: "Nothing to update."});
+    }
+    return false;
+  },
+  render: function () {
+    // build the form to edit notifications
+    var that = this;
+    if (!this.site) {
+      this.site = new Site();
+      this.site.fetch({
+        success: function (site) {
+          that.notifications = site.get('notifications');
+          var template = _.template($('#edit-notifications-template').html(), {notifications: that.notifications, site: site});
+          that.$el.html(template);
+          that.showNotification('signup');
+          var focus_input = $('#notification-signup input');
+          if (focus_input.length > 0) {
+            focus_input[0].focus();
+          }
+        }
+      });
+    } else {
+      this.notifications = this.site.get('notifications');
+      var template = _.template($('#edit-notifications-template').html(), {notifications: this.notifications, site: this.site});
+      this.$el.html(template);
+      this.showNotification('signup');
+      var focus_input = $('#notification-signup input');
+      if (focus_input.length > 0) {
+        focus_input[0].focus();
+      }
+    }
   }
 });
 
@@ -1664,7 +1808,7 @@ var SiteDetailView = Backbone.View.extend({
         error: function (model, xhr) {
           console.log(xhr);
           if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
-            alertView.render({label:"Update Site", msg: $.parseJSON(xhr.responseText).msg});
+            alertView.render({label:"Problem", msg: $.parseJSON(xhr.responseText).msg});
           }
         }
       });
@@ -1673,9 +1817,6 @@ var SiteDetailView = Backbone.View.extend({
       alertView.render({label:"Update Site", msg: "Nothing to update."});
     }
     return false;
-  },
-  cancel: function() {
-    window.history.back();
   },
   render: function () {
     
@@ -1704,13 +1845,12 @@ var SiteDetailView = Backbone.View.extend({
 
 // Setup the generic alert link view
 var AlertView = Backbone.View.extend({
-  el: '.popup',
+  el: '#alert-modal',
+  root: '.popup',
   events: {
     'click .close' : 'close'
   },
   close: function () {
-    //$('.modal-backdrop').remove();
-    //this.$el.html('');
     // accepts the name of a route to go to after close
     if (this.onclose) {
       router.navigate(this.onclose);
@@ -1718,8 +1858,9 @@ var AlertView = Backbone.View.extend({
   },
   render: function (options) {
     //$('.modal-backdrop').remove();
-    var template = _.template($('#alert-template').html(), {label: options.label, msg: options.msg }); 
-    this.$el.html(template);
+    var template = _.template($('#alert-template').html(), {label: options.label, msg: options.msg});
+    $(".modal-backdrop").remove();
+    $(this.root).html(template);
     $('#alert-modal').modal('show');
     if (options && options.onclose) {
       this.onclose = options.onclose;
@@ -1754,6 +1895,7 @@ var arrangeColumnsView   = new ArrangeColumnsView();
 var importView           = new ImportView();
 var userListView         = new UserListView();
 var userDetailView       = new UserDetailView();
+var notificationsView    = new NotificationsView();
 var siteDetailView       = new SiteDetailView();
 
 // Map an event to each route
@@ -1785,6 +1927,7 @@ var Router = Backbone.Router.extend({
       "users"             : "list-users",
       "users/new"         : "edit-user",
       "users/:id"         : "edit-user",
+      "notifications"     : "edit-notifications",
       "site"              : "edit-site"
     }
 });
@@ -1792,23 +1935,8 @@ var Router = Backbone.Router.extend({
 // Setup the behavior for each route event
 var router = new Router;
 router.on('route:home', function() {
-  if (session.get('auth')) {
-    if (session.get('user') && (session.get('user').role == 'Admin')) {
-      navselect("pages");
-      // Render pages list view
-      pageListView.render();
-    }
-    else {
-      alertView.render({
-        label: "Restricted", 
-        msg: "Sorry, you need to be an admin to access this.", 
-        onclose: 'login'
-      });
-    }
-  }
-  else {
-    loginView.render();
-  }
+  console.log("home route");
+  pageListView.render();
 });
 router.on('route:signup', function() {
   // Render signup view
@@ -1817,7 +1945,6 @@ router.on('route:signup', function() {
 router.on('route:login', function() {
   // Render login view
   loginView.render();
-  Backbone.history.start();
 });
 router.on('route:logout', function() {
   session.logout();
@@ -1831,6 +1958,7 @@ router.on('route:pw-change', function(token) {
   pwchangeView.render({token: token});
 });
 router.on('route:list-users', function() {
+  console.log("users route");
   navselect("users");
   // Render user list view
   userListView.render();
@@ -1859,6 +1987,7 @@ router.on('route:verify-email', function(token) {
   }
 });
 router.on('route:list-pages', function() {
+  console.log("pages route");
   navselect("pages");
   // Render page list view
   pageListView.render();
@@ -1913,6 +2042,11 @@ router.on('route:browse-model', function(id) {
   // Render model browse view
   modelBrowseView.render({id: id});
 });
+router.on('route:edit-notifications', function() {
+  navselect("notifications");
+  // Render notifications view
+  notificationsView.render();
+});
 router.on('route:edit-site', function() {
   navselect("site");
   // Render site detail view
@@ -1920,4 +2054,4 @@ router.on('route:edit-site', function() {
 });
 
 // Init
-init();
+Fluff.admin.init();

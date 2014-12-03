@@ -38,7 +38,7 @@ var display_columns = [{
 var sort_column = { name:'name', order:true };
 
 // These are used in plug.js
-exports.matchfields = ['name'];
+exports.match_fields = ['name'];
 exports.schema = schema;
 
 // Preprocessor for GET /plugthings

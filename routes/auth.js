@@ -1,142 +1,133 @@
 
 // AUTHENTICATION HANDLER
 
-var app = require('../app');
+var app   = require('../app'),
+    Fluff = app.Fluff;
 
 // Response for GET
 exports.check = function(req, res){
   if (req.session.auth) {
-    console.log("AUTH OK.");
-    var body = {
-      auth    : req.session.auth,
-      human   : req.session.human || false,
-      _id     : req.session.id,
-      _csrf   : req.session._csrf,
-      site    : {
-        name       : app.App.get('config').name,
-        fluff_path : app.App.get('config').fluff_path,
-        apikey    : {
-          required : app.App.get('config').apikey.required
-        }
-      },
-      user: {
-        _id    : req.session.user_id,
-        email  : req.session.email,
-        role   : req.session.role,
-        name   : req.session.name,
-        status : req.session.status }
-    };
+    var body  = authResponse(req);
   }
   else {
-    console.log("AUTH BAD.");
-    res.status(401);
-    var body = {
-      auth    : false,
-      human   : req.session.human || false,
-      status  : req.session.status
-    };
-    if (req.session.human) {
-      body._csrf = req.session._csrf;
-    }
+    var body = basicResponse(req);
   }
   res.json(body);
 };
 
 // Response for POST with email and password
 exports.attach = function(req, res){
-  console.log("Authenticating a user...");
+  Fluff.log.info("Authenticating a user...");
   if (req.body.email && req.body.password) {
     app.User.findOne({"email": req.body.email}).select("firstname lastname email role pwhash salt status").exec(function (err, user) {
       if (err || !user) {
-        var body = err || {msg: 'User does not exist.'};
-        if (!user) {
-          res.status(401);
-        }
-        console.log("LOGIN ERR: " + JSON.stringify(body));
+        req.session.auth = false;
+        res.status(401);
+        var body = basicResponse(req);
+        body.msg = err || 'User does not exist.';
       }
       else {
-        console.log("LOGIN FOUND USER: " + JSON.stringify(user));
+        Fluff.log.info("LOGIN FOUND USER: " + user.email);
         if (user.status == "Active") {
           if (user.pwMatch(req.body.password)) {
-            console.log("LOGIN USER " + user.displayname + ":" + JSON.stringify(user));
+            Fluff.log.info("LOGIN USER " + user.displayname + ": " + user.email);
             req.session.auth    = true;
             req.session.human   = true;  // if it's a real user, then it's human
-            req.session.user_id = user._id;
-            req.session.email   = user.email;
-            req.session.role    = user.role;
-            req.session.name    = user.displayname;
-            req.session.status  = user.status;
-            req.session.site    = {
-              name       : app.App.get('config').name,
-              fluff_path : app.App.get('config').fluff_path,
-              apikey     : {
-                required : app.App.get('config').apikey.required
-              }
-            };
-            app.Fluff.user = {
+            req.session.user = {
               id          : user._id, 
-              email       : user.email, 
+              email       : user.email,
               role        : user.role,
-              displayname : user.displayname
+              displayname : user.displayname,
+              status      : user.status
             };
-            var body = {
-              auth     : req.session.auth,
-              human    : req.session.human,
-              _id      : req.session.id,
-              _csrf    : req.session._csrf,
-              site     : req.session.site,
-              user: {
-                _id    : req.session.user_id,
-                email  : req.session.email,
-                role   : req.session.role,
-                name   : req.session.name,
-                status : req.session.status }
-            };
+            var body = authResponse(req);
           }
           else {
             req.session.auth = false;
-            res.status(400);
-            var body = {
-              auth: req.session.auth, 
-              msg:  "Password is incorrect."};
+            res.status(401);
+            var body = basicResponse(req);
+            body.msg = "Password is incorrect.";
           }
         }
         else {
           req.session.auth = false;
           res.status(401);
-          var body = {
-            auth:   req.session.auth,
-            status: user.status, 
-            msg:    "Your account is not active. Please contact an administrator for help."};
+          var body = basicResponse(req);
+          body.msg = "Your account is not active. Please contact an administrator for help.";
         }
+      }
+      if (body.msg) {
+        Fluff.log.info(body.msg);
       }
       res.json(body);
     });
   }
   else {
     req.session.auth = false;
-    res.status(400);
-    var body = {
-      auth: false, 
-      msg:  "Credentials are missing."};
+    res.status(403);
+    var body = basicResponse(req);
+    body.msg = "Credentials are missing.";
+    Fluff.log.info(body.msg);
     res.json(body);
   }
 };
 
 // Response for DELETE
 exports.detach = function(req, res){
-  if ((req.session.id == req.params.id) && (typeof req.session.email !== 'undefined')) {
-    console.log("LOGOUT: \n" + req.session.email);
+  if ((req.session.user.id == req.params.id) && (typeof req.session.user.email !== 'undefined')) {
+    Fluff.log.info("LOGOUT: \n" + req.session.user.email);
   }
   // Logout by clearing the session
   req.session.regenerate(function(err){
-    // Generate a new csrf token so the user can login again
-    // This is pretty hacky, connect.csrf isn't built for rest
-    var csrf = require('../csrf');
-    csrf.generate(req, res, function () {
-      res.send({auth: false, _csrf: req.session._csrf});
-    });
     req.session.auth = false;
-    app.Fluff.user = null;
+    req.session.user = null;
+    var body = basicResponse(req);
+    res.json(body);
   });
+};
+
+// Handler for POST /captcha
+exports.captcha = function(req, res){
+  Fluff.checkCaptcha(req, res, function (req, res, verified) {
+    // If the site config has no captcha setting, then assumed not required
+    if (verified) {
+      var msg = "Captcha verified..";
+      req.session.human = true;
+    }
+    else {
+      var msg = "Captcha not verified.";
+      req.session.human = false;
+      res.status(401);
+    }
+    var body = basicResponse(req);
+    body.msg = msg;
+    Fluff.log.info(body.msg);
+    res.json(body);
+  });
+};
+
+var authResponse = function (req) {
+  var body   = basicResponse(req);
+  body._id   = req.session.id,
+  body.user  = req.session.user;
+  return body;
+};
+
+var basicResponse = function (req) {
+  return {
+    auth    : req.session.auth,
+    human   : req.session.human,
+    _csrf   : req.session.human ? req.session._csrf : '',
+    site    : {
+      name            : Fluff.app.get('config').name,
+      fluff_path      : Fluff.app.get('config').fluff_path,
+      apikey  : {
+        required      : Fluff.app.get('config').apikey.required
+      },
+      captcha : {
+        required      : Fluff.app.get('config').captcha.required,
+        recaptcha_key : Fluff.app.get('config').captcha.recaptcha_public_key
+      }
+    }
+  }
 };

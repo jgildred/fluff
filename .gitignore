@@ -1,9 +1,9 @@
 node_modules/
 plugins/*
-#!plugins/example/
+!plugins/example/
 #!plugins/avb.io/
 #!plugins/bantr/
 #!plugins/keypair.io/
-!plugins/aws/
-config-*.js
+#!plugins/aws/
+#!plugins/mandrill/
 .DS_Store
