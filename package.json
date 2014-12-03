@@ -17,14 +17,10 @@
     "serve-favicon": "*",
     "express-session": "*",
     "mongoose": "*",
+    "winston": "*",
     "mime": "*",
     "nodemailer": "*",
     "inflection": "*",
-    "recaptcha-async": "*",
-    "wordpos": "*",
-    "xml2js": "*",
-    "winston": "*",
-    "supertest": "*",
-    "mandrill-api": "*"
+    "recaptcha-async": "*"
   }
 }

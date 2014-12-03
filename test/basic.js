@@ -5,6 +5,7 @@ var app      = require('../app'),
     Fluff    = app.Fluff,
     mongoose = require('mongoose'),
     request  = require('supertest'),
+    should   = require('should'),
     db_name  = 'fluff-test-' + app.randomString(5),
     cookie, csrf,
     user_id, view_id, page_id, var_id, model_id;
