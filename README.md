@@ -52,7 +52,7 @@ The fluff.js library is an easy way to get automatic scaffolding of data into yo
 
 FLUFF-UI.JS:
 
-The fluff-ui.js library reusable set of UI components for basic user-facing functions including user signup, user login, password reset, profile editing, user email verification, and basic alerts. The fluff-ui.js library requires fluff.js.
+The fluff-ui.js library is a reusable set of UI components for basic user-facing functions including user signup, user login, password reset, profile editing, user email verification, and basic alert dialogs. The fluff-ui.js library requires fluff.js. Currently all UI components are available as modal dialogs, but there is a plan to include a non-modal option at some point.
 
 REST API:
 
