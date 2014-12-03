@@ -15,7 +15,7 @@ before(function (done) {
 	var custom_config = {
   	db_uri      : 'mongodb://localhost:27017/' + db_name
 	};
-	app.launch(custom_config, done);
+	app.launch(custom_config, 'silent', done);
 });
 
 // This runs after all tests

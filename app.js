@@ -1570,8 +1570,8 @@ exports.toSchemaData = toSchemaData;
 var saveDbUri = function (uri, callback) {
   active_config = app.get('config');
   active_config.db_uri = uri;
-  var content = "var config = {{object}};\nexports.config = config;";
-  fs.writeFile(__dirname + '/config.js', content.replace("{{object}}", JSON.stringify(active_config)), function (err) {
+  var content = "exports.config = " + JSON.stringify(active_config);
+  fs.writeFile(__dirname + '/config.js', content, function (err) {
     if (err) throw err;
     Fluff.log.info('New DB URI saved to config.js.');
     app.set('config', active_config);
@@ -1708,8 +1708,11 @@ var startListening = function (ok, callback, noop) {
 }
 
 // This is the red button
-var launch = function (config, callback) {
+var launch = function (config, loglevel, callback) {
   Fluff.log.info("Starting Fluff...");
+  if (loglevel) {
+    Fluff.log.transports.console.level = loglevel;
+  }
   // This callback is a global, and it is run at the end of startUp.
   Callback = callback;
   preLaunch();
