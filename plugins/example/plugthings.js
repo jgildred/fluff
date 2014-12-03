@@ -8,6 +8,7 @@ var app      = require('../../app'),
     Plug     = require('./plug'),
     resource = require('../../routes/resource');
 
+// This is the schema for Plugthings
 var schema = "{\n\
   user_id        : ObjectId,                          // The owner.\n\
   name           : String,                            // The name.\n\
@@ -18,6 +19,7 @@ var schema = "{\n\
   lastupdate     : { type: Date, default: Date.now }  // Required by Fluff.\n\
 }";
 
+// This is the default set of columns to display in a UI
 var display_columns = [{
   name:  'user_id',
   title: 'User ID',
@@ -35,18 +37,12 @@ var display_columns = [{
   size:  20
 }];
 
+// This is the default sort
 var sort_column = { name:'name', order:true };
 
 // These are used in plug.js
 exports.match_fields = ['name'];
 exports.schema = schema;
-
-// Preprocessor for GET /plugthings
-exports.find = function(req, res){
-  // Using app.doIfHasAccess is not required but illustrates the use of Fluff access control.
-  // There is a good chance you will want to enforce 'Admins' level access to plugin resources.
-  app.doIfHasAccess(req, res, 'Owner', Plug.Plugthing, resource.find);
-};
 
 // Preprocessor for GET /plugthings/info
 exports.getinfo = function(req, res){
@@ -58,6 +54,13 @@ exports.getinfo = function(req, res){
     }
     res.json(data);
   });
+};
+
+// Preprocessor for GET /plugthings
+exports.find = function(req, res){
+  // Using app.doIfHasAccess is not required but illustrates the use of Fluff access control.
+  // There is a good chance you will want to enforce 'Admins' level access to plugin resources.
+  app.doIfHasAccess(req, res, 'Owner', Plug.Plugthing, resource.find);
 };
 
 // Preprocessor for GET /plugthings/:id

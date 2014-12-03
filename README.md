@@ -14,30 +14,27 @@ INSTALL on local machine:
 2. clone this repo or download the [zip package](https://github.com/jgildred/fluff/archive/master.zip)
 3. cd to the root dir of the app
 4. type "npm install"
-5. edit config.js: db_uri should point to an empty Mongo DB, and set initialize to "true"
-6. type "node fluff"
-7. open http://localhost:3000/fluff/admin in your browser
-8. login with "admin@domain.com", password "fluff"
+5. type "node fluff"
+6. open http://localhost:3000/fluff/admin in your browser
+7. login with "admin@domain.com", password "fluff"
 
 INSTALL on Heroku:
 
 1. clone this repo or download the [zip package](https://github.com/jgildred/fluff/archive/master.zip)
 2. cd to the root dir of the app
-3. edit config.js: app_service is "Heroku", db_service is "MongoLab", initialize is "true"
-4. create a new app on Heroku and get the MongoLab addon
-5. push to Heroku (type "git push heroku master")
-6. open the Heroku app url in your browser
-7. login with "admin@domain.com", password "fluff"
+3. create a new app on Heroku and get the MongoLab addon
+4. push to Heroku (type "git push heroku master")
+5. open the Heroku app url in your browser
+6. login with "admin@domain.com", password "fluff"
 
 INSTALL on AppFog:
 
 1. clone this repo or download the [zip package](https://github.com/jgildred/fluff/archive/master.zip)
 2. cd to the root dir of the app
-3. edit config.js: app_service is "AppFog", db_service is "MongoDB", initialize is "true"
-4. create a new app on AppFog and bind the MongoDB service
-5. push to AppFog (type "af update [name of app]")
-6. open the AppFog app url in your browser
-7. login with "admin@domain.com", password "fluff"
+3. create a new app on AppFog and bind the MongoDB service
+4. push to AppFog (type "af update [name of app]")
+5. open the AppFog app url in your browser
+6. login with "admin@domain.com", password "fluff"
 
 ADMIN GUIDE:
 
@@ -53,7 +50,7 @@ FLUFF.JS:
 
 The fluff.js library is an easy way to get automatic scaffolding of data into your pages. By simply adding model=[model name] attribute to elements like tables, you can auto-populate the table with data from that model. You can also include query=[query params] attribute with the model attribute to specify necessary query params. There is also the option to include 'noharvest' attribute to avoid initial harvest, and 'norender' attribute to avoid render on initial harvest. Some sub elements can accept a field=[field name] attribute when nested within an element containing a model attribute. There is an example page created upon initialization which includes the fluff.js library. The fluff.js library requires jQuery and Backbone.js which are also included for convenience.
 
-FLUFF-UI.JS
+FLUFF-UI.JS:
 
 The fluff-ui.js library reusable set of UI components for basic user-facing functions including user signup, user login, password reset, profile editing, user email verification, and basic alerts. The fluff-ui.js library requires fluff.js.
 
@@ -67,7 +64,7 @@ You can simply put your plugin code into a subfolder in the "plugins" folder. Fl
 
 TESTS:
 
-Currently there is only a basic smoke test. Feel free to add more test cases if you're feeling testy. To run the smoke test, in the root dir of the app type "mocha".
+Currently there is only a basic set of smoke tests. Feel free to add more test cases if you're feeling testy. To run the smoke test, in the root dir of the app type "mocha". If you don't have Mocha, type "npm install -g mocha", then cd to /test and type "npm install".
 
 LICENSE:
 
@@ -80,16 +77,14 @@ TO DO:
 - paged display in admin
 - sort in admin list views
 - search users in admin
-- fluff-ui.js support for signup, password reset, email verification and profile editing
 
 WOULD BE NICE:
 
 - an easy way to add admin tabs for plugins, or at least a way to edit configs for plugins via admin
 - list of domains to redirect in site config (for cmspages)
-- manage email templates
 - manage error pages
 - page versioning
 - move session timeout to be user specific
 - move apikeys to be tied to users
 - move CORS domains to be tied to users
-- client data updates auto-propogated using fluff.js and web sockets or socket.io
+- client data updates auto-propogated via sockets

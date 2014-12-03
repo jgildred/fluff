@@ -1,9 +1,9 @@
 
 // PLUGIN EXAMPLE
 
-// All plugins must have a "plug.js" file which exports an "init" and a "load" function with a callback as the first argument
+// All plugins must reside in their own sub-directory under the /plugins directory and have a "plug.js" file which exports an "init" and a "load" function with a callback as the first argument. Note that if your plugin requires special modules, use a package.json file in your plugin's directory to manage the modules specific to your plugin.
 
-// Pretty standard requirements assuming you need additional model(s) for the plugin.
+// The requirements below are standard, assuming you need additional model(s) for the plugin.
 // In this example you use the plugthings.js model file for it's schema and routes.
 var app        = require('../../app'),
     Fluff      = app.Fluff,
@@ -35,11 +35,12 @@ exports.load = function (callback) {
 
   // Any routes added by the plugin, including routes for your plugin's model(s).
   Fluff.app.get   (base + '/plugthings',         plugthings.find);
+  Fluff.app.get   (base + '/plugthings.info',    plugthings.getinfo);
   Fluff.app.get   (base + '/plugthings/:id',     plugthings.findone);
   Fluff.app.post  (base + '/plugthings',         plugthings.create);
   Fluff.app.put   (base + '/plugthings/:id',     plugthings.update);
   Fluff.app.patch (base + '/plugthings/:id',     plugthings.update);
-  Fluff.app.delete   (base + '/plugthings/:id',     plugthings.remove);
+  Fluff.app.delete   (base + '/plugthings/:id',  plugthings.remove);
 
 	if (callback) {
 		callback();
