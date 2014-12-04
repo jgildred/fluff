@@ -468,7 +468,7 @@ var mergePaasConfig = function (active_config) {
       active_config.port = process.env.VMC_APP_PORT ? process.env.VMC_APP_PORT : defaultPort;
       break;
     default:
-      if ((active_config.db_service == "MongoLab") && process.env.MONGOLAB_URI) {
+      if (process.env.MONGOLAB_URI) {
         active_config.db_uri = process.env.MONGOLAB_URI;
       }
       active_config.port = process.env.PORT ? process.env.PORT : active_config.port;
