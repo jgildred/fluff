@@ -446,19 +446,19 @@ var loadDefaults = function (custom_config) {
 var mergePaasConfig = function (active_config) {
   switch (active_config.app_service) {
     case "OpsWorks":
-      if ((active_config.db_service == "MongoLab") && process.env.MONGOLAB_URI) {
+      if (process.env.MONGOLAB_URI) {
         active_config.db_uri = process.env.MONGOLAB_URI;
       }
       active_config.port = process.env.PORT ? process.env.PORT : active_config.port;
       break;
     case "Heroku":
-      if ((active_config.db_service == "MongoLab") && process.env.MONGOLAB_URI) {
+      if (process.env.MONGOLAB_URI) {
         active_config.db_uri = process.env.MONGOLAB_URI;
       }
       active_config.port = process.env.PORT ? process.env.PORT : active_config.port;
       break;
     case "AppFog":
-      if ((active_config.db_service == "MongoDB") && process.env.VCAP_SERVICES) {
+      if (process.env.VCAP_SERVICES) {
         var env   = JSON.parse(process.env.VCAP_SERVICES);
         var obj   = env['mongodb-1.8'][0]['credentials'];
         var cred  = '';
