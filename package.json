@@ -21,6 +21,7 @@
     "mime": "*",
     "nodemailer": "*",
     "inflection": "*",
-    "recaptcha-async": "*"
+    "recaptcha-async": "*",
+    "xml2js": "*"
   }
 }
