@@ -55,7 +55,7 @@ if (config.app_service == "Heroku") {
   var winstonTrans = [ new (winston.transports.Console)() ];
 }
 Fluff.log = new (winston.Logger)({
-  transports: winstonTrans;
+  transports: winstonTrans
 });
 
 // Helper functions
