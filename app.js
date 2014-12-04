@@ -520,7 +520,7 @@ var allowCrossDomain = function (req, res, next) {
         next();
       }
     }
-  } 
+  }
   // Allow anything
   else {
     // Build the cors header
