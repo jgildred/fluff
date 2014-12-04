@@ -433,9 +433,9 @@ var loadDefaults = function (custom_config) {
   active_config.fluff_path = active_config.fluff_path || defaultFluffPath;
   active_config.port = active_config.port || defaultPort;
   externalPort = active_config.port;
-  //Fluff.log.info("After loading defaults, ext port is: " + externalPort);
-  //Fluff.log.info("After loading defaults, int port is: " + active_config.port);
-  //Fluff.log.info("After loading defaults, DB URI is: " + active_config.db_uri);
+  Fluff.log.info("After loading defaults, ext port is: " + externalPort);
+  Fluff.log.info("After loading defaults, int port is: " + active_config.port);
+  Fluff.log.info("After loading defaults, DB URI is: " + active_config.db_uri);
   app.set('config', mergePaasConfig(active_config));
 }
 
@@ -473,9 +473,9 @@ var mergePaasConfig = function (active_config) {
       }
       active_config.port = process.env.PORT ? process.env.PORT : active_config.port;
   }
-  //Fluff.log.info("After merge PaaS config, ext port is: " + externalPort);
-  //Fluff.log.info("After merge PaaS config, int port is: " + active_config.port);
-  //Fluff.log.info("After merge PaaS config, DB URI is: " + active_config.db_uri);
+  Fluff.log.info("After merge PaaS config, ext port is: " + externalPort);
+  Fluff.log.info("After merge PaaS config, int port is: " + active_config.port);
+  Fluff.log.info("After merge PaaS config, DB URI is: " + active_config.db_uri);
   return active_config;
 }
 
@@ -811,9 +811,9 @@ var mergeConfig = function (app_config, site_config) {
   }
   // The external port is forced by the DB config
   externalPort = app_config.port || externalPort;
-  //Fluff.log.info("After merge DB config, ext port is: " + externalPort);
-  //Fluff.log.info("After merge DB config, int port is: " + app_config.port);
-  //Fluff.log.info("After merge DB config, DB URI is: " + app_config.db_uri);
+  Fluff.log.info("After merge DB config, ext port is: " + externalPort);
+  Fluff.log.info("After merge DB config, int port is: " + app_config.port);
+  Fluff.log.info("After merge DB config, DB URI is: " + app_config.db_uri);
   return mergePaasConfig(app_config);
 }
 

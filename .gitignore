@@ -8,5 +8,5 @@ plugins/*
 #!plugins/avb.io/
 #!plugins/bantr/
 #!plugins/keypair.io/
-#!plugins/aws/
+!plugins/aws/
 #!plugins/mandrill/
