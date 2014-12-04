@@ -47,11 +47,15 @@ var config   = require('./config').config,
     resource = require('./routes/resource');
 
 // Setup Winston logging
+var winstonTrans = [
+  new (winston.transports.Console)(),
+  new (winston.transports.File)({ filename: './log/fluff.log', maxsize: 100000, maxFiles: 1 })
+];
+if (config.app_service == "Heroku") {
+  var winstonTrans = [ new (winston.transports.Console)() ];
+}
 Fluff.log = new (winston.Logger)({
-  transports: [
-    new (winston.transports.Console)(),
-    new (winston.transports.File)({ filename: './log/fluff.log', maxsize: 100000, maxFiles: 1 })
-  ]
+  transports: winstonTrans;
 });
 
 // Helper functions
@@ -195,7 +199,6 @@ var initDb = function (callback) {
       });
     });
   });
-
 }
 
 var setupSchemas = function (callback) {
