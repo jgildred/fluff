@@ -123,6 +123,9 @@ exports.findone = function(req, res, resource, filter, callback){
     }
     else { 
       if (site) { 
+        if (site.domain && !site.domain_name) {
+          site.domain_name = site.domain;
+        }
         res.json(site);
         if (callback) {
           callback(req, res, site);

@@ -77,6 +77,7 @@ TO DO:
 - paged display in admin
 - sort in admin list views
 - search users in admin
+- ability to change display name of a model's columns via admin
 
 WOULD BE NICE:
 

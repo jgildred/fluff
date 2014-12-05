@@ -30,17 +30,17 @@ exports.init = function (callback) {
 // This will run when you startup Fluff (after init), and anytime Fluff config is reloaded.
 exports.load = function (callback) {
 
-	// This is the prefix for your routes.
+	// This is the prefix for your routes. Use the fluff_path to avoid conflicts.
   var base = Fluff.app.get('config').fluff_path + '/admin/api';
 
-  // Any routes added by the plugin, including routes for your plugin's model(s).
-  Fluff.app.get   (base + '/plugthings',         plugthings.find);
-  Fluff.app.get   (base + '/plugthings.info',    plugthings.getinfo);
-  Fluff.app.get   (base + '/plugthings/:id',     plugthings.findone);
-  Fluff.app.post  (base + '/plugthings',         plugthings.create);
-  Fluff.app.put   (base + '/plugthings/:id',     plugthings.update);
-  Fluff.app.patch (base + '/plugthings/:id',     plugthings.update);
-  Fluff.app.delete   (base + '/plugthings/:id',  plugthings.remove);
+  // All routes added by the plugin, including routes for your plugin's model(s).
+  Fluff.app.get    (base + '/plugthings',      plugthings.find);
+  Fluff.app.get    (base + '/plugthings.info', plugthings.getinfo);
+  Fluff.app.get    (base + '/plugthings/:id',  plugthings.findone);
+  Fluff.app.post   (base + '/plugthings',      plugthings.create);
+  Fluff.app.put    (base + '/plugthings/:id',  plugthings.update);
+  Fluff.app.patch  (base + '/plugthings/:id',  plugthings.update);
+  Fluff.app.delete (base + '/plugthings/:id',  plugthings.remove);
 
 	if (callback) {
 		callback();

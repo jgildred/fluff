@@ -4,6 +4,7 @@
 // Dependencies
 var express        = require('express'),
     http           = require('http'),
+    https          = require('https'),
     bodyParser     = require('body-parser'),
     cookieParser   = require('cookie-parser'),
     methodOverride = require('method-override'),
@@ -18,7 +19,6 @@ var express        = require('express'),
 // Setup globals
 var Fluff       = {},
     app         = express(),
-    Server      = http.createServer(app),
     defaultFluffPath = "/fluff",
     defaultPort = 80,
     PortChanged = false, 
@@ -28,7 +28,7 @@ var Fluff       = {},
     ObjectId    = mongoose.Schema.Types.ObjectId,
     Buffer      = mongoose.Schema.Types.Buffer,
     Mixed       = mongoose.Schema.Types.Mixed,
-    Callback;
+    Server, Callback;
     Fluff.match_fields = {};
 exports.Fluff  = Fluff;
 Fluff.app      = app;
@@ -1123,6 +1123,7 @@ var runAlertMode = function(level, callback) {
     res.status = 500;
     res.send(defaultAlertPage(text));
   });
+  setupServer();
   startListening(false, callback);
 }
 
@@ -1164,10 +1165,6 @@ var handleModelRequest = function (req, res, next, callback) {
           });
         }
         else {
-          // Make sure that the user_id is filled if needed
-          if (Models[model.name]) {
-
-          }
           doIfHasAccess(req, res, access, Models[model.name], callback);
         }
       }
@@ -1401,22 +1398,39 @@ var logRequest = function (req, res, next) {
   next();
 }
 
-var setUrls = function (req, res, next) {
+var setProtocol = function (req, res, next) {
   // externalBaseUrl is useful for email notifications which link back to the site
-  var protocol  = app.get('config').ssl ? "https://" : "http://";
+  if (app.get('config').ssl) {
+    var protocol = "https://";
+  } 
+  else {
+    var protocol = "http://";
+  }
   Fluff.externalBaseUrl = protocol + app.get('config').domain_name + ":" + externalPort;
   Fluff.externalUrl     = Fluff.externalBaseUrl + req.url;
   Fluff.log.info("EXTERNAL URL IS "+ Fluff.externalUrl);
   next();
 }
 
+var setupServer = function () {
+  if (!Server) {
+    if (app.get('config').ssl) {
+      Server = https.createServer(app);
+    } 
+    else {
+      Server = http.createServer(app);
+    }
+  }
+}
+
 // Every time the site config changes this is run. Could be more efficient.
 var applyConfig = function (callback) {
   // Run all the setup routines with the latest config
+  setupServer();             // Uses app.config ssl
   setupMailer();             // Uses app.config smtp
   app.enable('trust proxy'); // To support proxies
   app.use(logRequest);       // Log requet data without passwords
-  app.use(setUrls);          // Uses app.config ssl
+  app.use(setProtocol);      // Uses app.config ssl
   app.use(forceSsl);         // Uses app.config ssl
   app.use(allowCrossDomain); // Uses app.config cors
   app.use(requireApiKey);    // Uses app.config api_key
@@ -1658,6 +1672,9 @@ var reloadConfig = function (req, res) {
   loadConfig(applyConfig);
 }
 
+// This is a simple JSON response
+// Note the following common HTTP codes
+// 200 ok, 400 bad request, 401 unauthorized, 404 not found, 500 server error
 Fluff.msgResponse = function (req, res, status, msg) {
   Fluff.log.info(msg);
   res.status(status || 200);
@@ -1688,25 +1705,26 @@ var preLaunch = function () {
 
 // Start listening
 var startListening = function (ok, callback, noop) {
-  var time = new Date();
   if (!noop) {
-    Server.listen(app.get('config').port);
-  }
-  Fluff.log.info("Now listening on port " + app.get('config').port + " at " + time + ".");
-  if (ok && app.get('config').fluff_path) {
-    Fluff.log.info("Admin is located at " + app.get('config').fluff_path + "/admin.");
-    Fluff.log.info("Public files are located at " + app.get('config').fluff_path + "/js,css,images,fonts,files.");
-    Fluff.log.info("Fluff is up.");
-  }
-  else {
-    Fluff.log.info("Fluff is in alert mode.");
-  }
-  if (callback) {
-    Fluff.log.info("Post launch callback starting...");
-    callback();
-  }
-  else {
-    Fluff.log.info("No post launch callback.");
+    var time = new Date();
+    Server.listen(app.get('config').port, function() {
+      Fluff.log.info("Now listening on port " + app.get('config').port + " at " + time + ".");
+      if (ok && app.get('config').fluff_path) {
+        Fluff.log.info("Admin is located at " + app.get('config').fluff_path + "/admin.");
+        Fluff.log.info("Public files are located at " + app.get('config').fluff_path + "/js,css,images,fonts,files.");
+        Fluff.log.info("Fluff is up.");
+      }
+      else {
+        Fluff.log.info("Fluff is in alert mode.");
+      }
+      if (callback) {
+        Fluff.log.info("Post launch callback starting...");
+        callback();
+      }
+      else {
+        Fluff.log.info("No post launch callback.");
+      }
+    });
   }
 }
 

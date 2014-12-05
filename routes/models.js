@@ -297,7 +297,7 @@ var checkSchemaAndUpdate = function (req, res) {
 });
 }
 
-// This will return the hash from Fluff.app.get('models') matching _id
+// This will return the index from Fluff.app.get('models') matching _id
 var modelIndexFromId = function (id) {
   if (id && Fluff.app.get('models')) {
     var modelIndex = null;
@@ -319,7 +319,7 @@ var modelIndexFromId = function (id) {
 }
 exports.modelIndexFromId = modelIndexFromId;
 
-// This will return the hash from Fluff.app.get('models') matching name
+// This will return the index from Fluff.app.get('models') matching name
 var modelIndexFromName = function (name) {
   if (name && Fluff.app.get('models')) {
     var modelIndex = null;
