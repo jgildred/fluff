@@ -13,7 +13,8 @@ var app      = require('../app'),
 // This runs before all tests
 before(function (done) {
 	var custom_config = {
-  	db_uri      : 'mongodb://localhost:27017/' + db_name
+    port   : 3000,
+  	db_uri : 'mongodb://localhost:27017/' + db_name
 	};
 	app.launch(custom_config, 'silent', done);
 });

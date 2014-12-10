@@ -42,6 +42,7 @@
       <div class="userListView"></div>
       <div class="userDetailView"></div>
       <div class="notificationsView"></div>
+      <div class="pluginsView"></div>
       <div class="siteDetailView"></div>
     </div>
     <div class="popups">
@@ -118,6 +119,7 @@
           <li id="notifications-tab"><a href="#/notifications">Notifications</a></li>
           <li id="users-tab"><a href="#/users">Users</a></li>
           <li id="site-tab"><a href="#/site">Site</a></li>
+          <li id="plugins-tab"><a href="#/plugins">Plugins</a></li>
         </ul>
       </div>
     </div>
@@ -964,7 +966,7 @@
           <div class="checkbox col-lg-9">
             <label>
               <input type="checkbox" value="" <%= (site && site.get('ssl')) ? 'checked' : '' %> onchange="setCheckVal(document.getElementsByName('ssl')[0],this.checked);" />
-                Require Secure HTTP (SSL)
+                Secure HTTP (SSL) only
               <input type="hidden" name="ssl" value="<%= site ? site.get('ssl') : 'false' %>" />
             </label>
           </div>
@@ -998,7 +1000,7 @@
           <div class="checkbox col-lg-9">
             <label>
               <input type="checkbox" value="" <%= (site && site.get('apikey').required) ? 'checked' : '' %> onchange="setCheckVal(document.getElementsByName('apikey.required')[0],this.checked);" />
-                Require API Key
+                Require API key
               <input type="hidden" name="apikey.required" value="<%= site ? site.get('apikey').required : 'false' %>" />
             </label>
           </div>
@@ -1015,7 +1017,7 @@
           <div class="checkbox col-lg-9">
             <label>
               <input type="checkbox" value="" <%= (site && site.get('captcha').required) ? 'checked' : '' %> onchange="setCheckVal(document.getElementsByName('captcha.required')[0],this.checked);" />
-                Require Captcha on Sign Up
+                Only humans can sign up
               <input type="hidden" name="captcha.required" value="<%= site ? site.get('captcha').required : 'false' %>" />
             </label>
           </div>
@@ -1095,6 +1097,51 @@
         </fieldset>
       </div>
       </div>
+      <div class="col-lg-12">
+        <fieldset>
+          <hr />
+          <button type="submit" class="btn btn-primary">Update</button>
+          <% if (site) { %>
+          <input type="hidden" name="id" value="<%= site.id %>" />
+          <% } %>
+        </fieldset>
+      </div>
+    </form>
+  </script>
+
+  <script type="text/template" id="edit-plugins-template">
+    <br/>
+    <form class="edit-plugins-form form-horizontal">
+      <legend>Installed Plugins</legend>
+      <br/>
+      <div class="col-lg-4">
+        <select class="form-control" id="selectPlugin">
+          <% _(plugins).each(function(option) { %>
+          <option value="<%= option.slug %>"<%= (option.slug == '') ? ' selected' : '' %>><%= option.name %></option>
+          <% }); %>
+        </select>
+      </div>
+      <br/><br/><br/>
+      <% _(plugins).each(function(plugin, index) { %>
+      <div id="<%= 'plugin-' + plugin.slug %>" class="plugin-field well col-lg-12 plugin-info <%= (plugin.slug == 'signup') ? '' : 'hidden' %>">
+        <p>Slug: <%= plugin.slug || '?'%>, Version: <%= plugin.version || '?'%>, Author: <%= plugin.author || '?'%>, Date: <%= new Date(plugin.date) || '?'%><br/>
+          Description: <%= plugin.description || 'No descrption available.'%>
+        </p><br/>
+        <% _.each(plugin.config, function(field, fieldIndex) { %>
+          <div class="col-lg-12">
+            <div class="input-group">
+              <span class="input-group-addon edit-field-name"><%= field ? field.name : '' %></span>
+              <input name="plugins[<%= index %>].config[<%= fieldIndex %>].value" class="form-control edit-field-value" type="text" value="<%= field ? field.value : '' %>" placeholder="value" />
+              <input name="plugins[<%= index %>].config[<%= fieldIndex %>].name" class="form-control edit-field-name" type="hidden" value="<%= field ? field.name : '' %>" />
+              <span class="input-group-addon delete-field-quickform pointer"><i class="glyphicon glyphicon-remove-sign"></i></span>
+            </div>
+          </div>
+          <br/><br/><br/>
+        <% }); %>
+        <input type="hidden" name="plugins[<%= index %>].name" value="<%= plugin.name %>" />
+        <input type="hidden" name="plugins[<%= index %>].slug" value="<%= plugin.slug %>" />
+      </div>
+      <% }); %>
       <div class="col-lg-12">
         <fieldset>
           <hr />

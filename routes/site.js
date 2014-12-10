@@ -40,41 +40,58 @@ var schema = '{ \n\
     required     : { type: Boolean, default: false }, \n\
     keychain     : [ String ] \n\
   }, \n\
-  notifications : { \n\
-    type: [{ \n\
-      name    : { type: String, required: true }, \n\
-      slug    : { type: String, enum: ["signup", "pwchange", "welcome"], required: true }, \n\
-      subject : String, \n\
-      body    : String \n\
+  notifications  : { \n\
+    type : [{ \n\
+      name       : { type: String, required: true }, \n\
+      slug       : { type: String, enum: ["signup", "pwchange", "welcome"], required: true, unique: true }, \n\
+      subject    : String, \n\
+      body       : String \n\
     }], \n\
-    default: [ \n\
-      { name    : "Sign Up", \n\
-        slug    : "signup", \n\
-        subject : "Verify Your Email Address", \n\
-        body    : "Hi {{shortname}}\\n\\n" \n\
+    default : [ \n\
+      { name     : "Sign Up", \n\
+        slug     : "signup", \n\
+        subject  : "Verify Your Email Address", \n\
+        body     : "Hi {{shortname}}\\n\\n" \n\
                  + "In order to complete the signup process, please go to:\\n\\n" \n\
                  + "{{link}}\\n\\n" \n\
                  + "to verify your email address.\\n" \n\
       }, \n\
-      { name    : "Change Password", \n\
-        slug    : "pwchange", \n\
-        subject : "Reset Request", \n\
-        body    : "Hi {{shortname}}\\n\\n" \n\
+      { name     : "Change Password", \n\
+        slug     : "pwchange", \n\
+        subject  : "Reset Request", \n\
+        body     : "Hi {{shortname}}\\n\\n" \n\
                  + "We just received a request to reset your password. In order to do so, please go to:\\n\\n" \n\
                  + "{{link}}\\n" \n\
       }, \n\
-      { name    : "Welcome", \n\
-        slug    : "welcome", \n\
-        subject : "Your Account is Ready", \n\
-        body    : "Hi {{shortname}}\\n\\n" \n\
+      { name     : "Welcome", \n\
+        slug     : "welcome", \n\
+        subject  : "Your Account is Ready", \n\
+        body     : "Hi {{shortname}}\\n\\n" \n\
                  + "We just setup a new user account for you. In order to complete the setup process, please go to:\\n\\n" \n\
                  + "{{link}}\\n\\n" \n\
                  + "to set your password.\\n" \n\
       } \n\
     ] \n\
   }, \n\
-  creator_id     : mongoose.Schema.Types.ObjectId, \n\
-  lastupdater_id : mongoose.Schema.Types.ObjectId, \n\
+  plugins : { \n\
+    type : [{ \n\
+      name        : { type: String, required: true }, \n\
+      slug        : { type: String, required: true, unique: true }, \n\
+      description : String, \n\
+      author      : String, \n\
+      license     : String, \n\
+      version     : String, \n\
+      date        : Date, \n\
+      config      : { \n\
+        type : [{ \n\
+          name  : String, \n\
+          value : String \n\
+        }] \n\
+      } \n\
+    }] \n\
+  }, \n\
+  creator_id     : ObjectId, \n\
+  lastupdater_id : ObjectId, \n\
   creation       : { type: Date, default: Date.now }, \n\
   lastupdate     : { type: Date, default: Date.now } \n\
 }';
@@ -119,10 +136,10 @@ exports.getinfo = function(req, res){
 exports.findone = function(req, res, resource, filter, callback){
   resource.findOne().exec(function (err, site) {
     if (err) { 
-      app.msgResponse(req, res, 500, JSON.stringify(err));
+      Fluff.msgResponse(req, res, 500, JSON.stringify(err));
     }
-    else { 
-      if (site) { 
+    else {
+      if (site) {
         if (site.domain && !site.domain_name) {
           site.domain_name = site.domain;
         }
@@ -132,7 +149,7 @@ exports.findone = function(req, res, resource, filter, callback){
         }
       }
       else {
-        app.msgResponse(req, res, 404, 'No site found.');
+        Fluff.msgResponse(req, res, 404, 'No site found.');
       }
     }
   });
@@ -140,13 +157,35 @@ exports.findone = function(req, res, resource, filter, callback){
 
 // Handler for PUT
 exports.update = function(req, res, resource, filter, callback){
-  if (req.body.id)  { delete req.body.id; }
-  if (req.body._id) { delete req.body._id; }
-  req.body.lastupdate     = new Date;
-  req.body.lastupdater_id = req.session.user.id;
-  resource.findOneAndUpdate(null, req.body, null, function (err, site) {
+  // Merge any missing data
+  var merge = require('merge');
+  var config = Fluff.app.get('config');
+  var update = merge(true, config, req.body);
+  // Make sure the plugin info is included
+  update.plugins.forEach(function (plugin, index) {
+    update.plugins[index] = {
+      name:        config.plugins[index].name,
+      slug:        config.plugins[index].slug,
+      description: config.plugins[index].description,
+      author:      config.plugins[index].author,
+      license:     config.plugins[index].license,
+      version:     config.plugins[index].version,
+      date:        config.plugins[index].date,
+      disabled:    plugin.disabled,
+      config:      plugin.config
+    };
+  });
+  // Make sure the updater info is correct
+  update.lastupdate     = new Date;
+  update.lastupdater_id = req.session.user.id;
+  // Make sure the update data has not id
+  if (update.id)  { delete update.id; }
+  if (update._id) { delete update._id; }
+  Fluff.log.info("Going to update site with this object:");
+  Fluff.log.info(JSON.stringify(update));
+  resource.findOneAndUpdate(null, update, null, function (err, site) {
     if (err) { 
-      app.msgResponse(req, res, 500, JSON.stringify(err));
+      Fluff.msgResponse(req, res, 500, "Problem trying to save site data:" + JSON.stringify(err));
     }
     else { 
       if (site) {
@@ -154,7 +193,7 @@ exports.update = function(req, res, resource, filter, callback){
         res.json(site);
       }
       else {
-        app.msgResponse(req, res, 404, "Nothing to update.");
+        Fluff.msgResponse(req, res, 404, "Nothing to update.");
       }
     }
     if (!err && callback) {

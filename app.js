@@ -32,7 +32,6 @@ var Fluff       = {},
     Fluff.match_fields = {};
 exports.Fluff  = Fluff;
 Fluff.app      = app;
-exports.Server = Server;
 exports.Models = Models;
 
 // Remaining dependencies
@@ -61,6 +60,24 @@ Fluff.log = new (winston.Logger)({
 // Helper functions
 var handleError = function (err) {
   Fluff.log.info("Bad things happened: " + err);
+}
+
+// Takes an array of name/value pairs and return a val for a name
+Fluff.getVal = function (array, name, nameField, valField) {
+  if (array && name) {
+    var returnVal;
+    nameField = nameField || 'name';
+    valField = valField || 'value';
+    array.forEach(function (item) {
+      if (item[nameField] == name) {
+        returnVal = item[valField];
+      }
+    });
+    return returnVal;
+  }
+  else {
+    return null;
+  }
 }
 
 // Returns a clone of the object or the same thing if not
@@ -344,6 +361,17 @@ var initPlugins = function (callback) {
   });
 }
 
+// Returns the index of the object in an array that has the matching field, if no match then returns the length of the array.
+var getIndexByMatch = function (array, field, value) {
+  var matchIndex = array.length;
+  array.forEach(function (object, index) {
+    if (object[field] == value) {
+      matchIndex = index;
+    }
+  });
+  return matchIndex;
+}
+
 // Init one plugin; you need the directory list and index of the plugin in the list
 var initOnePlugin = function (dirs, index, callback) {
   var path = __dirname + '/plugins';
@@ -359,8 +387,64 @@ var initOnePlugin = function (dirs, index, callback) {
       else {
         Plugins[name] = require('./plugins/' + name + '/plug');
         Plugins[name].init(function () {
-          Fluff.log.info("Initialized " + name + " plugin.");
-          finishInitPlugin(dirs, index, callback);
+          if (Plugins[name].info) {
+            Plugins[name].info.slug = name;
+            var siteConfig = app.get('config');
+            var pluginIndex = 0, disabled = false, config = [];
+            var plugins = app.get('config').plugins;
+            if (plugins) {
+              pluginIndex = getIndexByMatch(plugins, 'slug', name);
+              if (plugins[pluginIndex]) {
+                if (plugins[pluginIndex].disabled) {
+                  disabled = true;
+                }
+                // Make sure that the config is using the correct set of fields
+                if (!plugins[pluginIndex].config) {plugins[pluginIndex].config = [];}
+                if (!Plugins[name].config_fields) {Plugins[name].config_fields = [];}
+                config = plugins[pluginIndex].config;
+                // Remove the field if the plugin doesn't use it
+                config.forEach(function (field, fieldIndex) {
+                  if (Plugins[name].config_fields.indexOf(field.name) == -1) {
+                    config.splice(fieldIndex, 1);
+                  }
+                });
+                // Add the field if it's missing
+                Plugins[name].config_fields.forEach(function (field) {
+                  if (flattenArray(config, 'name').indexOf(field) == -1) {
+                    config.push({name: field, value: ''});
+                  }
+                });
+              }
+            }
+            siteConfig.plugins[pluginIndex] = {
+              name: Plugins[name].info.name,
+              slug:  Plugins[name].info.slug,
+              description: Plugins[name].info.description,
+              author: Plugins[name].info.author,
+              license: Plugins[name].info.license,
+              version: Plugins[name].info.version,
+              date: Plugins[name].info.date,
+              disabled: disabled,
+              config: config
+            };
+            if (siteConfig._id) { delete siteConfig._id; }
+            if (siteConfig.id) { delete siteConfig.id; }
+            if (siteConfig.lastupdater_id) { delete siteConfig.lastupdater_id; }
+            siteConfig.lastupdate = new Date();
+            Site.findOneAndUpdate(null, siteConfig, null, function (err, site) {
+              if (!err && site) {
+                Fluff.log.info("Initialized " + name + " plugin.");
+              }
+              else {
+                Fluff.log.info("Failed to save " + name + " plugin info to DB. Error: " + JSON.stringify(err));
+              }
+              finishInitPlugin(dirs, index, callback);
+            });
+          }
+          else {
+            Fluff.log.info("Initialized " + name + " plugin without config.");
+            finishInitPlugin(dirs, index, callback);
+          }
         });
       }
     }
@@ -822,7 +906,7 @@ var mergeConfig = function (app_config, site_config) {
 
 // Load the site config from the db
 var loadConfig = function (callback) {
-  Fluff.log.info("Loading config...");
+  Fluff.log.info("Loading config from DB...");
   Site.findOne().exec(function (err, data) {
     if (!err && data) {
       var active_config = app.get('config');
@@ -1636,26 +1720,24 @@ var checkDb = function (callback) {
 }
 
 // Startup sequence
-var startUp = function (config) {
+var startUp = function (launchConfig) {
   // Load data from config.js and check for env variables
-  loadDefaults(config);
+  loadDefaults(launchConfig || config);
   // Make sure the bd_uri at least looks like a MongoDB URI
   if (app.get('config').db_uri && (app.get('config').db_uri.length > 10)) {
     if (app.get('config').db_uri.split("//")[0] == "mongodb:") {
       Fluff.log.info("DB URI looks ok.");
-      //setupSchemas(function () {
-        connectDb(function () {
-          checkDb(function () {
+      connectDb(function () {
+        checkDb(function () {
+          loadConfig(function () {
             initPlugins(function () {
-              loadConfig(function () {
-                loadModels(function () {
-                  applyConfig(Callback);
-                });
+              loadModels(function () {
+                applyConfig(Callback);
               });
             });
           });
         });
-      //});
+      });
     }
     else {
       Fluff.log.info("DB URI is not working.");
@@ -1668,6 +1750,7 @@ var startUp = function (config) {
   }
 }
 
+// FIXME need to check if plugin configs changed, if so, then reload plugins, then applyconfig
 var reloadConfig = function (req, res) {
   loadConfig(applyConfig);
 }
@@ -1708,6 +1791,8 @@ var startListening = function (ok, callback, noop) {
   if (!noop) {
     var time = new Date();
     Server.listen(app.get('config').port, function() {
+      // Exporting the server object is useful for testing
+      exports.Server = Server;
       Fluff.log.info("Now listening on port " + app.get('config').port + " at " + time + ".");
       if (ok && app.get('config').fluff_path) {
         Fluff.log.info("Admin is located at " + app.get('config').fluff_path + "/admin.");
@@ -1729,7 +1814,7 @@ var startListening = function (ok, callback, noop) {
 }
 
 // This is the red button
-var launch = function (config, loglevel, callback) {
+var launch = function (launchConfig, loglevel, callback) {
   Fluff.log.info("Starting Fluff...");
   if (loglevel) {
     Fluff.log.transports.console.level = loglevel;
@@ -1737,6 +1822,6 @@ var launch = function (config, loglevel, callback) {
   // This callback is a global, and it is run at the end of startUp.
   Callback = callback;
   preLaunch();
-  startUp(config);
+  startUp(launchConfig);
 }
 exports.launch = launch;

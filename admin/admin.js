@@ -25,6 +25,16 @@ Fluff.admin.init = function () {
   checkSession(startRoutes);
 }
 
+// Returns a clone of the object or the same thing if not
+var cloneObject = function (obj) {
+  if ((null == obj) || ("object" != typeof obj)) return obj;
+  var copy = obj.constructor();
+  for (var attr in obj) {
+      if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+  }
+  return copy;
+}
+
 var startRoutes = function (path) {
   console.log("Backbone history started");
   if (!Backbone.History.started) {
@@ -169,54 +179,104 @@ var addArrayOrString = function(object, name, text) {
   }
 }
 
+
+
+var consolidateChildren = function (object) {
+  if (object) {
+    if (objectType(object) == 'Object') {
+      var newObject = {};
+      for (item in object) {
+        if (item.split('.').length > 1) {
+          var item_name    = item.split('.')[0];
+          var subitem_name = item.substr(item_name.length + 1);
+          // make sure the newObject has the subobject
+          if (!newObject.hasOwnProperty(item_name)) {
+            newObject[item_name] = {};
+          }
+          newObject[item_name] = addArrayOrString(newObject[item_name], subitem_name, object[item]);
+        }
+        else {
+          // Add it to the newObject as a child array or string 
+          newObject = addArrayOrString(newObject, item, object[item]);
+        }
+      }
+      return newObject;
+    }
+    else {
+      return object;
+    }
+  }
+  else {
+    return null;
+  }
+}
+
+var consolidateArrays = function (object) {
+  if (object) {
+    if (objectType(object) == 'Object') {
+      var newObject = {};
+      for (item in object) {
+        if ((item.split('[').length > 1) && (item.split(']').length > 1)) {
+          var item_name  = item.split('[')[0];
+          var item_index = parseInt(item.split('[')[1].split(']')[0]);
+          if (item_index != NaN) {
+            // take the item and make it an array with a new item
+            // first check to see if the array already exists, if so add to it
+            if (newObject[item_name]) {
+              if (objectType(newObject[item_name]) == 'Array') {
+                newObject[item_name].push(object[item]);
+                delete object[item];
+              }
+              else {
+                console.log("Form data has an array with same name as another element.");
+              }
+            }
+            else {
+              newObject[item_name] = [object[item]];
+              delete object[item];
+            }
+          }
+        }
+        else {
+          // Add it to the newObject as a child array or string 
+          newObject[item] = object[item];
+        }
+      }
+      return newObject;
+    }
+    else {
+      return object;
+    }
+  }
+  else {
+    return null;
+  }
+}
+
 // Grabs all form data and puts it into an object ready to update a resource.
 // Form elements with a name like 'item.subitem' will be put into an 'item' subobject.
 // Form elements with a name like 'items[]' will be parsed into an 'items' array of text.
 // Form elements with a name like 'items[0].subitem' will be parsed into an 'items' array of objects.
-var getFormData = function(form) {
-  if (form) {
+// FIXME not proud of this code; this should ideally recurse beyond two levels deep
+var formDataToObject = function (formData) {
+  if (formData) {
     var formObject = {};
-    var formData = $(form).serializeObject();
-    console.log("FORM DATA:");
-    console.log(formData);
     // Consolidate children
-    for (item in formData) {
-      if (item.split('.').length > 1) {
-        var item_name    = item.split('.')[0];
-        var subitem_name = item.split('.')[1];
-        // make sure the formObject has the subobject
-        if (!formObject.hasOwnProperty(item_name)) {
-          formObject[item_name] = {};
-        }
-        formObject[item_name] = addArrayOrString(formObject[item_name], subitem_name, formData[item]);
-      }
-      else {
-        // Add it to the form object as an array or string 
-        formObject = addArrayOrString(formObject, item, formData[item]);
-      }
+    formObject = consolidateChildren(formData);
+    for (item in formObject) {
+      formObject[item] = consolidateChildren(formObject[item]);
     }
     // Consolidate arrays of objects
-    for (item in formObject) {
-      if ((item.split('[').length > 1) && (item.split(']').length > 1)) {
-        var item_name  = item.split('[')[0];
-        var item_index = parseInt(item.split('[')[1].split(']')[0]);
-        if (item_index != NaN) {
-          // take the item and make it an array with a new item
-          // first check to see if the array already exists, if so add to it
-          if (formObject[item_name]) {
-            if (objectType(formObject[item_name]) == 'Array') {
-              formObject[item_name].push(formObject[item]);
-              delete formObject[item];
-            }
-            else {
-              console.log("Form data has an array with same name as another element.");
-            }
-          }
-          else {
-            formObject[item_name] = [formObject[item]];
-            delete formObject[item];
-          }
-        }
+    formObject = consolidateArrays(formObject);
+    for (subitem in formObject) {
+      if ((objectType(formObject[subitem]) == "Array") && (formObject[subitem].length > 0)) {
+        var array = formObject[subitem];
+        array.forEach(function (arrayItem, index) {
+          array[index] = consolidateArrays(cloneObject(arrayItem));
+        });
+      }
+      else {
+        formObject[subitem] = consolidateArrays(formObject[subitem]);
       }
     }
     return formObject;
@@ -224,6 +284,35 @@ var getFormData = function(form) {
   else {
     return null;
   }
+}
+
+var getFormData = function (form) {
+  if (form) {
+    var formData = $(form).serializeObject();
+  }
+  return formDataToObject(formData);
+}
+
+// Test for the formDataToObject function
+var tfo = function () {
+  var data = {
+    "id": "547ebb87a96bd50d1dcafcdd",
+    "plugins[0].config[0].name": "id",
+    "plugins[0].config[0].value": "asdf",
+    "plugins[0].config[1].name": "key",
+    "plugins[0].config[1].value": "sdf",
+    "plugins[0].config[2].name": "assocId",
+    "plugins[0].config[2].value": "sdf",
+    "plugins[0].name": "AWS Plugin",
+    "plugins[0].slug": "aws",
+    "plugins[1].config[0].name": "something",
+    "plugins[1].config[0].value": "sdf",
+    "plugins[1].config[1].name": "something_else",
+    "plugins[1].config[1].value": "sdf",
+    "plugins[1].name": "Example Plugin",
+    "plugins[1].slug": "example"
+  };
+  formDataToObject(data);
 }
 
 function toggleFullscreen(editor) {
@@ -477,11 +566,10 @@ var LoginView = Backbone.View.extend({
               }
               else {
                 if (that.callback) {
-                  console.log("admin yes desti");
+                  console.log("routing to destination");
                   that.callback();
                 }
                 else {
-                  console.log("admin no desti");
                   pageListView.render();
                 }
               }
@@ -1736,7 +1824,7 @@ var NotificationsView = Backbone.View.extend({
       });
     }
     else {
-      alertView.render({label:"Update Site", msg: "Nothing to update."});
+      alertView.render({label:"Update Notification", msg: "Nothing to update."});
     }
     return false;
   },
@@ -1843,6 +1931,81 @@ var SiteDetailView = Backbone.View.extend({
   }
 });
 
+// Setup the plugins view
+var PluginsView = Backbone.View.extend({
+  el: '.page',
+  events: {
+    'change #selectPlugin'      : 'showPlugin',
+    'submit .edit-plugins-form' : 'savePlugin'
+  },
+  showPlugin: function () {
+    var name = $('#selectPlugin').val();
+    $('.plugin-info').addClass('hidden');
+    $('#plugin-' + name).removeClass('hidden');
+    var focus_input = $('#plugin-' + name + ' input');
+    if (focus_input.length > 0) {
+      focus_input[0].focus();
+    }
+  },
+  savePlugin: function (ev) {
+    // TBD should only save the changed plugin
+    var siteDetails = getFormData(ev.currentTarget);
+    if (!this.site) {
+      this.site = new Site();
+    }
+    if (siteDetails) {
+      console.log("OBJECT TO SAVE:");
+      console.log(siteDetails);
+      this.site.save(siteDetails, {
+        patch: true,
+        success: function (plugin) {
+          console.log('plugin saved');
+          console.log(plugin.attributes);
+          alertView.render({label:"OK", msg: "Plugin has been updated.", onclose: "plugins"});
+        },
+        error: function (model, xhr) {
+          console.log(xhr);
+          if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
+            alertView.render({label:"Problem", msg: $.parseJSON(xhr.responseText).msg});
+          }
+        }
+      });
+    }
+    else {
+      alertView.render({label:"Update Plugin", msg: "Nothing to update."});
+    }
+    return false;
+  },
+  render: function () {
+    // build the form to edit plugins
+    var that = this;
+    if (!this.site) {
+      this.site = new Site();
+      this.site.fetch({
+        success: function (site) {
+          that.plugins = site.get('plugins');
+          var template = _.template($('#edit-plugins-template').html(), {plugins: that.plugins, site: site});
+          that.$el.html(template);
+          that.showPlugin();
+          var focus_input = $('.plugin-field input');
+          if (focus_input.length > 0) {
+            focus_input[0].focus();
+          }
+        }
+      });
+    } else {
+      this.plugins = this.site.get('plugins');
+      var template = _.template($('#edit-plugins-template').html(), {plugins: this.plugins, site: this.site});
+      this.$el.html(template);
+      this.showPlugin();
+      var focus_input = $('.plugin-field input');
+      if (focus_input.length > 0) {
+        focus_input[0].focus();
+      }
+    }
+  }
+});
+
 // Setup the generic alert link view
 var AlertView = Backbone.View.extend({
   el: '#alert-modal',
@@ -1897,6 +2060,7 @@ var userListView         = new UserListView();
 var userDetailView       = new UserDetailView();
 var notificationsView    = new NotificationsView();
 var siteDetailView       = new SiteDetailView();
+var pluginsView          = new PluginsView();
 
 // Map an event to each route
 var Router = Backbone.Router.extend({
@@ -1928,7 +2092,8 @@ var Router = Backbone.Router.extend({
       "users/new"         : "edit-user",
       "users/:id"         : "edit-user",
       "notifications"     : "edit-notifications",
-      "site"              : "edit-site"
+      "site"              : "edit-site",
+      "plugins"           : "edit-plugins"
     }
 });
 
@@ -2051,6 +2216,11 @@ router.on('route:edit-site', function() {
   navselect("site");
   // Render site detail view
   siteDetailView.render();
+});
+router.on('route:edit-plugins', function() {
+  navselect("plugins");
+  // Render plugins view
+  pluginsView.render();
 });
 
 // Init

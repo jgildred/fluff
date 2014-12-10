@@ -425,146 +425,160 @@ if (Fluff) {
 		var el = $('[fluff-alert], [fluff-alert-modal]');
 		el.find('[message]').html(message);
 		el.find('.modal').modal('show');
-    if (options && options.callback) {
-    	options.callback();
-    }
-    else {
-    	setTimeout(function () {
-        el.find('.modal').modal('hide');
-      }, 5000);
-    }
+    if (options) {
+    	if (options.wait) {
+	    	setTimeout(function () {
+	        el.find('.modal').modal('hide');
+	        if (options.callback) {
+	    			options.callback();
+	    		}
+	      }, options.wait * 1000);
+			}
+			else {
+				if (options.callback) {
+    			options.callback();
+    		}
+			}
+    } 
   };
 
 	Fluff.ui._login_setup = function (options) {
 	  var view = Fluff.views['form#fluff-login'];
-	  // This happens on successful login
-	  view.success = function (model) {
-	    $('[noauth]').hide();
-	    $('[fluff-userlabel]').html(Fluff.ui.userlabelTemplate(Fluff.session.get('user').displayname));
-	    $('.modal').modal('hide');
-	    var el = $('[fluff-login], [fluff-login-modal]');
-	    // Hide the alert message
-	    el.find('.alert').addClass('hidden');
-	    // Clear the password field
-	    el.find('input[name=password]').val('');
-	    $('[onauth]').fadeIn();
-	    if (options && options.callback) {
-	    	options.callback();
-	    }
-	  };
-	  view.error = function (model, xhr) {
-	  	var msg = "Couldn't login, check your connection.";
-	  	if (xhr) {
-		  	msg = Fluff.responseErrorMsg(xhr, {
-		  		401: "Login failed, please try again.",
-		  		default: msg
-		  	});
-			}
-	  	var el = $('[fluff-login], [fluff-login-modal]');
-	  	// Show the alert message
-	  	el.find('[error-message]').text(msg);
-      el.find('.alert').removeClass('hidden');
-    	// Clear the password field and put in focus
-    	el.find('input[type=password]').val('').focus();
-	  };
+		if (view) {
+		  // This happens on successful login
+		  view.success = function (model) {
+		    $('[noauth]').hide();
+		    $('[fluff-userlabel]').html(Fluff.ui.userlabelTemplate(Fluff.session.get('user').displayname));
+		    $('.modal').modal('hide');
+		    var el = $('[fluff-login], [fluff-login-modal]');
+		    // Hide the alert message
+		    el.find('.alert').addClass('hidden');
+		    // Clear the password field
+		    el.find('input[name=password]').val('');
+		    $('[onauth]').fadeIn();
+		    if (options && options.callback) {
+		    	options.callback();
+		    }
+		  };
+		  view.error = function (model, xhr) {
+		  	var msg = "Couldn't login, check your connection.";
+		  	if (xhr) {
+			  	msg = Fluff.responseErrorMsg(xhr, {
+			  		401: "Login failed, please try again.",
+			  		default: msg
+			  	});
+				}
+		  	var el = $('[fluff-login], [fluff-login-modal]');
+		  	// Show the alert message
+		  	el.find('[error-message]').text(msg);
+	      el.find('.alert').removeClass('hidden');
+	    	// Clear the password field and put in focus
+	    	el.find('input[type=password]').val('').focus();
+		  };
+	  }
 	};
 
 	Fluff.ui._signup_setup = function (options) {
 	  var view = Fluff.views['form#fluff-signup'];
-	  // This happens on successful signup
-	  view.success = function (model) {
-	    $('.modal').modal('hide');
-	    var el = $('[fluff-signup], [fluff-signup-modal]');
-	    // Hide the alert message
-	    el.find('.alert').addClass('hidden');
-	    // Clear the password fields
-	    el.find('input[type=password]').val('');
-	    Fluff.ui.alert('Check your email to complete setup.');
-	    if (options && options.callback) {
-	    	options.callback();
-	    }
-	  };
-	  view.error = function (model, xhr) {
-	  	var msg = "Couldn't signup, check your connection.";
-	  	if (xhr) {
-		  	msg = Fluff.responseErrorMsg(xhr, {
-		  		401: "The captcha was invalid, please try again.",
-		  		default: msg
-		  	});
-			}
-			if (Recaptcha) {
-				Recaptcha.reload();
-	  		Recaptcha.focus_response_field();
-			}
-	  	var el = $('[fluff-signup], [fluff-signup-modal]');
-	  	el.find('[error-message]').text(msg);
-	  	el.find('.alert').removeClass('hidden');
-	  	el.find('input')[0].focus();
-	  };
+	  if (view) {
+		  // This happens on successful signup
+		  view.success = function (model) {
+		    $('.modal').modal('hide');
+		    var el = $('[fluff-signup], [fluff-signup-modal]');
+		    // Hide the alert message
+		    el.find('.alert').addClass('hidden');
+		    // Clear the password fields
+		    el.find('input[type=password]').val('');
+		    Fluff.ui.alert('Check your email to complete setup.');
+		    if (options && options.callback) {
+		    	options.callback();
+		    }
+		  };
+		  view.error = function (model, xhr) {
+		  	var msg = "Couldn't signup, check your connection.";
+		  	if (xhr) {
+			  	msg = Fluff.responseErrorMsg(xhr, {
+			  		401: "The captcha was invalid, please try again.",
+			  		default: msg
+			  	});
+				}
+				if (Recaptcha) {
+					Recaptcha.reload();
+		  		Recaptcha.focus_response_field();
+				}
+		  	var el = $('[fluff-signup], [fluff-signup-modal]');
+		  	el.find('[error-message]').text(msg);
+		  	el.find('.alert').removeClass('hidden');
+		  	el.find('input')[0].focus();
+		  };
+	  }
 	};
 
 	Fluff.ui._pwreset_setup = function (options) {
 	  var view = Fluff.views['form#fluff-pwreset'];
-	  // This happens on successful reset request
-	  view.success = function (model) {
-	  	$('.modal').modal('hide');
-	    var el = $('[fluff-pwreset], [fluff-pwreset-modal]');
-	    // Hide the alert message
-	    el.find('.alert').addClass('hidden');
-	    // Clear the email field
-	    el.find('input[name=email]').val('');
-	    if (options && options.callback) {
-	    	options.callback();
-	    }
-	  };
-	  view.error = function (model, xhr) {
-	  	var msg = "Couldn't send request, check your connection.";
-	  	if (xhr) {
-		  	msg = Fluff.responseErrorMsg(xhr, {
-		  		401: "Request failed, please try again.",
-		  		default: msg
-		  	});
-			}
-	  	var el = $('[fluff-pwreset], [fluff-pwreset-modal]');
-	  	el.find('[error-message]').text(msg);
-      el.find('.alert').removeClass('hidden');
-	    el.find('input[name=email]').focus();
-	  };
+		if (view) {
+		  // This happens on successful reset request
+		  view.success = function (model) {
+		  	$('.modal').modal('hide');
+		    var el = $('[fluff-pwreset], [fluff-pwreset-modal]');
+		    // Hide the alert message
+		    el.find('.alert').addClass('hidden');
+		    // Clear the email field
+		    el.find('input[name=email]').val('');
+		    if (options && options.callback) {
+		    	options.callback();
+		    }
+		  };
+		  view.error = function (model, xhr) {
+		  	var msg = "Couldn't send request, check your connection.";
+		  	if (xhr) {
+			  	msg = Fluff.responseErrorMsg(xhr, {
+			  		401: "Request failed, please try again.",
+			  		default: msg
+			  	});
+				}
+		  	var el = $('[fluff-pwreset], [fluff-pwreset-modal]');
+		  	el.find('[error-message]').text(msg);
+	      el.find('.alert').removeClass('hidden');
+		    el.find('input[name=email]').focus();
+		  };
+	  }
 	};
 
 	Fluff.ui._pwchange_setup = function (options) {
 	  var view = Fluff.views['form#fluff-pwchange'];
-	  // This happens on successful password change
-	  view.success = function (model) {
-	  	$('.modal').modal('hide');
-	    var el = $('[fluff-pwchange], [fluff-pwchange-modal]');
-	    // Hide the alert message
-	    el.find('.alert').addClass('hidden');
-	    // Clear the email field
-	    el.find('input[name=email]').val('');
-	    if (options && options.callback) {
-	    	options.callback();
-	    }
-	  };
-	  view.error = function (model, xhr) {
-	  	var msg = "Couldn't change password, check your connection.";
-	  	if (xhr) {
-		  	msg = Fluff.responseErrorMsg(xhr, {
-		  		401: "Change failed, please try again.",
-		  		default: msg
-		  	});
-			}
-	  	var el = $('[fluff-pwchange], [fluff-pwchange-modal]');
-	  	el.find('[error-message]').text(msg);
-      el.find('.alert').removeClass('hidden');
-	    el.find('input[name=email]').focus();
-	  };
+	  if (view) {
+		  // This happens on successful password change
+		  view.success = function (model) {
+		  	$('.modal').modal('hide');
+		    var el = $('[fluff-pwchange], [fluff-pwchange-modal]');
+		    // Hide the alert message
+		    el.find('.alert').addClass('hidden');
+		    // Clear the email field
+		    el.find('input[name=email]').val('');
+		    if (options && options.callback) {
+		    	options.callback();
+		    }
+		  };
+		  view.error = function (model, xhr) {
+		  	var msg = "Couldn't change password, check your connection.";
+		  	if (xhr) {
+			  	msg = Fluff.responseErrorMsg(xhr, {
+			  		401: "Change failed, please try again.",
+			  		default: msg
+			  	});
+				}
+		  	var el = $('[fluff-pwchange], [fluff-pwchange-modal]');
+		  	el.find('[error-message]').text(msg);
+	      el.find('.alert').removeClass('hidden');
+		    el.find('input[name=email]').focus();
+		  };
+	  }
 	};
 
   // Map an event to each route
 	var Router = Backbone.Router.extend({
 	    routes: {
-	      ""                : "profile",
 	      "profile"         : "profile",
 	      "signup"          : "signup",
 	      "signup/:email"   : "signup",

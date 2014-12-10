@@ -8,6 +8,9 @@ var app      = require('../../app'),
     Plug     = require('./plug'),
     resource = require('../../routes/resource');
 
+// This is how you can access your plugin's config data
+var something = Fluff.getVal(Plug.config, 'something');
+
 // This is the schema for Plugthings
 var schema = "{\n\
   user_id        : ObjectId,                          // The owner.\n\

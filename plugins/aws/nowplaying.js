@@ -126,6 +126,7 @@ exports.refresh = function(req, res){
               return item.asin;
             });
             asyncLoop.start({
+              user_id: req.session.user.id,
               array: asins,
               onloop: nowPlayingLoop,
               step: 10,
@@ -182,7 +183,7 @@ var nowPlayingLoop = function(options){
       return {seriesasin: asin};
     });
     console.log('Now playing loop on ASINs: ' + JSON.stringify(seriesASINs));
-    var prodAdv = aws.createProdAdvClient(Fluff.awsAccessKeyId, Fluff.awsSecretAccessKey, Fluff.awsAssociatesId);
+    var prodAdv = aws.createProdAdvClient(Fluff.getVal(Plug.config, 'awsAccessKeyId'), Fluff.getVal(Plug.config, 'awsSecretAccessKey'), Fluff.getVal(Plug.config, 'awsAssociatesId'));
     prodAdv.call("ItemLookup", {IdType: "ASIN", ItemId: seriesASINs.join(","), ResponseGroup: "ItemAttributes, RelatedItems", RelationshipType: "Season"}, function(err, result) {
       if (result.ItemLookupResponse) {
         var seasonASINs = [];
@@ -226,25 +227,33 @@ var nowPlayingLoop = function(options){
               var seasonName = item.ItemAttributes[0].Title[0];
               console.log('Got season lookup response for ' + seasonName);
 
-              // Check bonanza season 2 and NYPD blue season 12 for data issues
-              // Check if the season has any episodes
-              var latestEpisodeDate = '0000-00-00', latestEpisodeASIN = null;
+              // NOTE: Check bonanza season 2 and NYPD blue season 12 for data issues
+              var latestEpisodeDate = '0000-00-00', 
+                  latestEpisodeSequence = -1,
+                  latestEpisodeASIN = null
               item.RelatedItems.forEach(function (relateditem) {
                 if ((relateditem.Relationship[0] == "Children") && 
                   (relateditem.RelationshipType[0] == "Episode")) {
                   relateditem.RelatedItem.forEach(function (episode) {
-                    console.log("Episode for " + seasonName + ": " + episode.Item[0].ItemAttributes[0].ReleaseDate[0]);
-                    if (episode.Item[0].ItemAttributes[0].ReleaseDate[0] &&
+                    // If not release date, then user episode sequence
+                    console.log("Episode for " + seasonName);
+                    if (episode.Item[0].ItemAttributes[0].ReleaseDate &&
                       (episode.Item[0].ItemAttributes[0].ReleaseDate[0] > latestEpisodeDate)) {
                       latestEpisodeDate = episode.Item[0].ItemAttributes[0].ReleaseDate[0];
                       latestEpisodeASIN = episode.Item[0].ASIN[0];
                     }
+                    else {
+                      if (episode.Item[0].ItemAttributes[0].EpisodeSequence &&
+                        (parseInt(episode.Item[0].ItemAttributes[0].EpisodeSequence[0]) > latestEpisodeSequence)) {
+                        latestEpisodeSequence = parseInt(episode.Item[0].ItemAttributes[0].EpisodeSequence[0]);
+                        latestEpisodeASIN = episode.Item[0].ASIN[0];
+                      }
+                    }
                   });
                 }
               });
-              if (latestEpisodeDate == '0000-00-00') {
-                console.log('NO latest episode for ' + seasonName + ' ' + item.ASIN[0]);
-                asyncLoop.next(options);
+              if ((latestEpisodeDate == '0000-00-00') && (latestEpisodeSequence == -1)) {
+                Fluff.log.info('NO latest episode for ' + seasonName + ' ' + item.ASIN[0]);
               }
               else {
                 episodeASINs.push(latestEpisodeASIN);
@@ -252,43 +261,43 @@ var nowPlayingLoop = function(options){
                   if (item.ASIN[0] == npitem.seasonasin) {
                     nowPlayingItems[index].seasonname  = seasonName;
                     nowPlayingItems[index].asin        = latestEpisodeASIN;
-                    nowPlayingItems[index].releasedate = latestEpisodeDate;
                   }
                 });
               }
             });
-            console.log('Got latest episodes');
-            console.log('looking up episodes: ' + episodeASINs.join(","));
+            Fluff.log.info('Got latest episodes');
+            Fluff.log.info('looking up episodes: ' + episodeASINs.join(","));
             prodAdv.call("ItemLookup", {IdType: "ASIN", ItemId: episodeASINs.join(","), ResponseGroup: "ItemAttributes, Images"}, function(err, result) {
               if (result.ItemLookupResponse) {
                 result.ItemLookupResponse.Items[0].Item.forEach(function (item) {
-                  console.log('Got episode lookup response for ' + item.ASIN[0]);
+                  Fluff.log.info('Got episode lookup response for ' + item.ASIN[0]);
                   nowPlayingItems.forEach(function (npitem, index) {
                     if (item.ASIN[0] == npitem.asin) {
                       nowPlayingItems[index].networkname   = item.ItemAttributes[0].Studio[0];
+                      nowPlayingItems[index].releasedate   = item.ItemAttributes[0].ReleaseDate ? item.ItemAttributes[0].ReleaseDate[0] : 'Unknown';
                       nowPlayingItems[index].episodenumber = item.ItemAttributes[0].EpisodeSequence[0];
                       nowPlayingItems[index].episodename   = item.ItemAttributes[0].Title[0];
                       nowPlayingItems[index].imageurl      = item.SmallImage[0].URL[0];
                       nowPlayingItems[index].pageurl       = item.DetailPageURL[0];
-                      nowPlayingItems[index].user_id       = req.session.user.id;
+                      nowPlayingItems[index].user_id       = options.user_id;
                     }
                   });
-                  console.log('SAVING NOWPLAYING ITEMS');
                 });
+                Fluff.log.info('SAVING NOWPLAYING ITEMS');
                 Plug.NowPlaying.create(nowPlayingItems, function (err, data) {
                   asyncLoop.next(options);
                 });
               }
               else {
-                console.log('NO episode lookup response');
-                console.log(JSON.stringify(result.ItemLookupErrorResponse.Error));
+                Fluff.log.info('NO episode lookup response');
+                Fluff.log.info(JSON.stringify(result.ItemLookupErrorResponse.Error));
                 asyncLoop.next(options);
               }
             });
           }
           else {
-            console.log('NO season lookup response');
-            console.log(JSON.stringify(result.ItemLookupErrorResponse.Error));
+            Fluff.log.info('NO season lookup response');
+            Fluff.log.info(JSON.stringify(result.ItemLookupErrorResponse.Error));
             asyncLoop.next(options);
           }
         });

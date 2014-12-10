@@ -34,6 +34,7 @@ exports.find = function(req, res, resource, filter, callback, sort){
     else {
       if (data) {
         var dataset = [];
+        // if a fields parameter was included, then only include those fields in response
         if (req.query.fields) {
           data.forEach(function (item) {
             var iteminfo = {_id: item.id};

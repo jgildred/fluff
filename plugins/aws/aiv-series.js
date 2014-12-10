@@ -114,7 +114,7 @@ var checkSeriesLoop = function(options, callback){
 exports.findbykeyword = function(req, res){
   app.doIfHasAccess(req, res, 'Users', null, function(){
     if (req.query.keyword) {
-      var prodAdv = aws.createProdAdvClient(Fluff.awsAccessKeyId, Fluff.awsSecretAccessKey, Fluff.awsAssociatesId);
+      var prodAdv = aws.createProdAdvClient(Fluff.getVal(Plug.config, 'awsAccessKeyId'), Fluff.getVal(Plug.config, 'awsSecretAccessKey'), Fluff.getVal(Plug.config, 'awsAssociatesId'));
       // Find any matching episodes based on title
       prodAdv.call("ItemSearch", {SearchIndex: "UnboxVideo", Keywords: req.query.keyword, ResponseGroup: "ItemAttributes, RelatedItems", RelationshipType: "Episode"}, function(err, result) {
         var matchedEpisodes = [], seasonASINs = [], seriesASINs = [], matchedSeries = [];

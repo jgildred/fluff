@@ -20,6 +20,7 @@
     "winston": "*",
     "mime": "*",
     "nodemailer": "*",
+    "merge": "*",
     "inflection": "*",
     "recaptcha-async": "*",
     "xml2js": "*"
