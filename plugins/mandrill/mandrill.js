@@ -7,9 +7,6 @@ var app         = require('../../app'),
     Plug        = require('./plug'),
     mandrillApi = require('mandrill-api');
 
-// Setup globals
-var mandrill_client = new mandrillApi.Mandrill(Fluff.getVal(Plug.config, 'apikey'));
-
 /* Example request:
 POST /api/mandrill/send
 BODY:
@@ -73,6 +70,7 @@ exports.send = function(req, res){
         qty_sent: 0,
         callback: function (options) {
           SendNotificationEmail({
+            user: req.session.user,
             qty_sent: options.qty_sent,
             qty_failed: recipients.length - options.qty_sent
           });
@@ -122,6 +120,7 @@ var asyncLoop = {
 
 var sendMessage = function (options) {
   if (options) {
+    var mandrill_client = new mandrillApi.Mandrill(Fluff.getVal(Plug.config, 'apikey'));
     var message = options.message;
     message.to = [options.array[options.index]];
     mandrill_client.messages.sendTemplate(
@@ -152,9 +151,9 @@ var sendMessage = function (options) {
 var SendNotificationEmail = function(options) {
   if (options) {
     Fluff.emailToUser({
-      user: req.session.user,
+      user: options.user,
       subject: "Your Email Campaign is Completed",
-      body:    "Hi " + req.session.user + "\n\n" 
+      body:    "Hi " + options.user.shortname + "\n\n" 
              + options.qty_sent + " emails were delivered,\n\n"
              + options.qty_failed + " emails failed."
     });

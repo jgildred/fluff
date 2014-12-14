@@ -12,6 +12,7 @@ var express        = require('express'),
     session        = require('express-session'),
     mongoose       = require('mongoose'),
     mime           = require('mime'),
+    multer         = require('multer'),
     nodemailer     = require('nodemailer'),
     fs             = require('fs'),
     winston        = require('winston');
@@ -286,6 +287,7 @@ var connectDb = function (callback) {
   Fluff.log.info("Connecting to " + app.get('config').db_uri);
   mongoose.connect(app.get('config').db_uri, function(err) {
     if (err) {
+      Fluff.log.info("DB connect error: " + JSON.stringify(err));
       runAlertMode('bad_db_uri');
     }
     else {
@@ -408,14 +410,15 @@ var initOnePlugin = function (dirs, index, callback) {
                     config.splice(fieldIndex, 1);
                   }
                 });
-                // Add the field if it's missing
-                Plugins[name].config_fields.forEach(function (field) {
-                  if (flattenArray(config, 'name').indexOf(field) == -1) {
-                    config.push({name: field, value: ''});
-                  }
-                });
+                
               }
             }
+            // Make sure the fields are all there
+            Plugins[name].config_fields.forEach(function (field) {
+              if (flattenArray(config, 'name').indexOf(field) == -1) {
+                config.push({name: field, value: ''});
+              }
+            });
             siteConfig.plugins[pluginIndex] = {
               name: Plugins[name].info.name,
               slug:  Plugins[name].info.slug,
@@ -1772,6 +1775,7 @@ var preLaunch = function () {
     parameterLimit: 100000,
     extended: true
   }));
+  app.use(multer());
   app.use(bodyParser.json({
     limit: '50mb',
     parameterLimit: 100000

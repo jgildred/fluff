@@ -139,6 +139,7 @@ var hacked_splice = function (index, howMany /* model1, ... modelN */) {
   this.remove(removed).add.apply(this, args);
   return removed;
 }
+
 // show a log of events getting fired
 var log_events = function (event, model) {
   var now = new Date();
@@ -178,8 +179,6 @@ var addArrayOrString = function(object, name, text) {
     return object;
   }
 }
-
-
 
 var consolidateChildren = function (object) {
   if (object) {
@@ -260,12 +259,14 @@ var consolidateArrays = function (object) {
 // FIXME not proud of this code; this should ideally recurse beyond two levels deep
 var formDataToObject = function (formData) {
   if (formData) {
+    //console.log("SERIALIZED FORM DATA: " + JSON.stringify(formData));
     var formObject = {};
     // Consolidate children
     formObject = consolidateChildren(formData);
     for (item in formObject) {
       formObject[item] = consolidateChildren(formObject[item]);
     }
+    //console.log("FORM DATA WITH CHILDREN: " + JSON.stringify(formObject));
     // Consolidate arrays of objects
     formObject = consolidateArrays(formObject);
     for (subitem in formObject) {
@@ -279,6 +280,7 @@ var formDataToObject = function (formData) {
         formObject[subitem] = consolidateArrays(formObject[subitem]);
       }
     }
+    //console.log("FORM DATA WITH ARRAYS: " + JSON.stringify(formObject));
     return formObject;
   }
   else {
@@ -558,7 +560,7 @@ var LoginView = Backbone.View.extend({
             $('.login-fail').show();
             break;
           default:
-            $('#login-modal').modal('hide');
+            $('.modal').modal('hide');
             if (session.get("user").role == "Admin") {
               // Not sure why checking for this
               if (/#\/login/i.test(window.location.href) || /#login/i.test(window.location.href)) {
@@ -594,7 +596,7 @@ var LoginView = Backbone.View.extend({
       this.callback = callback;
     }
     // make sure not to have a double backdrop
-    $(".modal-backdrop").remove();
+    $('.modal').modal('hide');
     var template = $('#login-template').html();
     this.$el.html(template);
     this.$el.find('.modal').modal('show');
@@ -1383,18 +1385,17 @@ var ModelBrowseView = Backbone.View.extend({
     });
   },
   deleteItems: function () {
+    var that = this;
     var selections = [];
-    var ht         = this.$container.handsontable('getInstance');
-    var selection  = ht.getSelected();
-    console.log(selection);
+    var selection  = that.ht.getSelected();
+    //console.log(selection);
     var lowSelection  = (selection[0] <= selection[2]) ? selection[0] : selection[2];
     var highSelection = (selection[0] <= selection[2]) ? selection[2] : selection[0];
     var models = [];
     for (var r = lowSelection; r <= highSelection; r++) {
-      var dataRow = ht.getCellMeta(r,0).row;
-      models.push(ht.getData().models[dataRow]);
+      var dataRow = that.ht.getCellMeta(r,0).row;
+      models.push(that.ht.getData().models[dataRow]);
     }
-    var that = this;
     models.forEach( function (model, index) {
       model.destroy({
         success: function () {
@@ -1485,7 +1486,7 @@ var ModelBrowseView = Backbone.View.extend({
               var template = _.template($('#browse-model-template').html(), {model: that.model});
               that.$el.html(template);
               var attr = function (attr) {
-                // this lets us remember 'attr' for when when it is get/set
+                // this lets us remember 'attr' for when it is get/set
                 return {
                   data: function (modelItem, value) {
                     if (_.isUndefined(value)) {
@@ -1524,7 +1525,7 @@ var ModelBrowseView = Backbone.View.extend({
                 }
               });
               that.$container = $("#model-data-grid");
-              that.$container.handsontable({
+              that.ht = new Handsontable(that.$container[0], {
                 data:               that.modelItems,
                 dataSchema:         that.modelItem,
                 manualColumnMove:   true,
@@ -1542,23 +1543,22 @@ var ModelBrowseView = Backbone.View.extend({
                   that.updateColumnSizes(index, size);
                 }
               });
-              var ht = that.$container.handsontable('getInstance');
               // Add event listener to show delete button
-              ht.addHook('afterSelection', function () {
+              that.ht.addHook('afterSelection', function () {
                 $('.delete-modelitems').show();
               });
               // Add event listener to hide delete button
-              ht.addHook('afterDeselect', function () {
+              that.ht.addHook('afterDeselect', function () {
                 ('.delete-modelitems').hide();
               });
               // Add event listener for afterColumnSort
-              ht.addHook('afterColumnSort', function (index, order) {
+              that.ht.addHook('afterColumnSort', function (index, order) {
                 that.updateSortColumn(index, order);
               });
               // Apply sort
               that.displayColumns.forEach(function (displayColumn, index) {
                 if (displayColumn.name == that.sortColumn.name) {
-                  ht.sort(index, that.sortColumn.order);
+                  that.ht.sort(index, that.sortColumn.order);
                 }
               });
             }
@@ -1585,7 +1585,7 @@ var ModelBrowseView = Backbone.View.extend({
       },
       error: function (model, xhr) {
         if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
-          alertView.render({label:"Save Model", msg: $.parseJSON(xhr.responseText).msg});
+          alertView.render({label: "Save Model", msg: $.parseJSON(xhr.responseText).msg});
         }
       }
     });
@@ -1599,7 +1599,7 @@ var ModelBrowseView = Backbone.View.extend({
       },
       error: function (model, xhr) {
         if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
-          alertView.render({label:"Save Model", msg: $.parseJSON(xhr.responseText).msg});
+          alertView.render({label: "Save Model", msg: $.parseJSON(xhr.responseText).msg});
         }
       }
     });
@@ -1613,7 +1613,7 @@ var ModelBrowseView = Backbone.View.extend({
       },
       error: function (model, xhr) {
         if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
-          alertView.render({label:"Save Model", msg: $.parseJSON(xhr.responseText).msg});
+          alertView.render({label: "Save Model", msg: $.parseJSON(xhr.responseText).msg});
         }
       }
     });
@@ -1622,15 +1622,13 @@ var ModelBrowseView = Backbone.View.extend({
 
 // Setup the arrange columns view
 var ArrangeColumnsView = Backbone.View.extend({
-  el: '#arrange-columns-modal',
-  root: '.popup',
+  el: '.arrangeColumnsView',
   events: {
-    'submit .arrange-columns-form' : 'applyColumns',
-    'click  .cancel-arrange'       : 'cancel'
+    'click  .apply-columns'  : 'submit',
+    'click  .cancel-arrange' : 'cancel'
   },
-  applyColumns: function (ev) {
-    console.log(modelBrowseView.displayColumns);
-    var newColumnNames = getFormData(ev.currentTarget).display_columns;
+  submit: function (ev) {
+    var newColumnNames = getFormData(this.form).display_columns;
     var oldColumnNames = flattenArray(modelBrowseView.displayColumns, 'name');
     // Build the new display columns
     var displayColumns = [];
@@ -1652,10 +1650,10 @@ var ArrangeColumnsView = Backbone.View.extend({
       patch: true,
       success: function (model) {
         console.log('display columns saved');
-        window.location.reload();
+        //window.location.reload();
         //FIXME column move not working after return to model browse view
-        //modelBrowseView.render({id: model.id});
-        $('#arrange-columns-modal').modal('hide');
+        modelBrowseView.render({id: model.id});
+        $('.modal').modal('hide');
       },
       error: function (model, xhr) {
         console.log(xhr);
@@ -1664,27 +1662,34 @@ var ArrangeColumnsView = Backbone.View.extend({
         }
       }
     });
-    return false;
   },
   cancel: function () {
-    $('#arrange-columns-modal').modal('hide');
+    $('.modal').modal('hide');
   },
   render: function (availableColumns, displayColumns) {
+    var that = this;
     var template = _.template($('#arrange-columns-template').html(), {available_columns: availableColumns, display_columns: displayColumns});
-    $(".modal-backdrop").remove();
-    $(this.root).html(template);
-    $('#arrange-columns-modal').modal('show');
+    $('.modal').modal('hide');
+    this.$el.html(template);
+    this.form = this.$el.find('form')[0];
+    this.$el.find('.modal').modal('show');
+    // Hitting enter key while in the form will submit.
+    this.$el.bind('keypress', function(e){
+      if (e.keyCode == 13) {
+        e.preventDefault();
+        that.submit();
+      }
+    });
   }
 });
 
 // Setup the import view
 var ImportView = Backbone.View.extend({
-  el: '#import-modal',
-  root: '.popup',
+  el: '.importView',
   events: {
     'click  input[type=radio]'   : 'pickSource',
     'change .show-options'       : 'showOptions',
-    'click  .btn-import'         : 'import',
+    'click  .btn-import'         : 'submit',
     'click  .cancel-import'      : 'cancel'
   },
   pickSource: function (ev) {
@@ -1710,13 +1715,11 @@ var ImportView = Backbone.View.extend({
       $('div.import-fieldset').hide();
     }
   },
-  import: function (ev) {
-    var data,
-        formData = getFormData($(ev.currentTarget).parents("form:first"));
+  submit: function (ev) {
+    var data, formData = getFormData(this.form);
     delete formData['ignore'];
     var contentType = 'application/json';
-    var process  = false;
-    var file     = $('input[name=file]').toArray()[0].files[0];
+    var file = this.$el.find('input[name=file]')[0].files[0];
     if (file && (file.size > 0)) {
       data = new FormData();
       if (formData) {
@@ -1728,11 +1731,13 @@ var ImportView = Backbone.View.extend({
       contentType = false;
     }
     else {
+      // FIXME this may not be necessary
       data = JSON.stringify(formData);
     }
     // If this is for creating a new model, then POST to /models
     // Otherwise POST to the specific models resource
-    if (($('input[name=name]').length > 0) && ($('input[name=name]').val() != "")) {
+    var name = this.$el.find('input[name=name]')
+    if (name && (name.length > 0) && (name.val() != "")) {
       var url = adminbase + 'api/models';
       var onclose  = "models";
       var forModel = true;
@@ -1742,11 +1747,12 @@ var ImportView = Backbone.View.extend({
       var onclose  = "models/" + modelBrowseView.model.id + "/browse";
       var forModel = false;
     }
+    console.log(data);
     $.ajax({
       data: data,
       cache: false,
       contentType: contentType,
-      processData: process,
+      processData: false,
       type: "POST",
       url: url,
       success: function () {
@@ -1759,29 +1765,37 @@ var ImportView = Backbone.View.extend({
           modelBrowseView.modelItems.reset();
           modelBrowseView.render({id: modelBrowseView.model.id});
         }
-        $('#import-modal').modal('hide');
-        alertView.render({label:"Import complete", msg: "Import was successful.", onclose: onclose});
+        $('.modal').modal('hide');
+        alertView.render({label: "Import complete", msg: "Import was successful.", onclose: onclose});
       },
       error: function (xhr) {
-        $('#import-modal').modal('hide');
+        $('.modal').modal('hide');
         if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).msg) {
-          alertView.render({label:"Import problem", msg: $.parseJSON(xhr.responseText).msg});
+          alertView.render({label: "Import problem", msg: $.parseJSON(xhr.responseText).msg});
         }
       }
     });
     return false;
   },
   cancel: function () {
-    $('#import-modal').modal('hide');
+    $('.modal').modal('hide');
   },
   render: function (createModel) {
     var template = _.template($('#import-template').html());
-    $(".modal-backdrop").remove();
-    $(this.root).html(template);
+    $('.modal').modal('hide');
+    this.$el.html(template);
+    this.form = this.$el.find('form')[0];
     if (createModel) {
       $('.import-form .model-name').show();
     }
-    $('#import-modal').modal('show');
+    this.$el.find('.modal').modal('show');
+    // Hitting enter key while in the form will submit.
+    this.$el.bind('keypress', function(e){
+      if (e.keyCode == 13) {
+        e.preventDefault();
+        that.submit();
+      }
+    });
   }
 });
 
@@ -1885,7 +1899,7 @@ var SiteDetailView = Backbone.View.extend({
           console.log('site saved');
           session.fetch({
             success: function (session) {
-              $('title').html((session.get('site') ? session.get('site') : 'Site') + ' Admin');
+              $('title').html((session.get('site') ? session.get('site').name : 'Site') + ' Admin');
               alertView.render({label:"Configuration changed.", msg: "Changes take effect immediately, unless you changed<br/>the port number which may take a few minutes.", onclose: "site"});
             },
             error: function (model, xhr) {

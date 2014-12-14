@@ -111,7 +111,7 @@ exports.findone = function (req, res) {
 // Preprocessor for POST /models
 exports.create = function (req, res) {
   app.doIfHasAccess(req, res, 'Admins', app.Model, function (req, res) {
-    if (!req.body.name) {
+    if (!req.body.name || (req.body.name == 'null')) {
       app.msgResponse(req, res, 400, 'The model must have a name.');
     }
     else {
@@ -132,16 +132,16 @@ exports.create = function (req, res) {
         }
         else {
           // If there is a schema in the request use it
-          if (!req.body.schema_data && req.body.fieldset) {
+          if (!req.body.schema_data && req.body.fieldset && (req.body.fieldset != 'null')) {
             req.body.schema_data = app.toSchemaData(req.body.fieldset);
           }
-          if (req.body.schema_data) {
+          if (req.body.schema_data && req.body.schema_data != 'null') {
             app.Models[req.body.name] = app.toModel({
               model_id    : req.body.model_id, 
               schema_data : req.body.schema_data
             });
           }
-          // If there is import data, use the first line as the schema
+          // If there is import data and no schema, use the first line as the schema
           if (req.body.url || req.files) {
             resource.import(req, res, null, function (req, res, resource, importData) {
               if (!app.Models[req.body.name]) {
@@ -189,9 +189,10 @@ var doCreate = function (req, res, importData) {
       app.loadOneModel(model);
       // Import data if it was included in the POST
       if (importData) {
+        // Including model will cause the import to handle the response
         resource.doImport(req, res, app.Models[req.body.name], importData, model);
       }
-    });
+    }, true);
   }
   else {
     app.msgResponse(req, res, 400, 'The model name conflicts or the schema has issues.');

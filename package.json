@@ -19,6 +19,7 @@
     "mongoose": "*",
     "winston": "*",
     "mime": "*",
+    "multer": "*",
     "nodemailer": "*",
     "merge": "*",
     "inflection": "*",
