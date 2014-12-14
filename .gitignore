@@ -3,8 +3,8 @@
 node_modules/
 test/node_modules
 log/*
-plugins/*
-!plugins/example/
+#plugins/*
+#!plugins/example/
 #!plugins/avb.io/
 #!plugins/bantr/
 #!plugins/keypair.io/
