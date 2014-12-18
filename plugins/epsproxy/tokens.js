@@ -2,18 +2,20 @@
 // TOKEN ROUTE HANDLER
 
 // This is a very simple route handler. You will most likely want to add to it.
+//
+// NOTES: The content model must have the following fields: media_id(unique), content_id, content_url, content_key. Additional fields are ignored. Can only handle one content ID and content key per media item.
 
 var app      = require('../../app'),
     Fluff    = app.Fluff,
     Plug     = require('./plug'),
     models   = require('../../routes/models');
 
-// Preprocessor for GET /token/:env/:type/:content_id?520k_constraint=true&rental=true
+// Preprocessor for GET /token/:env/:type/:media_id?520k_constraint=true&rental=true
 exports.request = function(req, res){
   app.doIfHasAccess(req, res, 'Public', null, function () {
     Fluff.log.info('OK to allow the request.');
     if (req.params.type) {
-      if (req.params.content_id) {
+      if (req.params.media_id) {
         var EPS_MS3_ROOT_TEST      = 'ms3-gen.test.expressplay.com';
         var EPS_BB_ROOT_TEST       = 'bb-gen.test.expressplay.com';
         var EPS_PR_ROOT_TEST       = 'pr-gen.test.expressplay.com';
@@ -29,21 +31,24 @@ exports.request = function(req, res){
         // Make sure the model exists
         if (app.Models[Fluff.getVal(Plug.config, 'contentModel')]) {
           var Content = app.Models[Fluff.getVal(Plug.config, 'contentModel')];
-          Content.findOne({ content_id: req.params.content_id }).exec(function (err, item) {
+          var media_id = decodeURIComponent(req.params.media_id);
+          Content.findOne({ media_id: media_id }).exec(function (err, item) {
             if (err) {
               Fluff.msgResponse(req, res, 500, 'Error:' + JSON.stringify(err));
             }
             else {
               if (item) {
-                if (item.content_key && item.content_url) {
-                  var eps_params = '&contentId=' + req.params.content_id;
-                  eps_params += '&contentKey=' + item.content_key;
-                  eps_params += '&contentURL=' + item.content_url;
+                if (item.content_id && item.content_key) {
+                  var eps_params = '&contentId=' + encodeURIComponent(item.content_id);
+                  eps_params += '&contentKey=' + encodeURIComponent(item.content_key);
+                  if (item.content_url) {
+                    eps_params += '&contentURL=' + encodeURIComponent(item.content_url);
+                  }
                   var eps_prod = (req.params.env == "production") ? true : false;
                   var eps_type = req.params.type;
                   var host, path, content_type_header;
                   var content_type_header = EPS_MS3_CONTENT_TYPE;
-                  var auth = (req.params.env == 'production') ? EPS_AUTHENTICATOR_PROD : EPS_AUTHENTICATOR_TEST;
+                  var auth = (req.params.env == 'production') ? encodeURIComponent(EPS_AUTHENTICATOR_PROD) : encodeURIComponent(EPS_AUTHENTICATOR_TEST);
                   switch (req.params.type) {
                     case 'bb':
                       host = (req.params.env == 'production') ? EPS_BB_ROOT_PROD : EPS_BB_ROOT_TEST;
@@ -87,12 +92,12 @@ exports.request = function(req, res){
                   }).end();
                 }
                 else {
-                  Fluff.msgResponse(req, res, 404, 'The content does not have a valie content_key or content_url. Please check your stored data.');
+                  Fluff.msgResponse(req, res, 404, 'The content does not have a valid content_id or content_url. Please check your stored data.');
                 }
 
               }
               else {
-                Fluff.msgResponse(req, res, 404, 'Content ID not found. Please check that your database has a content model with the correct content_id.');
+                Fluff.msgResponse(req, res, 404, 'Media ID not found. Please check that your database has a content model with the correct media_id.');
               }
             }
           });
@@ -102,7 +107,7 @@ exports.request = function(req, res){
         }
       }
       else {
-        Fluff.msgResponse(req, res, 400, 'Missing content ID in the URL.');
+        Fluff.msgResponse(req, res, 400, 'Missing media ID in the URL.');
       }
     }
     else {

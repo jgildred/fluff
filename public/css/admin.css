@@ -75,10 +75,11 @@ a.navbar-brand {
   margin-left: 10px;
 }
 .btn-fse {
-  height: 30px;
+  margin-top:2px;
+  height: 26px;
+  line-height: 14px;
 }
 .btn-fse-container {
-  width: 150px;
   height: 30px;
 }
 .x-overflow-scroll {
@@ -112,6 +113,14 @@ a.navbar-brand {
   right: 0px !important;
   margin: 0px !important;
   z-index: 1000 !important;
+}
+.save-fullscreen-editor {
+  width: 80px;
+  margin-right:2px;
+}
+.close-fullscreen-editor {
+  width: 120px;
+  margin-right:10px;
 }
 .caps {
   text-transform: capitalize;

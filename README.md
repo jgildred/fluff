@@ -77,15 +77,14 @@ TO DO:
 - paged display in admin
 - sort in admin list views
 - search users in admin
-- ability to change display name of a model's columns via admin
+- ability to change display name of a model's columns in admin
 
 WOULD BE NICE:
 
-- an easy way to add admin tabs for plugins, or at least a way to edit configs for plugins via admin
 - list of domains to redirect in site config (for cmspages)
 - manage error pages
 - page versioning
 - move session timeout to be user specific
 - move apikeys to be tied to users
 - move CORS domains to be tied to users
-- client data updates auto-propogated via sockets
+- pubsub data updates

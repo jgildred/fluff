@@ -142,7 +142,8 @@ exports.create = function (req, res) {
             });
           }
           // If there is import data and no schema, use the first line as the schema
-          if (req.body.url || req.files) {
+          if ((req.body.url && req.body.url != 'null')
+            || (req.files && req.files.file && (req.files.file.size > 0))) {
             resource.import(req, res, null, function (req, res, resource, importData) {
               if (!app.Models[req.body.name]) {
                 req.body.schema_data = app.toSchemaData(importData[0]);

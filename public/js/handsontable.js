@@ -8260,18 +8260,20 @@ var jsonpatch;
                 deleted = true;
             }
         }
-
+        
         if (!deleted && newKeys.length == oldKeys.length) {
             return;
         }
-      
+        // FIXME PATCH - JGILDRED
         for (var t = 0; t < newKeys.length; t++) {
             var key = newKeys[t];
-            if (!mirror.hasOwnProperty(key)) {
+            if (!mirror.hasOwnProperty(key) && (key != "callback") && (key != "context")) {
                 patches.push({ op: "add", path: path + "/" + escapePathComponent(key), value: obj[key] });
                 mirror[key] = JSON.parse(JSON.stringify(obj[key]));
             }
+            else return;
         }
+        // FIXME PATCH - JGILDRED
     }
 
     var _isArray;

@@ -102,8 +102,24 @@ var flattenArray = function (objectArray, key) {
   });
   return array;
 }
+var humanize = function (string) {
+  return string.replace("_", " ").toLowerCase();
+}
 var dehumanize = function (string) {
   return string.replace(" ", "_").toLowerCase();
+}
+var titleize = function (string) {
+  var st = "";
+  string.split(" ").forEach(function (part, index) {
+    if (index > 0) st += " ";
+    if (["id","url"].indexOf(part) > -1) {
+      st += part.toUpperCase();
+    }
+    else {
+      st += part.charAt(0).toUpperCase() + part.slice(1);
+    }
+  });
+  return st;
 }
 // Useful when comparing schema attributes
 var lowerCaseObject = function (obj) {
@@ -157,7 +173,9 @@ var log_events = function (event, model) {
 var metaSave = function(on, callback) {
   if (on && callback) {
     $(window).bind('keydown',function(e){
-      if (!( String.fromCharCode(e.which).toLowerCase() == 's' && e.metaKey)) return true;
+      if (!( String.fromCharCode(e.which).toLowerCase() == 's' && e.metaKey)) {
+        return true;
+      }
       e.preventDefault();
       callback();
       return false;
@@ -368,7 +386,14 @@ function renderEditor(element_id, content, cursor, mode, view, fullscreen) {
   if (view) {
     editor.targetView = view;
     if (fullscreen) {
-      metaSave(true, view.submitForm);
+      metaSave(true, function () {
+        if (view.saveEditor) {
+          view.saveEditor();
+        } 
+        else {
+          view.submitForm();
+        }
+      });
     }
     else {
       metaSave(false);
@@ -1094,6 +1119,7 @@ var PageDetailView = Backbone.View.extend({
             }
           });
         } else {
+          // Open page detail for a new blank page
           that.page = null;
           var template = _.template($('#info-page-template').html(), {page: that.page, views: that.views, access_options: that.access_options, status_options: that.status_options});
           that.$el.html(template);
@@ -1166,7 +1192,7 @@ var FullScreenEditView = Backbone.View.extend({
           }
           that.editor = renderEditor('fullscreen-editor', that.model.get(that.dataField), that.model.get('cursor'), null, that, true);
           $('#fullscreen-editor-controlbar').html($('#editor-controlbar-template').html());
-          $('.label-fse').html(that.model.get('name') + ' ' + that.dataField.humanize());
+          $('.label-fse').html(that.model.get('name') + ' ' + titleize(humanize(that.dataField)));
           $('#fullscreen-editor-container').removeClass('hidden');
           $('.save-fullscreen-editor').click(function() {
             that.saveEditor();
@@ -1417,7 +1443,7 @@ var ModelBrowseView = Backbone.View.extend({
     for (attribute in this.schema) {
       availableColumns.push({
         name  : attribute,
-        title : attribute.humanize(),
+        title : titleize(humanize(attribute)),
         size  : 100
       });
     }
@@ -1640,7 +1666,7 @@ var ArrangeColumnsView = Backbone.View.extend({
       else {
         displayColumns.push({
           name  : columnName,
-          title : (columnName.humanize() == "") ? "ID" : columnName.humanize(),
+          title : titleize(humanize(columnName)),
           size  : 100
         });
       }

@@ -58,7 +58,7 @@ exports.load = function (callback) {
   var base = Fluff.app.get('config').fluff_path + '/api';
 
   // Any routes added by the plugin, including routes for your plugin's model(s).
-  Fluff.app.get (base + '/token/:env/:type/:content_id', tokens.request);
+  Fluff.app.get (base + '/token/:env/:type/:media_id', tokens.request);
 
 	if (callback) {
 		callback();

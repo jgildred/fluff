@@ -310,7 +310,12 @@ exports.mongooseCollections = mongooseCollections;
 
 // Create a schema from schema_data
 var toSchema = function (schema_data) {
-  eval("var obj = " + schema_data);
+  try {
+    eval("var obj = " + schema_data);
+  }
+  catch(err) {
+    return null;
+  }
   obj = lowerCaseObject(obj);
   // Make sure that the model will handle these fields correctly.
   obj.creator_id     = ObjectId;
@@ -325,8 +330,13 @@ exports.toSchema = toSchema;
 // Create a model; model must have a model_id and schema_data
 var toModel = function (model) {
   var schema = toSchema(model.schema_data);
-  var newModel = mongoose.model(dehumanize(model.model_id) + "-" + randomString(), schema, dehumanize(model.model_id));
-  return newModel;
+  if (schema) {
+    var newModel = mongoose.model(dehumanize(model.model_id) + "-" + randomString(), schema, dehumanize(model.model_id));
+    return newModel;
+  }
+  else {
+    return null;
+  }
 }
 exports.toModel = toModel;
 
