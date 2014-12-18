@@ -25,6 +25,7 @@
     "inflection": "*",
     "recaptcha-async": "*",
     "xml2js": "*",
-    "wordpos": "*"
+    "wordpos": "*",
+    "mandrill-api": "*"
   }
 }
