@@ -24,10 +24,6 @@ exports.init = function (callback) {
   // If you see this on Fluff startup, then your plugin was detected.
 	console.log("I'm the Bantr plugin.");
 
-  // These are restricted to bantr.herokuapp.com
-  Fluff.reCaptchaPublicKey  = "6LfEWu4SAAAAAFYvmd9uZ-WvUXl6PLQ0bX4LIUaT";
-  Fluff.reCaptchaPrivateKey = "6LfEWu4SAAAAAJQUaEvnMmUTuZqnSay85aLC1D7p";
-
   // Pulls in the schema definitions from "schemas.js".
 	var utteranceSchema = app.toSchema(schemas.utterance);
   exports.Utterance   = mongoose.model('Utterance', utteranceSchema);
