@@ -1511,7 +1511,7 @@ var setProtocol = function (req, res, next) {
 
 var setupServer = function () {
   if (!Server) {
-    if (app.get('config').ssl) {
+    if (app.get('config').ssl && (app.get('config').app_service != 'Heroku')) {
       Server = https.createServer(app);
     } 
     else {
