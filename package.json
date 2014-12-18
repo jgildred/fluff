@@ -24,6 +24,7 @@
     "merge": "*",
     "inflection": "*",
     "recaptcha-async": "*",
-    "xml2js": "*"
+    "xml2js": "*",
+    "wordpos": "*"
   }
 }
