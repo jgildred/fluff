@@ -1497,7 +1497,7 @@ var logRequest = function (req, res, next) {
 
 var setProtocol = function (req, res, next) {
   // externalBaseUrl is useful for email notifications which link back to the site
-  if (app.get('config').ssl) {
+  if (app.get('config').ssl && (app.get('config').app_service != 'Heroku')) {
     var protocol = "https://";
   } 
   else {
