@@ -1,7 +1,9 @@
 {
   "name": "fluff",
-  "version": "0.0.1",
-  "private": true,
+  "description":"The web app management system.",
+  "version": "0.9.0",
+  "author":"John Gildred <info@fluff.io>",
+  "main": "fluff.js",
   "scripts": {
     "start": "node fluff"
   },
@@ -9,6 +11,20 @@
     "node": "0.10.x",
     "npm":  "1.1.x"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jgildred/fluff.git"
+  },
+  "keywords": [
+    "cms",
+    "wams"
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://opensource.org/licenses/MIT"
+    }
+  ],
   "dependencies": {
     "express": "*",
     "body-parser": "*",
