@@ -943,7 +943,7 @@ Fluff.Session = Backbone.Model.extend({
 Fluff.checkSession = function (options) {
 	Fluff.session = new Fluff.Session();
 	Fluff.session.fetch({
-    success: function () {
+    success: function (data, status, xhr) {
     	if (Fluff.session.get('user')) {
     		var msg = "Logged in as " + Fluff.session.get('user').email;
     	}
@@ -958,14 +958,14 @@ Fluff.checkSession = function (options) {
     	Fluff.log(msg);
     	Backbone.history.start();
       if (options && options.success) {
-      	options.success();
+      	options.success(data, status, xhr);
       }
     },
     error: function (data, xhr) {
     	Fluff.log("Error checking session:", xhr);
     	Backbone.history.start();
       if (options && options.error) {
-      	options.error();
+      	options.error(data, xhr);
       }
     }
   });
@@ -991,10 +991,10 @@ Fluff.checkCaptcha = function(options) {
       	options.success(data, status, xhr);
       }
     },
-    error : function (xhr) {
+    error : function (data, xhr) {
       Fluff.log("Error checking captcha: " + xhr.status);
       if (options && options.error) {
-      	options.error(xhr);
+      	options.error(data, xhr);
       }
     }
   });
@@ -1093,7 +1093,7 @@ Fluff.init = function (options) {
 	}
 	// Initialize Fluff UI if exists
 	if (Fluff.ui.init) {
-		Fluff.ui.init();
+		Fluff.ui.init(options);
 	}
 	if (!(options && (options.harvest == false))) {
 		this.harvestElements();

@@ -201,28 +201,33 @@ if (Fluff) {
 		$('[fluff-alert],[fluff-alert-modal]').append(Fluff.ui.alertModalTemplate);
 		// Hide elements that require login
 	  // Check to see if already logged in
-	  Fluff.checkSession({
-			// Check session should always succeed unless server/network is down
-	    success: function () {
-	      if (Fluff.session.get('user')) {
-	      	$('[fluff-userlabel]').html(Fluff.ui.userlabelTemplate(Fluff.session.get('user').displayname));
-	      	$('[onauth]').show();
-	      	$('[noauth]').hide();
-	      }
-	    	if (Fluff.session.get('site')) {
-	    		// Setup for captcha if necessary
-	    		if (Fluff.session.get('site').captcha && Fluff.session.get('site').captcha.required) {
-		      	var script = document.createElement('script');
-						script.type = 'text/javascript';
-						//script.src = 'https://www.google.com/recaptcha/api/challenge?k=' + Fluff.session.get('site').captcha.recaptcha_key;
-						$("body").append(script);
-	    		}
-	    		else {
-	    			$('#captcha_container').remove();
-	    		}
-	      }
-	    }
-	  });
+	  if (options && options.dontCheckSession) {
+	  	Fluff.log("Not checking session.");
+	  }
+	  else {
+		  Fluff.checkSession({
+				// Check session should always succeed unless server/network is down
+		    success: function () {
+		      if (Fluff.session.get('user')) {
+		      	$('[fluff-userlabel]').html(Fluff.ui.userlabelTemplate(Fluff.session.get('user').displayname));
+		      	$('[onauth]').show();
+		      	$('[noauth]').hide();
+		      }
+		    	if (Fluff.session.get('site')) {
+		    		// Setup for captcha if necessary
+		    		if (Fluff.session.get('site').captcha && Fluff.session.get('site').captcha.required) {
+			      	var script = document.createElement('script');
+							script.type = 'text/javascript';
+							//script.src = 'https://www.google.com/recaptcha/api/challenge?k=' + Fluff.session.get('site').captcha.recaptcha_key;
+							$("body").append(script);
+		    		}
+		    		else {
+		    			$('#captcha_container').remove();
+		    		}
+		      }
+		    }
+		  });
+		}
 	  // Setup the login view
 	  Fluff.harvestLogins({
 	  	callback: Fluff.ui._login_setup

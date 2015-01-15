@@ -1489,7 +1489,7 @@ var logRequest = function (req, res, next) {
   }
   Fluff.log.info("**** NEW REQUEST ****");
   Fluff.log.info("REQ " + req.method + ": " + req.path + " from " + req.ip);
-  Fluff.log.info("REQ BODY: " + JSON.stringify(body));
+  Fluff.log.info("REQ RAWBODY: " + req.rawBody);
   Fluff.log.info("REQ HEADERS: " + JSON.stringify(req.headers));
   Fluff.log.info("REQ QUERY: " + JSON.stringify(req.query));
   next();
@@ -1596,6 +1596,7 @@ var checkToken = function(req, res, next){
         || (req.path == (app.get('config').fluff_path + '/admin/api/auth'))
         || (req.path == (app.get('config').fluff_path + '/admin/api/identities'))
         || (req.path == (app.get('config').fluff_path + '/admin/api/captcha'))
+        || (req.path == '/LicensingService.ashx')
       )
     ) 
     || (
@@ -1780,6 +1781,17 @@ exports.msgResponse = Fluff.msgResponse;
 
 // JSON body, sessions and other setup
 var preLaunch = function () {
+  app.use(function(req, res, next) {
+    req.rawBody = '';
+    req.setEncoding('utf8');
+
+    req.on('data', function(chunk) { 
+      req.rawBody += chunk;
+    });
+    req.on('end', function() {
+      next();
+    });
+  });
   app.use(bodyParser.urlencoded({
     limit: '50mb',
     parameterLimit: 100000,
