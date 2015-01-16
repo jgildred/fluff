@@ -1596,7 +1596,6 @@ var checkToken = function(req, res, next){
         || (req.path == (app.get('config').fluff_path + '/admin/api/auth'))
         || (req.path == (app.get('config').fluff_path + '/admin/api/identities'))
         || (req.path == (app.get('config').fluff_path + '/admin/api/captcha'))
-        || (req.path == '/LicensingService.ashx')
       )
     ) 
     || (
