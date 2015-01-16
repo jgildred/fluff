@@ -41,7 +41,6 @@
     "inflection": "*",
     "recaptcha-async": "*",
     "xml2js": "*",
-    "xml2js-expat": "*",
     "wordpos": "*",
     "mandrill-api": "*"
   }
