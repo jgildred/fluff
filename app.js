@@ -1781,16 +1781,9 @@ exports.msgResponse = Fluff.msgResponse;
 
 // JSON body, sessions and other setup
 var preLaunch = function () {
-  app.use(function(req, res, next) {
-    req.rawBody = '';
-    //req.setEncoding('utf8');
-    req.on('data', function(chunk) { 
-      req.rawBody += chunk;
-    });
-    req.on('end', function() {
-      next();
-    });
-  });
+  app.use(bodyParser.raw({
+    limit: '50mb'
+  }));
   app.use(bodyParser.urlencoded({
     limit: '50mb',
     parameterLimit: 100000,
@@ -1798,8 +1791,7 @@ var preLaunch = function () {
   }));
   app.use(multer());
   app.use(bodyParser.json({
-    limit: '50mb',
-    parameterLimit: 100000
+    limit: '50mb'
   }));
   app.use(cookieParser('abracadabra'));
   app.use(session({
