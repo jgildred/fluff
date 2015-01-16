@@ -1489,7 +1489,7 @@ var logRequest = function (req, res, next) {
   }
   Fluff.log.info("**** NEW REQUEST ****");
   Fluff.log.info("REQ " + req.method + ": " + req.path + " from " + req.ip);
-  Fluff.log.info("REQ RAWBODY: " + req.rawBody);
+  Fluff.log.info("REQ BODY: " + JSON.stringify(req.body));
   Fluff.log.info("REQ HEADERS: " + JSON.stringify(req.headers));
   Fluff.log.info("REQ QUERY: " + JSON.stringify(req.query));
   next();
