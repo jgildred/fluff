@@ -38,6 +38,7 @@ exports.attach = function(req, res){
               email       : user.email,
               role        : user.role,
               displayname : user.displayname,
+              shortname   : user.shortname,
               status      : user.status
             };
             var body = authResponse(req);

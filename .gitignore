@@ -9,5 +9,5 @@ plugins/*
 #!plugins/bantr/
 #!plugins/keypair.io/
 #!plugins/aws/
-#!plugins/mandrill/
-!plugins/epsproxy/
+!plugins/mandrill/
+#!plugins/epsproxy/
