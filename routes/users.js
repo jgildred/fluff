@@ -258,7 +258,7 @@ var updateSession = function(req, res, user) {
   }
 }
 
-// This happens when a new user signs up
+// This happens on sign up, creation by admin, or password reset
 var SendNotificationEmail = function(req, res, user, options) {
   if (user && options) {
     switch (options.slug) {
