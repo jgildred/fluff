@@ -1,8 +1,8 @@
 
 // GENERIC RESOURCE HANDLER
 
-var app     = require('../app'),
-    Fluff   = app.Fluff;
+var app   = require('../app'),
+    Fluff = app.Fluff;
 
 // Handler for GET   NEED TO FIX SORT POSITION - MOVE TO OBJECT
 exports.find = function(req, res, resource, filter, callback, sort){

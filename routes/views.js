@@ -1,8 +1,8 @@
 
 // VIEW RESOURCE PREPROCESSOR
 
-var app      = require('../app'),
-    Fluff    = app.Fluff;
+var app   = require('../app'),
+    Fluff = app.Fluff;
 
 var schema = "{ \n\
   name           : { type: String, unique: true }, \n\
