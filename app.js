@@ -1778,7 +1778,7 @@ Fluff.msgResponse = function (req, res, status, msg) {
 }
 exports.msgResponse = Fluff.msgResponse;
 
-// JSON body, sessions and other setup
+// JSON body, other body types, sessions and other setup
 var preLaunch = function () {
   app.use(bodyParser.raw({
     limit: '50mb'
