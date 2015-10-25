@@ -1788,9 +1788,9 @@ var preLaunch = function () {
     parameterLimit: 100000,
     extended: true
   }));
-  app.use(multer({
-    dest: './tmp'
-  }));
+  //app.use(multer({
+  //  dest: './tmp'
+  //}));
   app.use(bodyParser.json({
     limit: '50mb'
   }));
