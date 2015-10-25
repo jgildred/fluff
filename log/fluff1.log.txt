@@ -1,0 +1,58 @@
+{"level":"info","message":"CSRF from client: 1F1XAxLOBuLv+UftQOBAcg2k","timestamp":"2014-12-03T08:32:29.152Z"}
+{"level":"info","message":"The requested resource is: Var","timestamp":"2014-12-03T08:32:29.152Z"}
+{"level":"info","message":"Restricted to admins only.","timestamp":"2014-12-03T08:32:29.153Z"}
+{"level":"info","message":"UPDATE ITEM:\n{\"__v\":0,\"_id\":\"547eca9cfa21ec83206e7c0c\",\"creator_id\":\"547eca9cfa21ec83206e7c07\",\"lastupdater_id\":\"547eca9cfa21ec83206e7c07\",\"name\":\"Changed Name\",\"value\":\"Goodbye World.\",\"creation\":\"2014-12-03T08:32:28.606Z\",\"lastupdate\":\"2014-12-03T08:32:29.153Z\"}","timestamp":"2014-12-03T08:32:29.154Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T08:32:29.168Z"}
+{"level":"info","message":"REQ POST: /fluff/admin/api/auth from 127.0.0.1","timestamp":"2014-12-03T08:32:29.169Z"}
+{"level":"info","message":"REQ BODY: {\"email\":\"admin@domain.com\",\"password\":\"[private]\"}","timestamp":"2014-12-03T08:32:29.169Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:3000\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"content-type\":\"application/json\",\"accept\":\"application/json\",\"content-length\":\"47\",\"connection\":\"close\"}","timestamp":"2014-12-03T08:32:29.169Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T08:32:29.169Z"}
+{"level":"info","message":"EXTERNAL URL IS http://domain.com:3000/fluff/admin/api/auth","timestamp":"2014-12-03T08:32:29.169Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T08:32:29.169Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T08:32:29.169Z"}
+{"level":"info","message":"CSRF on server: zp0z7niaYy9/vnM+RUkpvW03 for session Waqojt36bEga8smN0LICdvDDUUnZ3hOh for unknown user","timestamp":"2014-12-03T08:32:29.169Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-12-03T08:32:29.169Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-12-03T08:32:29.170Z"}
+{"level":"info","message":"Authenticating a user...","timestamp":"2014-12-03T08:32:29.170Z"}
+{"level":"info","message":"LOGIN FOUND USER: admin@domain.com","timestamp":"2014-12-03T08:32:29.171Z"}
+{"level":"info","message":"LOGIN USER George Administrator: admin@domain.com","timestamp":"2014-12-03T08:32:29.171Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T08:32:29.174Z"}
+{"level":"info","message":"REQ PATCH: /fluff/admin/api/models/547eca9cfa21ec83206e7c0e from 127.0.0.1","timestamp":"2014-12-03T08:32:29.174Z"}
+{"level":"info","message":"REQ BODY: {\"name\":\"Changed Name\"}","timestamp":"2014-12-03T08:32:29.174Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:56879\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"accept\":\"application/json\",\"x-csrf-token\":\"zp0z7niaYy9/vnM+RUkpvW03\",\"cookie\":\"connect.sid=s%3AWaqojt36bEga8smN0LICdvDDUUnZ3hOh.44N6yYxL1ronRyNAxGwo0%2FRU1tFpNCcYKrf0F%2Bftiqw; Path=/; HttpOnly\",\"content-type\":\"application/json\",\"content-length\":\"23\",\"connection\":\"close\"}","timestamp":"2014-12-03T08:32:29.175Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T08:32:29.175Z"}
+{"level":"info","message":"EXTERNAL URL IS http://domain.com:3000/fluff/admin/api/models/547eca9cfa21ec83206e7c0e","timestamp":"2014-12-03T08:32:29.175Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T08:32:29.175Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T08:32:29.175Z"}
+{"level":"info","message":"CSRF on server: zp0z7niaYy9/vnM+RUkpvW03 for session Waqojt36bEga8smN0LICdvDDUUnZ3hOh for admin@domain.com","timestamp":"2014-12-03T08:32:29.175Z"}
+{"level":"info","message":"CSRF from client: zp0z7niaYy9/vnM+RUkpvW03","timestamp":"2014-12-03T08:32:29.175Z"}
+{"level":"info","message":"The requested resource is: Model","timestamp":"2014-12-03T08:32:29.175Z"}
+{"level":"info","message":"Restricted to admins only.","timestamp":"2014-12-03T08:32:29.175Z"}
+{"level":"info","message":"Updating model Things...","timestamp":"2014-12-03T08:32:29.177Z"}
+{"level":"info","message":"UPDATE ITEM:\n{\"__v\":0,\"_id\":\"547eca9cfa21ec83206e7c0e\",\"creator_id\":\"547eca9cfa21ec83206e7c07\",\"lastupdater_id\":\"547eca9cfa21ec83206e7c07\",\"model_id\":\"things\",\"name\":\"Changed Name\",\"schema_data\":\"{\\nname: String,\\ncolor: String,\\ngood: Boolean\\n}\",\"cursor\":{\"column\":0,\"row\":0},\"access\":{\"remove\":\"Users\",\"update\":\"Users\",\"create\":\"Users\",\"view\":\"Public\"},\"display_columns\":[{\"name\":\"name\",\"title\":\"Name\",\"size\":100,\"_id\":\"547eca9cfa21ec83206e7c11\"},{\"name\":\"color\",\"title\":\"Color\",\"size\":100,\"_id\":\"547eca9cfa21ec83206e7c10\"},{\"name\":\"good\",\"title\":\"Good\",\"size\":50,\"_id\":\"547eca9cfa21ec83206e7c0f\"}],\"sort_column\":{\"name\":\"name\",\"order\":true},\"match_fields\":[\"name\"],\"creation\":\"2014-12-03T08:32:28.608Z\",\"lastupdate\":\"2014-12-03T08:32:29.177Z\"}","timestamp":"2014-12-03T08:32:29.178Z"}
+{"level":"info","message":"Loaded model: Changed Name","timestamp":"2014-12-03T08:32:29.179Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T09:52:28.086Z"}
+{"level":"info","message":"EXTERNAL URL IS http://domain.com:3000/fluff/admin/api/auth","timestamp":"2014-12-03T09:52:28.086Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T09:52:28.086Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T09:52:28.086Z"}
+{"level":"info","message":"CSRF on server: U+O0ciNh/6LHqU9aT1e3gm6j for session 9PXSQ1FBQM9dVdLwPxnE4WR0GNcrzWQg for unknown user","timestamp":"2014-12-03T09:52:28.087Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-12-03T09:52:28.087Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-12-03T09:52:28.087Z"}
+{"level":"info","message":"Authenticating a user...","timestamp":"2014-12-03T09:52:28.087Z"}
+{"level":"info","message":"LOGIN FOUND USER: admin@domain.com","timestamp":"2014-12-03T09:52:28.088Z"}
+{"level":"info","message":"LOGIN USER George Administrator: admin@domain.com","timestamp":"2014-12-03T09:52:28.088Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T09:52:28.091Z"}
+{"level":"info","message":"REQ PATCH: /fluff/admin/api/models/547edd5b9c4d90f321f9323c from 127.0.0.1","timestamp":"2014-12-03T09:52:28.091Z"}
+{"level":"info","message":"REQ BODY: {\"name\":\"Changed Name\"}","timestamp":"2014-12-03T09:52:28.091Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:57268\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"accept\":\"application/json\",\"x-csrf-token\":\"U+O0ciNh/6LHqU9aT1e3gm6j\",\"cookie\":\"connect.sid=s%3A9PXSQ1FBQM9dVdLwPxnE4WR0GNcrzWQg.JkYwsOn46O%2FvyXBkJUFoG1w25Wwa9LTN4P77OOMDfys; Path=/; HttpOnly\",\"content-type\":\"application/json\",\"content-length\":\"23\",\"connection\":\"close\"}","timestamp":"2014-12-03T09:52:28.091Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T09:52:28.091Z"}
+{"level":"info","message":"EXTERNAL URL IS http://domain.com:3000/fluff/admin/api/models/547edd5b9c4d90f321f9323c","timestamp":"2014-12-03T09:52:28.091Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T09:52:28.091Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T09:52:28.091Z"}
+{"level":"info","message":"CSRF on server: U+O0ciNh/6LHqU9aT1e3gm6j for session 9PXSQ1FBQM9dVdLwPxnE4WR0GNcrzWQg for admin@domain.com","timestamp":"2014-12-03T09:52:28.091Z"}
+{"level":"info","message":"CSRF from client: U+O0ciNh/6LHqU9aT1e3gm6j","timestamp":"2014-12-03T09:52:28.091Z"}
+{"level":"info","message":"The requested resource is: Model","timestamp":"2014-12-03T09:52:28.091Z"}
+{"level":"info","message":"Restricted to admins only.","timestamp":"2014-12-03T09:52:28.091Z"}
+{"level":"info","message":"Updating model Things...","timestamp":"2014-12-03T09:52:28.093Z"}
+{"level":"info","message":"UPDATE ITEM:\n{\"__v\":0,\"_id\":\"547edd5b9c4d90f321f9323c\",\"creator_id\":\"547edd5b9c4d90f321f93235\",\"lastupdater_id\":\"547edd5b9c4d90f321f93235\",\"model_id\":\"things\",\"name\":\"Changed Name\",\"schema_data\":\"{\\nname: String,\\ncolor: String,\\ngood: Boolean\\n}\",\"cursor\":{\"column\":0,\"row\":0},\"access\":{\"remove\":\"Users\",\"update\":\"Users\",\"create\":\"Users\",\"view\":\"Public\"},\"display_columns\":[{\"name\":\"name\",\"title\":\"Name\",\"size\":100,\"_id\":\"547edd5b9c4d90f321f9323f\"},{\"name\":\"color\",\"title\":\"Color\",\"size\":100,\"_id\":\"547edd5b9c4d90f321f9323e\"},{\"name\":\"good\",\"title\":\"Good\",\"size\":50,\"_id\":\"547edd5b9c4d90f321f9323d\"}],\"sort_column\":{\"name\":\"name\",\"order\":true},\"match_fields\":[\"name\"],\"creation\":\"2014-12-03T09:52:27.562Z\",\"lastupdate\":\"2014-12-03T09:52:28.093Z\"}","timestamp":"2014-12-03T09:52:28.094Z"}
+{"level":"info","message":"Loaded model: Changed Name","timestamp":"2014-12-03T09:52:28.104Z"}

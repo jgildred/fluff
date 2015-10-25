@@ -131,7 +131,7 @@ var sendMessage = function (options) {
       },
       function(result) {
         Fluff.log.info(options.array[options.index].email + " sent");
-        Fluff.log.info(JSON.stringify(options.template_content));
+        //Fluff.log.info(JSON.stringify(options.template_content));
         options.qty_sent++;
         asyncLoop.next(options);
       },

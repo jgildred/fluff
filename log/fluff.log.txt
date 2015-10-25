@@ -1,0 +1,452 @@
+{"level":"info","message":"Starting Fluff...","timestamp":"2014-12-03T09:52:45.406Z"}
+{"level":"info","message":"DB URI looks ok.","timestamp":"2014-12-03T09:52:45.424Z"}
+{"level":"info","message":"Connecting to mongodb://localhost:27017/fluff","timestamp":"2014-12-03T09:52:45.424Z"}
+{"level":"info","message":"DB has 8 collections.","timestamp":"2014-12-03T09:52:45.446Z"}
+{"level":"info","message":"Setting up the required schemas...","timestamp":"2014-12-03T09:52:45.447Z"}
+{"level":"info","message":"Detected plugins: avb.io, aws, bantr, example, keypair.io, mandrill","timestamp":"2014-12-03T09:52:45.469Z"}
+{"level":"info","message":"Initialized avb.io plugin.","timestamp":"2014-12-03T09:52:45.476Z"}
+{"level":"info","message":"Initialized aws plugin.","timestamp":"2014-12-03T09:52:45.524Z"}
+{"level":"info","message":"Initialized bantr plugin.","timestamp":"2014-12-03T09:52:45.740Z"}
+{"level":"info","message":"I'm the example plugin.","timestamp":"2014-12-03T09:52:45.742Z"}
+{"level":"info","message":"Initialized example plugin.","timestamp":"2014-12-03T09:52:45.742Z"}
+{"level":"info","message":"Initialized keypair.io plugin.","timestamp":"2014-12-03T09:52:45.769Z"}
+{"level":"info","message":"I'm the Mandrill plugin.","timestamp":"2014-12-03T09:52:45.774Z"}
+{"level":"info","message":"Initialized mandrill plugin.","timestamp":"2014-12-03T09:52:45.774Z"}
+{"level":"info","message":"Loading config...","timestamp":"2014-12-03T09:52:45.774Z"}
+{"level":"info","message":"Loaded complete config.","timestamp":"2014-12-03T09:52:45.783Z"}
+{"level":"info","message":"Loading models from DB...","timestamp":"2014-12-03T09:52:45.783Z"}
+{"level":"info","message":"Loaded model: Things","timestamp":"2014-12-03T09:52:45.787Z"}
+{"level":"info","message":"Loaded avb.io plugin.","timestamp":"2014-12-03T09:52:45.789Z"}
+{"level":"info","message":"Loaded aws plugin.","timestamp":"2014-12-03T09:52:45.789Z"}
+{"level":"info","message":"Loaded bantr plugin.","timestamp":"2014-12-03T09:52:45.790Z"}
+{"level":"info","message":"Loaded example plugin.","timestamp":"2014-12-03T09:52:45.790Z"}
+{"level":"info","message":"Loaded keypair.io plugin.","timestamp":"2014-12-03T09:52:45.791Z"}
+{"level":"info","message":"Loaded mandrill plugin.","timestamp":"2014-12-03T09:52:45.791Z"}
+{"level":"info","message":"Adding routes for models...","timestamp":"2014-12-03T09:52:45.792Z"}
+{"level":"info","message":"Now listening on port 3000 at Wed Dec 03 2014 01:52:45 GMT-0800 (PST).","timestamp":"2014-12-03T09:52:45.798Z"}
+{"level":"info","message":"Admin is located at /fluff/admin.","timestamp":"2014-12-03T09:52:45.798Z"}
+{"level":"info","message":"Public files are located at /fluff/js,css,images,fonts,files.","timestamp":"2014-12-03T09:52:45.798Z"}
+{"level":"info","message":"Fluff is up.","timestamp":"2014-12-03T09:52:45.798Z"}
+{"level":"info","message":"No post launch callback.","timestamp":"2014-12-03T09:52:45.798Z"}
+{"level":"info","message":"Starting Fluff...","timestamp":"2014-12-03T17:48:53.228Z"}
+{"level":"info","message":"DB URI looks ok.","timestamp":"2014-12-03T17:48:53.262Z"}
+{"level":"info","message":"Connecting to mongodb://localhost:27017/fluff","timestamp":"2014-12-03T17:48:53.262Z"}
+{"level":"info","message":"DB has 8 collections.","timestamp":"2014-12-03T17:48:53.287Z"}
+{"level":"info","message":"Setting up the required schemas...","timestamp":"2014-12-03T17:48:53.288Z"}
+{"level":"info","message":"Detected plugins: avb.io, aws, bantr, example, keypair.io, mandrill","timestamp":"2014-12-03T17:48:53.307Z"}
+{"level":"info","message":"Initialized avb.io plugin.","timestamp":"2014-12-03T17:48:53.319Z"}
+{"level":"info","message":"Initialized aws plugin.","timestamp":"2014-12-03T17:48:53.394Z"}
+{"level":"info","message":"Initialized bantr plugin.","timestamp":"2014-12-03T17:48:53.666Z"}
+{"level":"info","message":"I'm the example plugin.","timestamp":"2014-12-03T17:48:53.670Z"}
+{"level":"info","message":"Initialized example plugin.","timestamp":"2014-12-03T17:48:53.671Z"}
+{"level":"info","message":"Initialized keypair.io plugin.","timestamp":"2014-12-03T17:48:53.710Z"}
+{"level":"info","message":"I'm the Mandrill plugin.","timestamp":"2014-12-03T17:48:53.719Z"}
+{"level":"info","message":"Initialized mandrill plugin.","timestamp":"2014-12-03T17:48:53.719Z"}
+{"level":"info","message":"Loading config...","timestamp":"2014-12-03T17:48:53.719Z"}
+{"level":"info","message":"Loaded complete config.","timestamp":"2014-12-03T17:48:53.725Z"}
+{"level":"info","message":"Loading models from DB...","timestamp":"2014-12-03T17:48:53.725Z"}
+{"level":"info","message":"Loaded model: Things","timestamp":"2014-12-03T17:48:53.729Z"}
+{"level":"info","message":"Loaded avb.io plugin.","timestamp":"2014-12-03T17:48:53.730Z"}
+{"level":"info","message":"Loaded aws plugin.","timestamp":"2014-12-03T17:48:53.731Z"}
+{"level":"info","message":"Loaded bantr plugin.","timestamp":"2014-12-03T17:48:53.731Z"}
+{"level":"info","message":"Loaded example plugin.","timestamp":"2014-12-03T17:48:53.731Z"}
+{"level":"info","message":"Loaded keypair.io plugin.","timestamp":"2014-12-03T17:48:53.732Z"}
+{"level":"info","message":"Loaded mandrill plugin.","timestamp":"2014-12-03T17:48:53.732Z"}
+{"level":"info","message":"Adding routes for models...","timestamp":"2014-12-03T17:48:53.733Z"}
+{"level":"info","message":"Now listening on port 3000 at Wed Dec 03 2014 09:48:53 GMT-0800 (PST).","timestamp":"2014-12-03T17:48:53.738Z"}
+{"level":"info","message":"Admin is located at /fluff/admin.","timestamp":"2014-12-03T17:48:53.738Z"}
+{"level":"info","message":"Public files are located at /fluff/js,css,images,fonts,files.","timestamp":"2014-12-03T17:48:53.738Z"}
+{"level":"info","message":"Fluff is up.","timestamp":"2014-12-03T17:48:53.738Z"}
+{"level":"info","message":"No post launch callback.","timestamp":"2014-12-03T17:48:53.738Z"}
+{"level":"info","message":"Starting Fluff...","timestamp":"2014-12-03T17:48:57.991Z"}
+{"level":"info","message":"DB URI looks ok.","timestamp":"2014-12-03T17:48:58.009Z"}
+{"level":"info","message":"Connecting to mongodb://localhost:27017/fluff-test-5QEPr","timestamp":"2014-12-03T17:48:58.009Z"}
+{"level":"info","message":"DB has 0 collections.","timestamp":"2014-12-03T17:48:58.029Z"}
+{"level":"info","message":"Setting up the required schemas...","timestamp":"2014-12-03T17:48:58.029Z"}
+{"level":"info","message":"Wiping DB...","timestamp":"2014-12-03T17:48:58.041Z"}
+{"level":"info","message":"Initialize DB...","timestamp":"2014-12-03T17:48:58.210Z"}
+{"level":"info","message":"Creating a site...","timestamp":"2014-12-03T17:48:58.220Z"}
+{"level":"info","message":"Creating an admin user...","timestamp":"2014-12-03T17:48:58.223Z"}
+{"level":"info","message":"Creating views...","timestamp":"2014-12-03T17:48:58.227Z"}
+{"level":"info","message":"Creating pages...","timestamp":"2014-12-03T17:48:58.230Z"}
+{"level":"info","message":"Creating vars...","timestamp":"2014-12-03T17:48:58.232Z"}
+{"level":"info","message":"Creating a model...","timestamp":"2014-12-03T17:48:58.235Z"}
+{"level":"info","message":"Initialized DB with seed data.","timestamp":"2014-12-03T17:48:58.235Z"}
+{"level":"info","message":"Detected plugins: avb.io, aws, bantr, example, keypair.io, mandrill","timestamp":"2014-12-03T17:48:58.235Z"}
+{"level":"info","message":"Initialized avb.io plugin.","timestamp":"2014-12-03T17:48:58.244Z"}
+{"level":"info","message":"Initialized aws plugin.","timestamp":"2014-12-03T17:48:58.292Z"}
+{"level":"info","message":"Initialized bantr plugin.","timestamp":"2014-12-03T17:48:58.522Z"}
+{"level":"info","message":"I'm the example plugin.","timestamp":"2014-12-03T17:48:58.525Z"}
+{"level":"info","message":"Initialized example plugin.","timestamp":"2014-12-03T17:48:58.526Z"}
+{"level":"info","message":"Initialized keypair.io plugin.","timestamp":"2014-12-03T17:48:58.551Z"}
+{"level":"info","message":"I'm the Mandrill plugin.","timestamp":"2014-12-03T17:48:58.556Z"}
+{"level":"info","message":"Initialized mandrill plugin.","timestamp":"2014-12-03T17:48:58.556Z"}
+{"level":"info","message":"Loading config...","timestamp":"2014-12-03T17:48:58.556Z"}
+{"level":"info","message":"Loaded complete config.","timestamp":"2014-12-03T17:48:58.566Z"}
+{"level":"info","message":"Loading models from DB...","timestamp":"2014-12-03T17:48:58.566Z"}
+{"level":"info","message":"Loaded model: Things","timestamp":"2014-12-03T17:48:58.569Z"}
+{"level":"info","message":"Loaded avb.io plugin.","timestamp":"2014-12-03T17:48:58.570Z"}
+{"level":"info","message":"Loaded aws plugin.","timestamp":"2014-12-03T17:48:58.571Z"}
+{"level":"info","message":"Loaded bantr plugin.","timestamp":"2014-12-03T17:48:58.571Z"}
+{"level":"info","message":"Loaded example plugin.","timestamp":"2014-12-03T17:48:58.571Z"}
+{"level":"info","message":"Loaded keypair.io plugin.","timestamp":"2014-12-03T17:48:58.572Z"}
+{"level":"info","message":"Loaded mandrill plugin.","timestamp":"2014-12-03T17:48:58.572Z"}
+{"level":"info","message":"Adding routes for models...","timestamp":"2014-12-03T17:48:58.573Z"}
+{"level":"info","message":"Now listening on port 3000 at Wed Dec 03 2014 09:48:58 GMT-0800 (PST).","timestamp":"2014-12-03T17:48:58.578Z"}
+{"level":"info","message":"Admin is located at /fluff/admin.","timestamp":"2014-12-03T17:48:58.578Z"}
+{"level":"info","message":"Public files are located at /fluff/js,css,images,fonts,files.","timestamp":"2014-12-03T17:48:58.578Z"}
+{"level":"info","message":"Fluff is up.","timestamp":"2014-12-03T17:48:58.578Z"}
+{"level":"info","message":"Post launch callback starting...","timestamp":"2014-12-03T17:48:58.578Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.621Z"}
+{"level":"info","message":"REQ POST: /fluff/admin/api/auth from 127.0.0.1","timestamp":"2014-12-03T17:48:58.621Z"}
+{"level":"info","message":"REQ BODY: {\"email\":\"admin@domain.com\",\"password\":\"[private]\"}","timestamp":"2014-12-03T17:48:58.621Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:3000\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"content-type\":\"application/json\",\"accept\":\"application/json\",\"content-length\":\"47\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.622Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.622Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/api/auth","timestamp":"2014-12-03T17:48:58.622Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.622Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.622Z"}
+{"level":"info","message":"CSRF on server: mqfTqtCOxXtW+HuME1t+JZlz for session EGrJNHxlvITVos0n--1eFv22CUpM8xLx for unknown user","timestamp":"2014-12-03T17:48:58.623Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-12-03T17:48:58.623Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-12-03T17:48:58.623Z"}
+{"level":"info","message":"Authenticating a user...","timestamp":"2014-12-03T17:48:58.625Z"}
+{"level":"info","message":"LOGIN FOUND USER: admin@domain.com","timestamp":"2014-12-03T17:48:58.626Z"}
+{"level":"info","message":"LOGIN USER Default Administrator: admin@domain.com","timestamp":"2014-12-03T17:48:58.627Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.639Z"}
+{"level":"info","message":"REQ GET: /fluff/admin/api/site from 127.0.0.1","timestamp":"2014-12-03T17:48:58.639Z"}
+{"level":"info","message":"REQ BODY: {}","timestamp":"2014-12-03T17:48:58.639Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:58309\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"accept\":\"application/json\",\"x-csrf-token\":\"mqfTqtCOxXtW+HuME1t+JZlz\",\"cookie\":\"connect.sid=s%3AEGrJNHxlvITVos0n--1eFv22CUpM8xLx.nwL4Ii0aoVqZSAjecsejPShB0i5oCxM5WosX0gLdkXM; Path=/; HttpOnly\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.639Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.640Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/api/site","timestamp":"2014-12-03T17:48:58.640Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.640Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.640Z"}
+{"level":"info","message":"CSRF on server: mqfTqtCOxXtW+HuME1t+JZlz for session EGrJNHxlvITVos0n--1eFv22CUpM8xLx for admin@domain.com","timestamp":"2014-12-03T17:48:58.640Z"}
+{"level":"info","message":"CSRF from client: mqfTqtCOxXtW+HuME1t+JZlz","timestamp":"2014-12-03T17:48:58.640Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-12-03T17:48:58.640Z"}
+{"level":"info","message":"The requested resource is: Site","timestamp":"2014-12-03T17:48:58.641Z"}
+{"level":"info","message":"Restricted to admins only.","timestamp":"2014-12-03T17:48:58.641Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.649Z"}
+{"level":"info","message":"REQ POST: /fluff/admin/api/auth from 127.0.0.1","timestamp":"2014-12-03T17:48:58.649Z"}
+{"level":"info","message":"REQ BODY: {\"email\":\"admin@domain.com\",\"password\":\"[private]\"}","timestamp":"2014-12-03T17:48:58.649Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:3000\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"content-type\":\"application/json\",\"accept\":\"application/json\",\"content-length\":\"47\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.649Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.649Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/api/auth","timestamp":"2014-12-03T17:48:58.649Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.649Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.649Z"}
+{"level":"info","message":"CSRF on server: 4RZeHgswJ5TFrmec6NmMDGow for session mhAF8Pa61y8OidEAEh1HCL2_INIl42Md for unknown user","timestamp":"2014-12-03T17:48:58.649Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-12-03T17:48:58.649Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-12-03T17:48:58.650Z"}
+{"level":"info","message":"Authenticating a user...","timestamp":"2014-12-03T17:48:58.650Z"}
+{"level":"info","message":"LOGIN FOUND USER: admin@domain.com","timestamp":"2014-12-03T17:48:58.651Z"}
+{"level":"info","message":"LOGIN USER Default Administrator: admin@domain.com","timestamp":"2014-12-03T17:48:58.652Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.655Z"}
+{"level":"info","message":"REQ GET: /fluff/admin/api/users from 127.0.0.1","timestamp":"2014-12-03T17:48:58.655Z"}
+{"level":"info","message":"REQ BODY: {}","timestamp":"2014-12-03T17:48:58.655Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:58312\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"accept\":\"application/json\",\"x-csrf-token\":\"4RZeHgswJ5TFrmec6NmMDGow\",\"cookie\":\"connect.sid=s%3AmhAF8Pa61y8OidEAEh1HCL2_INIl42Md.9eKkseYvGb1Zaqam2sNhqPBiPkUM3CkJHlsXrFLIkW4; Path=/; HttpOnly\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.655Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.655Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/api/users","timestamp":"2014-12-03T17:48:58.655Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.655Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.655Z"}
+{"level":"info","message":"CSRF on server: 4RZeHgswJ5TFrmec6NmMDGow for session mhAF8Pa61y8OidEAEh1HCL2_INIl42Md for admin@domain.com","timestamp":"2014-12-03T17:48:58.655Z"}
+{"level":"info","message":"CSRF from client: 4RZeHgswJ5TFrmec6NmMDGow","timestamp":"2014-12-03T17:48:58.655Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-12-03T17:48:58.655Z"}
+{"level":"info","message":"The requested resource is: User","timestamp":"2014-12-03T17:48:58.655Z"}
+{"level":"info","message":"Restricted to admins only.","timestamp":"2014-12-03T17:48:58.655Z"}
+{"level":"info","message":"USING FILTER: ","timestamp":"2014-12-03T17:48:58.655Z"}
+{"level":"info","message":"","timestamp":"2014-12-03T17:48:58.655Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.661Z"}
+{"level":"info","message":"REQ POST: /fluff/admin/api/auth from 127.0.0.1","timestamp":"2014-12-03T17:48:58.661Z"}
+{"level":"info","message":"REQ BODY: {\"email\":\"admin@domain.com\",\"password\":\"[private]\"}","timestamp":"2014-12-03T17:48:58.661Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:3000\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"content-type\":\"application/json\",\"accept\":\"application/json\",\"content-length\":\"47\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.661Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.661Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/api/auth","timestamp":"2014-12-03T17:48:58.661Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.661Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.661Z"}
+{"level":"info","message":"CSRF on server: Z7TG05j9+WVoIuylhugjxvlh for session x-pWDaDnXYrCf6W8uUyrpNHuk0-rwKib for unknown user","timestamp":"2014-12-03T17:48:58.661Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-12-03T17:48:58.662Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-12-03T17:48:58.662Z"}
+{"level":"info","message":"Authenticating a user...","timestamp":"2014-12-03T17:48:58.662Z"}
+{"level":"info","message":"LOGIN FOUND USER: admin@domain.com","timestamp":"2014-12-03T17:48:58.663Z"}
+{"level":"info","message":"LOGIN USER Default Administrator: admin@domain.com","timestamp":"2014-12-03T17:48:58.663Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.666Z"}
+{"level":"info","message":"REQ GET: /fluff/admin/api/views from 127.0.0.1","timestamp":"2014-12-03T17:48:58.666Z"}
+{"level":"info","message":"REQ BODY: {}","timestamp":"2014-12-03T17:48:58.666Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:58315\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"accept\":\"application/json\",\"x-csrf-token\":\"Z7TG05j9+WVoIuylhugjxvlh\",\"cookie\":\"connect.sid=s%3Ax-pWDaDnXYrCf6W8uUyrpNHuk0-rwKib.eOEXDlxfzKXwsXdl7uG1Xcf8t5YE0XHpuQ3tjQp46HM; Path=/; HttpOnly\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.666Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.666Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/api/views","timestamp":"2014-12-03T17:48:58.666Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.666Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.666Z"}
+{"level":"info","message":"CSRF on server: Z7TG05j9+WVoIuylhugjxvlh for session x-pWDaDnXYrCf6W8uUyrpNHuk0-rwKib for admin@domain.com","timestamp":"2014-12-03T17:48:58.666Z"}
+{"level":"info","message":"CSRF from client: Z7TG05j9+WVoIuylhugjxvlh","timestamp":"2014-12-03T17:48:58.666Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-12-03T17:48:58.666Z"}
+{"level":"info","message":"The requested resource is: View","timestamp":"2014-12-03T17:48:58.666Z"}
+{"level":"info","message":"Restricted to admins only.","timestamp":"2014-12-03T17:48:58.667Z"}
+{"level":"info","message":"USING FILTER: ","timestamp":"2014-12-03T17:48:58.667Z"}
+{"level":"info","message":"","timestamp":"2014-12-03T17:48:58.667Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.672Z"}
+{"level":"info","message":"REQ POST: /fluff/admin/api/auth from 127.0.0.1","timestamp":"2014-12-03T17:48:58.672Z"}
+{"level":"info","message":"REQ BODY: {\"email\":\"admin@domain.com\",\"password\":\"[private]\"}","timestamp":"2014-12-03T17:48:58.672Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:3000\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"content-type\":\"application/json\",\"accept\":\"application/json\",\"content-length\":\"47\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.672Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.672Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/api/auth","timestamp":"2014-12-03T17:48:58.672Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.672Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.672Z"}
+{"level":"info","message":"CSRF on server: yDlU+LncNAl+0i7aqnIuGUlI for session cDAJLbkfXx6HbCe5nd2glLNOZLcIKa2t for unknown user","timestamp":"2014-12-03T17:48:58.673Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-12-03T17:48:58.673Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-12-03T17:48:58.673Z"}
+{"level":"info","message":"Authenticating a user...","timestamp":"2014-12-03T17:48:58.673Z"}
+{"level":"info","message":"LOGIN FOUND USER: admin@domain.com","timestamp":"2014-12-03T17:48:58.674Z"}
+{"level":"info","message":"LOGIN USER Default Administrator: admin@domain.com","timestamp":"2014-12-03T17:48:58.674Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.677Z"}
+{"level":"info","message":"REQ GET: /fluff/admin/api/pages from 127.0.0.1","timestamp":"2014-12-03T17:48:58.677Z"}
+{"level":"info","message":"REQ BODY: {}","timestamp":"2014-12-03T17:48:58.677Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:58318\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"accept\":\"application/json\",\"x-csrf-token\":\"yDlU+LncNAl+0i7aqnIuGUlI\",\"cookie\":\"connect.sid=s%3AcDAJLbkfXx6HbCe5nd2glLNOZLcIKa2t.rMDuIzScsfwOfCSqbt7ZaXmK79jMHodePp9HzDFJj64; Path=/; HttpOnly\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.677Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.677Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/api/pages","timestamp":"2014-12-03T17:48:58.677Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.677Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.677Z"}
+{"level":"info","message":"CSRF on server: yDlU+LncNAl+0i7aqnIuGUlI for session cDAJLbkfXx6HbCe5nd2glLNOZLcIKa2t for admin@domain.com","timestamp":"2014-12-03T17:48:58.677Z"}
+{"level":"info","message":"CSRF from client: yDlU+LncNAl+0i7aqnIuGUlI","timestamp":"2014-12-03T17:48:58.677Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-12-03T17:48:58.677Z"}
+{"level":"info","message":"The requested resource is: Page","timestamp":"2014-12-03T17:48:58.677Z"}
+{"level":"info","message":"Restricted to admins only.","timestamp":"2014-12-03T17:48:58.677Z"}
+{"level":"info","message":"USING FILTER: ","timestamp":"2014-12-03T17:48:58.677Z"}
+{"level":"info","message":"","timestamp":"2014-12-03T17:48:58.677Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.683Z"}
+{"level":"info","message":"REQ POST: /fluff/admin/api/auth from 127.0.0.1","timestamp":"2014-12-03T17:48:58.683Z"}
+{"level":"info","message":"REQ BODY: {\"email\":\"admin@domain.com\",\"password\":\"[private]\"}","timestamp":"2014-12-03T17:48:58.683Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:3000\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"content-type\":\"application/json\",\"accept\":\"application/json\",\"content-length\":\"47\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.683Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.683Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/api/auth","timestamp":"2014-12-03T17:48:58.683Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.683Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.683Z"}
+{"level":"info","message":"CSRF on server: pSTHXJr7fVFQaEAE7Z5/y/yi for session ac-KMKL61HkjkSRLIqGG2YM-e6KxuNep for unknown user","timestamp":"2014-12-03T17:48:58.684Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-12-03T17:48:58.684Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-12-03T17:48:58.684Z"}
+{"level":"info","message":"Authenticating a user...","timestamp":"2014-12-03T17:48:58.684Z"}
+{"level":"info","message":"LOGIN FOUND USER: admin@domain.com","timestamp":"2014-12-03T17:48:58.684Z"}
+{"level":"info","message":"LOGIN USER Default Administrator: admin@domain.com","timestamp":"2014-12-03T17:48:58.685Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.688Z"}
+{"level":"info","message":"REQ GET: /fluff/admin/api/vars from 127.0.0.1","timestamp":"2014-12-03T17:48:58.688Z"}
+{"level":"info","message":"REQ BODY: {}","timestamp":"2014-12-03T17:48:58.688Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:58321\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"accept\":\"application/json\",\"x-csrf-token\":\"pSTHXJr7fVFQaEAE7Z5/y/yi\",\"cookie\":\"connect.sid=s%3Aac-KMKL61HkjkSRLIqGG2YM-e6KxuNep.o9ezHBU62O03UAEcGhus6WC7O8hI0pqPnYwJOA6zHxc; Path=/; HttpOnly\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.688Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.688Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/api/vars","timestamp":"2014-12-03T17:48:58.688Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.688Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.688Z"}
+{"level":"info","message":"CSRF on server: pSTHXJr7fVFQaEAE7Z5/y/yi for session ac-KMKL61HkjkSRLIqGG2YM-e6KxuNep for admin@domain.com","timestamp":"2014-12-03T17:48:58.688Z"}
+{"level":"info","message":"CSRF from client: pSTHXJr7fVFQaEAE7Z5/y/yi","timestamp":"2014-12-03T17:48:58.688Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-12-03T17:48:58.688Z"}
+{"level":"info","message":"The requested resource is: Var","timestamp":"2014-12-03T17:48:58.689Z"}
+{"level":"info","message":"Restricted to admins only.","timestamp":"2014-12-03T17:48:58.689Z"}
+{"level":"info","message":"USING FILTER: ","timestamp":"2014-12-03T17:48:58.689Z"}
+{"level":"info","message":"","timestamp":"2014-12-03T17:48:58.689Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.695Z"}
+{"level":"info","message":"REQ POST: /fluff/admin/api/auth from 127.0.0.1","timestamp":"2014-12-03T17:48:58.695Z"}
+{"level":"info","message":"REQ BODY: {\"email\":\"admin@domain.com\",\"password\":\"[private]\"}","timestamp":"2014-12-03T17:48:58.695Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:3000\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"content-type\":\"application/json\",\"accept\":\"application/json\",\"content-length\":\"47\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.695Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.695Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/api/auth","timestamp":"2014-12-03T17:48:58.695Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.695Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.695Z"}
+{"level":"info","message":"CSRF on server: IZ/CsSFjcKASKA7/z74RrMP8 for session _XVcj0UQn5oDfMqMGIbZ3BoTuy8CvwC2 for unknown user","timestamp":"2014-12-03T17:48:58.695Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-12-03T17:48:58.695Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-12-03T17:48:58.695Z"}
+{"level":"info","message":"Authenticating a user...","timestamp":"2014-12-03T17:48:58.695Z"}
+{"level":"info","message":"LOGIN FOUND USER: admin@domain.com","timestamp":"2014-12-03T17:48:58.697Z"}
+{"level":"info","message":"LOGIN USER Default Administrator: admin@domain.com","timestamp":"2014-12-03T17:48:58.697Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.700Z"}
+{"level":"info","message":"REQ GET: /fluff/admin/api/models from 127.0.0.1","timestamp":"2014-12-03T17:48:58.700Z"}
+{"level":"info","message":"REQ BODY: {}","timestamp":"2014-12-03T17:48:58.700Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:58324\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"accept\":\"application/json\",\"x-csrf-token\":\"IZ/CsSFjcKASKA7/z74RrMP8\",\"cookie\":\"connect.sid=s%3A_XVcj0UQn5oDfMqMGIbZ3BoTuy8CvwC2.ANSue3HRCHO71il1qzyDPQzXI%2F7K7FPPGjFEIfFimx8; Path=/; HttpOnly\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.700Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.700Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/api/models","timestamp":"2014-12-03T17:48:58.700Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.700Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.700Z"}
+{"level":"info","message":"CSRF on server: IZ/CsSFjcKASKA7/z74RrMP8 for session _XVcj0UQn5oDfMqMGIbZ3BoTuy8CvwC2 for admin@domain.com","timestamp":"2014-12-03T17:48:58.700Z"}
+{"level":"info","message":"CSRF from client: IZ/CsSFjcKASKA7/z74RrMP8","timestamp":"2014-12-03T17:48:58.700Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-12-03T17:48:58.700Z"}
+{"level":"info","message":"The requested resource is: Model","timestamp":"2014-12-03T17:48:58.700Z"}
+{"level":"info","message":"Restricted to admins only.","timestamp":"2014-12-03T17:48:58.700Z"}
+{"level":"info","message":"USING FILTER: ","timestamp":"2014-12-03T17:48:58.700Z"}
+{"level":"info","message":"","timestamp":"2014-12-03T17:48:58.700Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.704Z"}
+{"level":"info","message":"REQ POST: /fluff/admin/api/auth from 127.0.0.1","timestamp":"2014-12-03T17:48:58.704Z"}
+{"level":"info","message":"REQ BODY: {\"email\":\"admin@domain.com\",\"password\":\"[private]\"}","timestamp":"2014-12-03T17:48:58.704Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:3000\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"content-type\":\"application/json\",\"accept\":\"application/json\",\"content-length\":\"47\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.704Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.704Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/api/auth","timestamp":"2014-12-03T17:48:58.704Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.704Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.704Z"}
+{"level":"info","message":"CSRF on server: ehm2hVaiA9TLOptx6laZJ/pG for session EqApXoIlDzTqX6o7M4kGomhZty5v4rcd for unknown user","timestamp":"2014-12-03T17:48:58.704Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-12-03T17:48:58.704Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-12-03T17:48:58.704Z"}
+{"level":"info","message":"Authenticating a user...","timestamp":"2014-12-03T17:48:58.704Z"}
+{"level":"info","message":"LOGIN FOUND USER: admin@domain.com","timestamp":"2014-12-03T17:48:58.705Z"}
+{"level":"info","message":"LOGIN USER Default Administrator: admin@domain.com","timestamp":"2014-12-03T17:48:58.705Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.708Z"}
+{"level":"info","message":"REQ PATCH: /fluff/admin/api/site from 127.0.0.1","timestamp":"2014-12-03T17:48:58.708Z"}
+{"level":"info","message":"REQ BODY: {\"domain_name\":\"domain.com\"}","timestamp":"2014-12-03T17:48:58.708Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:58327\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"accept\":\"application/json\",\"x-csrf-token\":\"ehm2hVaiA9TLOptx6laZJ/pG\",\"cookie\":\"connect.sid=s%3AEqApXoIlDzTqX6o7M4kGomhZty5v4rcd.14FYaFUUrbitY8x4PH%2FaKb7WVgHmQrhP3Uk1qJFAJ2g; Path=/; HttpOnly\",\"content-type\":\"application/json\",\"content-length\":\"28\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.708Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.708Z"}
+{"level":"info","message":"EXTERNAL URL IS http://localhost:3000/fluff/admin/api/site","timestamp":"2014-12-03T17:48:58.708Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.708Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.708Z"}
+{"level":"info","message":"CSRF on server: ehm2hVaiA9TLOptx6laZJ/pG for session EqApXoIlDzTqX6o7M4kGomhZty5v4rcd for admin@domain.com","timestamp":"2014-12-03T17:48:58.708Z"}
+{"level":"info","message":"CSRF from client: ehm2hVaiA9TLOptx6laZJ/pG","timestamp":"2014-12-03T17:48:58.708Z"}
+{"level":"info","message":"The requested resource is: Site","timestamp":"2014-12-03T17:48:58.709Z"}
+{"level":"info","message":"Restricted to admins only.","timestamp":"2014-12-03T17:48:58.709Z"}
+{"level":"info","message":"UPDATE ITEM:\n{\"__v\":0,\"_id\":\"547f4d0a7d8e845123b78902\",\"domain_name\":\"domain.com\",\"email_from\":\"noreply@domain.com\",\"lastupdater_id\":\"547f4d0a7d8e845123b78903\",\"name\":\"Web Site\",\"port\":3000,\"ssl\":false,\"fluff_path\":\"/fluff\",\"cors\":{\"whitelist\":[\"http://localhost:3000\"],\"restricted\":false},\"captcha\":{\"required\":false},\"smtp\":{\"host\":\"smtp.domain.com\",\"username\":\"user@domain.com\",\"password\":\"fluff\",\"port\":25,\"ssl\":true,\"service\":\"SMTP\"},\"apikey\":{\"keychain\":[\"1234567890\"],\"required\":false},\"notifications\":[{\"name\":\"Sign Up\",\"slug\":\"signup\",\"subject\":\"Verify Your Email Address\",\"body\":\"Hi {{shortname}}\\n\\nIn order to complete the signup process, please go to:\\n\\n{{link}}\\n\\nto verify your email address.\\n\"},{\"name\":\"Change Password\",\"slug\":\"pwchange\",\"subject\":\"Reset Request\",\"body\":\"Hi {{shortname}}\\n\\nWe just received a request to reset your password. In order to do so, please go to:\\n\\n{{link}}\\n\"},{\"name\":\"Welcome\",\"slug\":\"welcome\",\"subject\":\"Your Account is Ready\",\"body\":\"Hi {{shortname}}\\n\\nWe just setup a new user account for you. In order to complete the setup process, please go to:\\n\\n{{link}}\\n\\nto set your password.\\n\"}],\"creation\":\"2014-12-03T17:48:58.211Z\",\"lastupdate\":\"2014-12-03T17:48:58.709Z\"}","timestamp":"2014-12-03T17:48:58.712Z"}
+{"level":"info","message":"Loading config...","timestamp":"2014-12-03T17:48:58.712Z"}
+{"level":"info","message":"Loaded complete config.","timestamp":"2014-12-03T17:48:58.714Z"}
+{"level":"info","message":"Loaded avb.io plugin.","timestamp":"2014-12-03T17:48:58.715Z"}
+{"level":"info","message":"Loaded aws plugin.","timestamp":"2014-12-03T17:48:58.715Z"}
+{"level":"info","message":"Loaded bantr plugin.","timestamp":"2014-12-03T17:48:58.716Z"}
+{"level":"info","message":"Loaded example plugin.","timestamp":"2014-12-03T17:48:58.716Z"}
+{"level":"info","message":"Loaded keypair.io plugin.","timestamp":"2014-12-03T17:48:58.716Z"}
+{"level":"info","message":"Loaded mandrill plugin.","timestamp":"2014-12-03T17:48:58.717Z"}
+{"level":"info","message":"Adding routes for models...","timestamp":"2014-12-03T17:48:58.717Z"}
+{"level":"info","message":"Running on port 3000","timestamp":"2014-12-03T17:48:58.718Z"}
+{"level":"info","message":"Now listening on port 3000 at Wed Dec 03 2014 09:48:58 GMT-0800 (PST).","timestamp":"2014-12-03T17:48:58.718Z"}
+{"level":"info","message":"Admin is located at /fluff/admin.","timestamp":"2014-12-03T17:48:58.718Z"}
+{"level":"info","message":"Public files are located at /fluff/js,css,images,fonts,files.","timestamp":"2014-12-03T17:48:58.718Z"}
+{"level":"info","message":"Fluff is up.","timestamp":"2014-12-03T17:48:58.718Z"}
+{"level":"info","message":"No post launch callback.","timestamp":"2014-12-03T17:48:58.718Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.719Z"}
+{"level":"info","message":"REQ POST: /fluff/admin/api/auth from 127.0.0.1","timestamp":"2014-12-03T17:48:58.719Z"}
+{"level":"info","message":"REQ BODY: {\"email\":\"admin@domain.com\",\"password\":\"[private]\"}","timestamp":"2014-12-03T17:48:58.719Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:3000\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"content-type\":\"application/json\",\"accept\":\"application/json\",\"content-length\":\"47\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.719Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.719Z"}
+{"level":"info","message":"EXTERNAL URL IS http://domain.com:3000/fluff/admin/api/auth","timestamp":"2014-12-03T17:48:58.719Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.719Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.719Z"}
+{"level":"info","message":"CSRF on server: XTMTAi9P/EpnfzNhDpQsdbFs for session tvvzadx0U0lkBBET1toJdKjPdMWRO1A8 for unknown user","timestamp":"2014-12-03T17:48:58.719Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-12-03T17:48:58.720Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-12-03T17:48:58.720Z"}
+{"level":"info","message":"Authenticating a user...","timestamp":"2014-12-03T17:48:58.720Z"}
+{"level":"info","message":"LOGIN FOUND USER: admin@domain.com","timestamp":"2014-12-03T17:48:58.721Z"}
+{"level":"info","message":"LOGIN USER Default Administrator: admin@domain.com","timestamp":"2014-12-03T17:48:58.721Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.725Z"}
+{"level":"info","message":"REQ PATCH: /fluff/admin/api/users/547f4d0a7d8e845123b78903 from 127.0.0.1","timestamp":"2014-12-03T17:48:58.725Z"}
+{"level":"info","message":"REQ BODY: {\"firstname\":\"George\"}","timestamp":"2014-12-03T17:48:58.725Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:58330\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"accept\":\"application/json\",\"x-csrf-token\":\"XTMTAi9P/EpnfzNhDpQsdbFs\",\"cookie\":\"connect.sid=s%3Atvvzadx0U0lkBBET1toJdKjPdMWRO1A8.fVNC4AZZEO0eQCnrJVbGICfIvNnvrAcSPy0KIsKtB1k; Path=/; HttpOnly\",\"content-type\":\"application/json\",\"content-length\":\"22\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.725Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.725Z"}
+{"level":"info","message":"EXTERNAL URL IS http://domain.com:3000/fluff/admin/api/users/547f4d0a7d8e845123b78903","timestamp":"2014-12-03T17:48:58.726Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.726Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.726Z"}
+{"level":"info","message":"CSRF on server: XTMTAi9P/EpnfzNhDpQsdbFs for session tvvzadx0U0lkBBET1toJdKjPdMWRO1A8 for admin@domain.com","timestamp":"2014-12-03T17:48:58.726Z"}
+{"level":"info","message":"CSRF from client: XTMTAi9P/EpnfzNhDpQsdbFs","timestamp":"2014-12-03T17:48:58.726Z"}
+{"level":"info","message":"The requested resource is: User","timestamp":"2014-12-03T17:48:58.726Z"}
+{"level":"info","message":"Restricted to users only.","timestamp":"2014-12-03T17:48:58.726Z"}
+{"level":"info","message":"CLEAN PARAMS...","timestamp":"2014-12-03T17:48:58.726Z"}
+{"level":"info","message":"UPDATE ITEM:\n{\"__v\":0,\"_id\":\"547f4d0a7d8e845123b78903\",\"creator_id\":\"547f4d0a7d8e845123b78903\",\"email\":\"admin@domain.com\",\"firstname\":\"George\",\"lastname\":\"Administrator\",\"lastupdater_id\":\"547f4d0a7d8e845123b78903\",\"pwhash\":\"b1d027bebfaaec3f25b1172d455578ec\",\"salt\":\"dY8MnC/NUF\",\"verifytoken\":\"kaNpL0RwtS\",\"role\":\"Admin\",\"status\":\"Active\",\"creation\":\"2014-12-03T17:48:58.221Z\",\"lastupdate\":\"2014-12-03T17:48:58.726Z\"}","timestamp":"2014-12-03T17:48:58.727Z"}
+{"level":"info","message":"SESSION UPDATED: {\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"_csrf\":\"XTMTAi9P/EpnfzNhDpQsdbFs\",\"auth\":true,\"human\":true,\"user\":{\"id\":\"547f4d0a7d8e845123b78903\",\"email\":\"admin@domain.com\",\"role\":\"Admin\",\"displayname\":\"George Administrator\",\"status\":\"Active\"}}","timestamp":"2014-12-03T17:48:58.728Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.732Z"}
+{"level":"info","message":"REQ POST: /fluff/admin/api/auth from 127.0.0.1","timestamp":"2014-12-03T17:48:58.732Z"}
+{"level":"info","message":"REQ BODY: {\"email\":\"admin@domain.com\",\"password\":\"[private]\"}","timestamp":"2014-12-03T17:48:58.732Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:3000\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"content-type\":\"application/json\",\"accept\":\"application/json\",\"content-length\":\"47\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.732Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.732Z"}
+{"level":"info","message":"EXTERNAL URL IS http://domain.com:3000/fluff/admin/api/auth","timestamp":"2014-12-03T17:48:58.732Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.732Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.732Z"}
+{"level":"info","message":"CSRF on server: ivrTYsboHIh6NfYKEm41FgKK for session OZR9GKkcLB8L0UHYeWl-rd-8cILcua6h for unknown user","timestamp":"2014-12-03T17:48:58.732Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-12-03T17:48:58.732Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-12-03T17:48:58.732Z"}
+{"level":"info","message":"Authenticating a user...","timestamp":"2014-12-03T17:48:58.732Z"}
+{"level":"info","message":"LOGIN FOUND USER: admin@domain.com","timestamp":"2014-12-03T17:48:58.733Z"}
+{"level":"info","message":"LOGIN USER George Administrator: admin@domain.com","timestamp":"2014-12-03T17:48:58.733Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.736Z"}
+{"level":"info","message":"REQ PATCH: /fluff/admin/api/views/547f4d0a7d8e845123b78905 from 127.0.0.1","timestamp":"2014-12-03T17:48:58.736Z"}
+{"level":"info","message":"REQ BODY: {\"name\":\"Changed Name\"}","timestamp":"2014-12-03T17:48:58.736Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:58333\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"accept\":\"application/json\",\"x-csrf-token\":\"ivrTYsboHIh6NfYKEm41FgKK\",\"cookie\":\"connect.sid=s%3AOZR9GKkcLB8L0UHYeWl-rd-8cILcua6h.O5CrYS4epY1SjqeJexbxF0jG%2Fl5WCuDj7OzlD9jJJqY; Path=/; HttpOnly\",\"content-type\":\"application/json\",\"content-length\":\"23\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.736Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.736Z"}
+{"level":"info","message":"EXTERNAL URL IS http://domain.com:3000/fluff/admin/api/views/547f4d0a7d8e845123b78905","timestamp":"2014-12-03T17:48:58.736Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.736Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.736Z"}
+{"level":"info","message":"CSRF on server: ivrTYsboHIh6NfYKEm41FgKK for session OZR9GKkcLB8L0UHYeWl-rd-8cILcua6h for admin@domain.com","timestamp":"2014-12-03T17:48:58.736Z"}
+{"level":"info","message":"CSRF from client: ivrTYsboHIh6NfYKEm41FgKK","timestamp":"2014-12-03T17:48:58.736Z"}
+{"level":"info","message":"The requested resource is: View","timestamp":"2014-12-03T17:48:58.736Z"}
+{"level":"info","message":"Restricted to admins only.","timestamp":"2014-12-03T17:48:58.736Z"}
+{"level":"info","message":"UPDATE ITEM:\n{\"__v\":0,\"_id\":\"547f4d0a7d8e845123b78905\",\"content_type\":\"text/css\",\"creator_id\":\"547f4d0a7d8e845123b78903\",\"lastupdater_id\":\"547f4d0a7d8e845123b78903\",\"name\":\"Changed Name\",\"template\":\"{{content}}\",\"cursor\":{\"column\":0,\"row\":0},\"creation\":\"2014-12-03T17:48:58.224Z\",\"lastupdate\":\"2014-12-03T17:48:58.736Z\"}","timestamp":"2014-12-03T17:48:58.737Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.740Z"}
+{"level":"info","message":"REQ POST: /fluff/admin/api/auth from 127.0.0.1","timestamp":"2014-12-03T17:48:58.740Z"}
+{"level":"info","message":"REQ BODY: {\"email\":\"admin@domain.com\",\"password\":\"[private]\"}","timestamp":"2014-12-03T17:48:58.740Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:3000\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"content-type\":\"application/json\",\"accept\":\"application/json\",\"content-length\":\"47\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.740Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.740Z"}
+{"level":"info","message":"EXTERNAL URL IS http://domain.com:3000/fluff/admin/api/auth","timestamp":"2014-12-03T17:48:58.740Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.740Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.740Z"}
+{"level":"info","message":"CSRF on server: hLVkIIt4Rk+esEgzEFpI4Ps5 for session _pcRr2vDQLGYsBQZ7yYFgMBSYzesMOe- for unknown user","timestamp":"2014-12-03T17:48:58.740Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-12-03T17:48:58.740Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-12-03T17:48:58.740Z"}
+{"level":"info","message":"Authenticating a user...","timestamp":"2014-12-03T17:48:58.740Z"}
+{"level":"info","message":"LOGIN FOUND USER: admin@domain.com","timestamp":"2014-12-03T17:48:58.741Z"}
+{"level":"info","message":"LOGIN USER George Administrator: admin@domain.com","timestamp":"2014-12-03T17:48:58.742Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.745Z"}
+{"level":"info","message":"REQ PATCH: /fluff/admin/api/pages/547f4d0a7d8e845123b78906 from 127.0.0.1","timestamp":"2014-12-03T17:48:58.745Z"}
+{"level":"info","message":"REQ BODY: {\"name\":\"Changed Name\"}","timestamp":"2014-12-03T17:48:58.745Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:58336\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"accept\":\"application/json\",\"x-csrf-token\":\"hLVkIIt4Rk+esEgzEFpI4Ps5\",\"cookie\":\"connect.sid=s%3A_pcRr2vDQLGYsBQZ7yYFgMBSYzesMOe-.%2BG%2BSR4DpkcVspSr5YKeA1x84aXiJ6awur2ODUyEtNok; Path=/; HttpOnly\",\"content-type\":\"application/json\",\"content-length\":\"23\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.745Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.745Z"}
+{"level":"info","message":"EXTERNAL URL IS http://domain.com:3000/fluff/admin/api/pages/547f4d0a7d8e845123b78906","timestamp":"2014-12-03T17:48:58.745Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.745Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.745Z"}
+{"level":"info","message":"CSRF on server: hLVkIIt4Rk+esEgzEFpI4Ps5 for session _pcRr2vDQLGYsBQZ7yYFgMBSYzesMOe- for admin@domain.com","timestamp":"2014-12-03T17:48:58.745Z"}
+{"level":"info","message":"CSRF from client: hLVkIIt4Rk+esEgzEFpI4Ps5","timestamp":"2014-12-03T17:48:58.745Z"}
+{"level":"info","message":"The requested resource is: Page","timestamp":"2014-12-03T17:48:58.745Z"}
+{"level":"info","message":"Restricted to admins only.","timestamp":"2014-12-03T17:48:58.745Z"}
+{"level":"info","message":"UPDATE ITEM:\n{\"__v\":0,\"_id\":\"547f4d0a7d8e845123b78906\",\"content\":\"<h1 class=\\\"text-center example\\\">{{var.Greeting}}</h1>\",\"creator_id\":\"547f4d0a7d8e845123b78903\",\"lastupdater_id\":\"547f4d0a7d8e845123b78903\",\"name\":\"Changed Name\",\"path\":\"/\",\"view_id\":\"547f4d0a7d8e845123b78904\",\"cursor\":{\"column\":0,\"row\":0},\"access\":\"Public\",\"status\":\"Published\",\"publication\":\"2014-12-03T17:48:58.228Z\",\"creation\":\"2014-12-03T17:48:58.228Z\",\"lastupdate\":\"2014-12-03T17:48:58.745Z\"}","timestamp":"2014-12-03T17:48:58.746Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.749Z"}
+{"level":"info","message":"REQ POST: /fluff/admin/api/auth from 127.0.0.1","timestamp":"2014-12-03T17:48:58.749Z"}
+{"level":"info","message":"REQ BODY: {\"email\":\"admin@domain.com\",\"password\":\"[private]\"}","timestamp":"2014-12-03T17:48:58.749Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:3000\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"content-type\":\"application/json\",\"accept\":\"application/json\",\"content-length\":\"47\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.749Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.749Z"}
+{"level":"info","message":"EXTERNAL URL IS http://domain.com:3000/fluff/admin/api/auth","timestamp":"2014-12-03T17:48:58.749Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.749Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.749Z"}
+{"level":"info","message":"CSRF on server: N91X6eRLixyRYmwPFim4imM5 for session ggVubw0MMYLVlm55DS8qt7jpjGzIosWE for unknown user","timestamp":"2014-12-03T17:48:58.750Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-12-03T17:48:58.750Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-12-03T17:48:58.750Z"}
+{"level":"info","message":"Authenticating a user...","timestamp":"2014-12-03T17:48:58.750Z"}
+{"level":"info","message":"LOGIN FOUND USER: admin@domain.com","timestamp":"2014-12-03T17:48:58.751Z"}
+{"level":"info","message":"LOGIN USER George Administrator: admin@domain.com","timestamp":"2014-12-03T17:48:58.751Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.755Z"}
+{"level":"info","message":"REQ PATCH: /fluff/admin/api/vars/547f4d0a7d8e845123b78908 from 127.0.0.1","timestamp":"2014-12-03T17:48:58.755Z"}
+{"level":"info","message":"REQ BODY: {\"name\":\"Changed Name\"}","timestamp":"2014-12-03T17:48:58.755Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:58339\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"accept\":\"application/json\",\"x-csrf-token\":\"N91X6eRLixyRYmwPFim4imM5\",\"cookie\":\"connect.sid=s%3AggVubw0MMYLVlm55DS8qt7jpjGzIosWE.pk%2FGhk%2BAaxEgPyaiiVtVEn9eovOGBqJHdKzdvS2Nt2k; Path=/; HttpOnly\",\"content-type\":\"application/json\",\"content-length\":\"23\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.755Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.755Z"}
+{"level":"info","message":"EXTERNAL URL IS http://domain.com:3000/fluff/admin/api/vars/547f4d0a7d8e845123b78908","timestamp":"2014-12-03T17:48:58.755Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.755Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.755Z"}
+{"level":"info","message":"CSRF on server: N91X6eRLixyRYmwPFim4imM5 for session ggVubw0MMYLVlm55DS8qt7jpjGzIosWE for admin@domain.com","timestamp":"2014-12-03T17:48:58.755Z"}
+{"level":"info","message":"CSRF from client: N91X6eRLixyRYmwPFim4imM5","timestamp":"2014-12-03T17:48:58.755Z"}
+{"level":"info","message":"The requested resource is: Var","timestamp":"2014-12-03T17:48:58.756Z"}
+{"level":"info","message":"Restricted to admins only.","timestamp":"2014-12-03T17:48:58.756Z"}
+{"level":"info","message":"UPDATE ITEM:\n{\"__v\":0,\"_id\":\"547f4d0a7d8e845123b78908\",\"creator_id\":\"547f4d0a7d8e845123b78903\",\"lastupdater_id\":\"547f4d0a7d8e845123b78903\",\"name\":\"Changed Name\",\"value\":\"Goodbye World.\",\"creation\":\"2014-12-03T17:48:58.231Z\",\"lastupdate\":\"2014-12-03T17:48:58.756Z\"}","timestamp":"2014-12-03T17:48:58.757Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.760Z"}
+{"level":"info","message":"REQ POST: /fluff/admin/api/auth from 127.0.0.1","timestamp":"2014-12-03T17:48:58.760Z"}
+{"level":"info","message":"REQ BODY: {\"email\":\"admin@domain.com\",\"password\":\"[private]\"}","timestamp":"2014-12-03T17:48:58.760Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:3000\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"content-type\":\"application/json\",\"accept\":\"application/json\",\"content-length\":\"47\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.761Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.761Z"}
+{"level":"info","message":"EXTERNAL URL IS http://domain.com:3000/fluff/admin/api/auth","timestamp":"2014-12-03T17:48:58.761Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.761Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.761Z"}
+{"level":"info","message":"CSRF on server: jy+bm7DGZ/8Za/1QvhFCCObS for session KQq4myhCDtSofAy8bKjj44p5NWdCkOM1 for unknown user","timestamp":"2014-12-03T17:48:58.761Z"}
+{"level":"info","message":"CSRF from client: undefined","timestamp":"2014-12-03T17:48:58.761Z"}
+{"level":"info","message":"CSRF NOT REQUIRED","timestamp":"2014-12-03T17:48:58.761Z"}
+{"level":"info","message":"Authenticating a user...","timestamp":"2014-12-03T17:48:58.761Z"}
+{"level":"info","message":"LOGIN FOUND USER: admin@domain.com","timestamp":"2014-12-03T17:48:58.762Z"}
+{"level":"info","message":"LOGIN USER George Administrator: admin@domain.com","timestamp":"2014-12-03T17:48:58.762Z"}
+{"level":"info","message":"**** NEW REQUEST ****","timestamp":"2014-12-03T17:48:58.765Z"}
+{"level":"info","message":"REQ PATCH: /fluff/admin/api/models/547f4d0a7d8e845123b7890a from 127.0.0.1","timestamp":"2014-12-03T17:48:58.765Z"}
+{"level":"info","message":"REQ BODY: {\"name\":\"Changed Name\"}","timestamp":"2014-12-03T17:48:58.765Z"}
+{"level":"info","message":"REQ HEADERS: {\"host\":\"127.0.0.1:58342\",\"accept-encoding\":\"gzip, deflate\",\"user-agent\":\"node-superagent/0.21.0\",\"accept\":\"application/json\",\"x-csrf-token\":\"jy+bm7DGZ/8Za/1QvhFCCObS\",\"cookie\":\"connect.sid=s%3AKQq4myhCDtSofAy8bKjj44p5NWdCkOM1.7RbAeun54nA92E6%2F6r7pW0EIRk0SVeJ9%2FVXzVJQRwzE; Path=/; HttpOnly\",\"content-type\":\"application/json\",\"content-length\":\"23\",\"connection\":\"close\"}","timestamp":"2014-12-03T17:48:58.765Z"}
+{"level":"info","message":"REQ QUERY: {}","timestamp":"2014-12-03T17:48:58.765Z"}
+{"level":"info","message":"EXTERNAL URL IS http://domain.com:3000/fluff/admin/api/models/547f4d0a7d8e845123b7890a","timestamp":"2014-12-03T17:48:58.765Z"}
+{"level":"info","message":"SSL IS [false]","timestamp":"2014-12-03T17:48:58.765Z"}
+{"level":"info","message":"API key not required.","timestamp":"2014-12-03T17:48:58.765Z"}
+{"level":"info","message":"CSRF on server: jy+bm7DGZ/8Za/1QvhFCCObS for session KQq4myhCDtSofAy8bKjj44p5NWdCkOM1 for admin@domain.com","timestamp":"2014-12-03T17:48:58.765Z"}
+{"level":"info","message":"CSRF from client: jy+bm7DGZ/8Za/1QvhFCCObS","timestamp":"2014-12-03T17:48:58.765Z"}
+{"level":"info","message":"The requested resource is: Model","timestamp":"2014-12-03T17:48:58.765Z"}
+{"level":"info","message":"Restricted to admins only.","timestamp":"2014-12-03T17:48:58.765Z"}
+{"level":"info","message":"Updating model Things...","timestamp":"2014-12-03T17:48:58.766Z"}
+{"level":"info","message":"UPDATE ITEM:\n{\"__v\":0,\"_id\":\"547f4d0a7d8e845123b7890a\",\"creator_id\":\"547f4d0a7d8e845123b78903\",\"lastupdater_id\":\"547f4d0a7d8e845123b78903\",\"model_id\":\"things\",\"name\":\"Changed Name\",\"schema_data\":\"{\\nname: String,\\ncolor: String,\\ngood: Boolean\\n}\",\"cursor\":{\"column\":0,\"row\":0},\"access\":{\"remove\":\"Users\",\"update\":\"Users\",\"create\":\"Users\",\"view\":\"Public\"},\"display_columns\":[{\"name\":\"name\",\"title\":\"Name\",\"size\":100,\"_id\":\"547f4d0a7d8e845123b7890d\"},{\"name\":\"color\",\"title\":\"Color\",\"size\":100,\"_id\":\"547f4d0a7d8e845123b7890c\"},{\"name\":\"good\",\"title\":\"Good\",\"size\":50,\"_id\":\"547f4d0a7d8e845123b7890b\"}],\"sort_column\":{\"name\":\"name\",\"order\":true},\"match_fields\":[\"name\"],\"creation\":\"2014-12-03T17:48:58.232Z\",\"lastupdate\":\"2014-12-03T17:48:58.766Z\"}","timestamp":"2014-12-03T17:48:58.768Z"}
+{"level":"info","message":"Loaded model: Changed Name","timestamp":"2014-12-03T17:48:58.768Z"}
