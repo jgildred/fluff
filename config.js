@@ -1,1 +1,1 @@
-exports.config = {"port":80,"app_service":"Heroku","alert_token":"12345","db_uri":"mongodb://localhost:27017/fluff"};
+exports.config = {"port":80,"app_service":"Heroku","alert_token":"12345","db_uri":"mongodb://heroku_app17049091_A:lDsXKjAGumZdAirAXBvxSWEEIjbURLvz@ds037358.mongolab.com:37358/heroku_app17049091"};

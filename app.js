@@ -1697,7 +1697,7 @@ var saveDbUri = function (uri, callback) {
 
 // Check that the DB has site config
 var checkDb = function (callback) {
-  mongoose.connection.db.collectionNames(function (err, dbCollections) {
+  mongoose.connection.db.listCollections().toArray(function (err, dbCollections) {
     Fluff.log.info("DB has " + dbCollections.length + " collections.");
     // Need to check before schemas setup, or it will count them as collections even if they aren't in the DB
     if (dbCollections.length > 0) {
