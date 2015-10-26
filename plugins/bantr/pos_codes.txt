@@ -1,0 +1,44 @@
+CC Coord Conjuncn           and,but,or
+NN Noun, sing. or mass      dog
+CD Cardinal number          one,two
+NNS Noun, plural            dogs
+DT Determiner               the,some
+NNP Proper noun, sing.      Edinburgh
+EX Existential there        there
+NNPS Proper noun, plural    Smiths
+FW Foreign Word             mon dieu
+PDT Predeterminer           all, both
+IN Preposition              of,in,by
+POS Possessive ending       's
+JJ Adjective                big
+PP Personal pronoun         I,you,she
+JJR Adj., comparative       bigger
+PP$ Possessive pronoun      my,one's
+JJS Adj., superlative       biggest
+RB Adverb                   quickly
+LS List item marker         1,One
+RBR Adverb, comparative     faster
+MD Modal                    can,should
+RBS Adverb, superlative     fastest
+RP Particle                 up,off
+WP$ Possessive-Wh           whose
+SYM Symbol                  +,%,&
+WRB Wh-adverb               how,where
+TO 'to'                     to
+$ Dollar sign               $
+UH Interjection             oh, oops
+# Pound sign                #
+VB verb, base form          eat
+" quote                     "
+VBD verb, past tense        ate
+VBG verb, gerund            eating
+( Left paren                (
+VBN verb, past part         eaten
+) Right paren               )
+VBP Verb, present           eat
+, Comma                     ,
+VBZ Verb, present           eats
+. Sent-final punct          . ! ?
+WDT Wh-determiner           which,that
+: Mid-sent punct.           : ; Ñ
+WP Wh pronoun               who,what
