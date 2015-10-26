@@ -3,11 +3,11 @@
 node_modules/
 test/node_modules
 log/*
-plugins/*
+#plugins/*
 #!plugins/example/
 #!plugins/avb.io/
 #!plugins/bantr/
 #!plugins/keypair.io/
 #!plugins/aws/
-!plugins/mandrill/
+#!plugins/mandrill/
 #!plugins/epsproxy/
