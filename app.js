@@ -29,6 +29,7 @@ var Fluff       = {},
     ObjectId    = mongoose.Schema.Types.ObjectId,
     Buffer      = mongoose.Schema.Types.Buffer,
     Mixed       = mongoose.Schema.Types.Mixed,
+    Upload      = multer({ dest: './tmp' }),
     Server, Callback;
     Fluff.match_fields = {};
 exports.Fluff  = Fluff;
@@ -1290,7 +1291,7 @@ var modelRoutes = function () {
   app.post  (base + '/:model',         function(req, res, next) {
     handleModelRequest(req, res, next, resource.create);
   });
-  app.post  (base + '/:model/import',  function(req, res, next) {
+  app.post  (base + '/:model/import',  Upload.any(), function(req, res, next) {
     handleModelRequest(req, res, next, resource.import);
   });
   app.put   (base + '/:model/:id',     function(req, res, next) {
@@ -1439,7 +1440,7 @@ var adminRoutes = function () {
   app.get     (base + '/models',      models.find);
   app.get     (base + '/models/info', models.getinfo);
   app.get     (base + '/models/:id',  models.findone);
-  app.post    (base + '/models',      models.create);
+  app.post    (base + '/models',      Upload.any(), models.create);
   app.put     (base + '/models/:id',  models.update);
   app.patch   (base + '/models/:id',  models.update);
   app.delete  (base + '/models/:id',  models.remove);
@@ -1788,9 +1789,6 @@ var preLaunch = function () {
     parameterLimit: 100000,
     extended: true
   }));
-  //app.use(multer({
-  //  dest: './tmp'
-  //}));
   app.use(bodyParser.json({
     limit: '50mb'
   }));
