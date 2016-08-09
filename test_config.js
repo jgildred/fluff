@@ -1,1 +1,0 @@
-exports.config = {"port":80,"alert_token":"12345","db_uri":"mongodb://admin:fluff@ds145325.mlab.com:45325/fluff_test2"};
