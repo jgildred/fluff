@@ -10,7 +10,6 @@
   <link href="../images/favicon.ico"           rel="shortcut icon"/>
   <link href="../css/jquery-ui.css"            rel="stylesheet" media="screen"/>
   <link href="../css/bootstrap.css"            rel="stylesheet" media="screen"/>
-  <link href="../css/bootstrap-glyphicons.css" rel="stylesheet" media="screen"/>
   <link href="../css/handsontable.css"         rel="stylesheet" media="screen"/>
   <link href="../css/admin.css"                rel="stylesheet" media="screen"/>
 
@@ -324,7 +323,7 @@
             </td>
             <td><%= htmlEncode(page.get('name')) %></td>
             <td><%= htmlEncode(page.get('path')) %></td>
-            <td><%= htmlEncode(views.get(page.get('view_id')).get('name')) %></td>
+            <td><%= page.get('view_id') ? htmlEncode(views.get(page.get('view_id')).get('name')) : "--" %></td>
             <td><%= htmlEncode(page.get('access')) %></td>
             <td><%= htmlEncode(page.get('status')) %></td>
             <td><%= htmlEncode(page.get('lastupdate')) %></td>

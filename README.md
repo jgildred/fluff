@@ -36,6 +36,14 @@ INSTALL on AppFog:
 5. open the AppFog app url in your browser
 6. login with "admin@domain.com", password "fluff"
 
+INSTALL on AWS OpsWorks
+
+(description coming soon)
+
+INSTALL on Google Cloud
+
+(description coming soon)
+
 ADMIN GUIDE:
 
 Fluff Admin is located at http://../fluff/admin by default. Within the admin app you can manage most of what Fluff does.
@@ -48,7 +56,7 @@ Fluff Admin is located at http://../fluff/admin by default. Within the admin app
 
 FLUFF.JS:
 
-The fluff.js library is an easy way to get automatic scaffolding of data into your pages. By simply adding model=[model name] attribute to elements like tables, you can auto-populate the table with data from that model. You can also include query=[query params] attribute with the model attribute to specify necessary query params. There is also the option to include 'noharvest' attribute to avoid initial harvest, and 'norender' attribute to avoid render on initial harvest. Some sub elements can accept a field=[field name] attribute when nested within an element containing a model attribute. There is an example page created upon initialization which includes the fluff.js library. The fluff.js library requires jQuery and Backbone.js which are also included for convenience.
+The fluff.js library is an easy way to get automatic scaffolding of data into your pages. By simply adding model=[model name] attribute to elements like tables, you can auto-populate the table with data from that model. You can also include query=[query params] attribute with the model attribute to specify necessary query params. There is also the option to include 'noharvest' attribute to avoid the initial harvest, and 'norender' attribute to avoid render on initial harvest. Some sub elements can accept a field=[field name] attribute when nested within an element containing a model attribute. There is an example page created upon initialization which includes the fluff.js library. The fluff.js library requires jQuery and Backbone.js which are also included for convenience.
 
 FLUFF-UI.JS:
 
@@ -60,7 +68,7 @@ See the [README-API.md](README-API.md) for a list of APIs.
 
 PLUGINS:
 
-You can simply put your plugin code into a subfolder in the "plugins" folder. Fluff will scan for plugins on startup. More docs on plugins coming soon, for now you can look at the example plugin to get started. Note that writing plugins is really only necessary when you have back-end processing you need to add to your app. Most front-end development can be done using pages and models in Fluff, often with very little code.
+You can extend Fluff with plugins. Simply put your plugin code into a subfolder within the "plugins" folder. Fluff will scan for plugins on startup. More docs on plugins coming soon, for now you can look at the example plugin to get started. Note that writing plugins is really only necessary when you have back-end processing you need to add to your app. Most front-end development can be done using pages and models in Fluff, often with very little code.
 
 TESTS:
 
@@ -88,3 +96,4 @@ WOULD BE NICE:
 - move apikeys to be tied to users
 - move CORS domains to be tied to users
 - pubsub data updates
+- possibly move from Backbone to React

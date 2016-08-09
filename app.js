@@ -20,9 +20,6 @@ var express        = require('express'),
 // Setup globals
 var Fluff       = {},
     app         = express(),
-    defaultFluffPath = "/fluff",
-    defaultPort = 80,
-    PortChanged = false, 
     Site, User, View, Page, Var, Model, 
     Models      = {},
     Plugins     = {},
@@ -30,8 +27,13 @@ var Fluff       = {},
     Buffer      = mongoose.Schema.Types.Buffer,
     Mixed       = mongoose.Schema.Types.Mixed,
     Upload      = multer({ dest: './tmp' }),
-    Server, Callback;
-    Fluff.match_fields = {};
+    Server, Callback, winstonTrans;
+Fluff.paasDetected     = false;
+Fluff.defaultFluffPath = "/fluff";
+Fluff.defaultPort      = 80;
+Fluff.externalPort     = null;
+Fluff.launchConfig     = null;
+Fluff.match_fields     = {};
 exports.Fluff  = Fluff;
 Fluff.app      = app;
 exports.Models = Models;
@@ -48,21 +50,32 @@ var config   = require('./config').config,
     resource = require('./routes/resource');
 
 // Setup Winston logging
-var winstonTrans = [
-  new (winston.transports.Console)(),
-  new (winston.transports.File)({ filename: './log/fluff.log', maxsize: 100000, maxFiles: 1 })
-];
-if (config.app_service == "Heroku") {
-  var winstonTrans = [ new (winston.transports.Console)() ];
-}
-Fluff.log = new (winston.Logger)({
-  transports: winstonTrans
-});
+var setupLogging = function (config) {
+  winstonTrans = [
+    new (winston.transports.Console)(),
+    new (winston.transports.File)({ filename: './log/fluff.log', maxsize: 100000, maxFiles: 1 })
+  ];
+  if (Fluff.paasDetected) {
+    winstonTrans = [ new (winston.transports.Console)() ];
+  }
+  Fluff.log = new (winston.Logger)({
+    transports: winstonTrans
+  });
+};
+
+Fluff.detectPaas = function () {
+  if (process.env.VMC_APP_PORT || process.env.PORT) {
+    Fluff.paasDetected = true;
+  }
+  else {
+    Fluff.paasDetected = false;
+  }
+};
 
 // Helper functions
-var handleError = function (err) {
+Fluff.handleError = function (err) {
   Fluff.log.info("Bad things happened: " + err);
-}
+};
 
 // Takes an array of name/value pairs and return a val for a name
 Fluff.getVal = function (array, name, nameField, valField) {
@@ -80,9 +93,18 @@ Fluff.getVal = function (array, name, nameField, valField) {
   else {
     return null;
   }
-}
+};
 
-// Returns a clone of the object or the same thing if not
+// Returns an object from an array where a key matches a value
+Fluff.findObjInArray = function(array, key, value){
+    for (var i=0; i < array.length; i++) {
+        if (array[i][key] === value) {
+            return array[i];
+        }
+    }
+};
+
+// Returns a clone of the object or the same thing if not an object
 var cloneObject = function (obj) {
   if ((null == obj) || ("object" != typeof obj)) return obj;
   var copy = obj.constructor();
@@ -90,8 +112,9 @@ var cloneObject = function (obj) {
       if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
   }
   return copy;
-}
+};
 
+// Returns a clone of an object with all keys in lowercase
 var lowerCaseObject = function (obj) {
   var key,
       keys = Object.keys(obj);
@@ -102,9 +125,10 @@ var lowerCaseObject = function (obj) {
     newobj[dehumanize(key)] = obj[key];
   }
   return newobj;
-}
+};
 exports.lowerCaseObject = lowerCaseObject;
 
+// Returns an array of values based on a key in an object array
 var flattenArray = function (objectArray, key) {
   var array = [];
   if (objectArray) {
@@ -113,32 +137,33 @@ var flattenArray = function (objectArray, key) {
     });
   }
   return array;
-}
+};
 exports.flattenArray = flattenArray;
 
 var dehumanize = function (string) {
   return string.replace(" ", "_").toLowerCase();
-}
+};
 exports.dehumanize = dehumanize;
 
 var escapeRegExp = function (str) {
   return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-}
+};
 exports.escapeRegExp = escapeRegExp;
 
 var wipeDb = function (callback) {
   Fluff.log.info("Wiping DB...");
   Site.remove(function (err) {
-    if (err) return handleError(err);
+    if (err) return Fluff.handleError(err);
     User.remove(function (err) {
-      if (err) return handleError(err);
+      if (err) return Fluff.handleError(err);
       View.remove(function (err) {
-        if (err) return handleError(err);
+        if (err) return Fluff.handleError(err);
         Page.remove(function (err) {
-          if (err) return handleError(err);
+          if (err) return Fluff.handleError(err);
           Var.remove(function (err) {
-            if (err) return handleError(err);
+            if (err) return Fluff.handleError(err);
             Model.remove(function (err) {
+              if (err) return Fluff.handleError(err);
               if (callback) {
                 callback();
               }
@@ -148,68 +173,75 @@ var wipeDb = function (callback) {
       });
     });
   });
-}
+};
 
 var initDb = function (callback) {
   // First wipe the DB
   wipeDb(function () {
     Fluff.log.info("Initialize DB...");
     var seed = require('./seed');
+    var creator_id, css_view_id, html_view_id;
     Site.create(seed.Data.site, function (err) {
-      if (err) return handleError(err);
-      
+      if (err) return Fluff.handleError(err);
       Fluff.log.info("Creating a site...");
       seed.Data.users.forEach(function (user) { 
-        user.salt           = randomString();
-        user.pwhash         = users.saltyHash(user.password, user.salt);
-        user.verifytoken    = users.makeToken();
+        user.salt        = randomString();
+        user.pwhash      = users.saltyHash(user.password, user.salt);
+        user.verifytoken = users.makeToken();
       });
-      User.create(seed.Data.users, function (err, firstuser) {
+      User.create(seed.Data.users, function (err, seed_users) {
+        if (err) return Fluff.handleError(err);
         Fluff.log.info("Creating an admin user...");
-        if (err) return handleError(err);
-
-        firstuser.creator_id     = firstuser._id;
-        firstuser.lastupdater_id = firstuser._id;
-        firstuser.save();
-        seed.Data.views.forEach(function (view) {
-          view.creator_id     = firstuser._id;
-          view.lastupdater_id = firstuser._id;
+        // Assume all data created by first seed user
+        creator_id = seed_users[0]._id;
+        seed_users.forEach(function (seed_user) {
+          seed_user.creator_id     = creator_id;
+          seed_user.lastupdater_id = creator_id;
+          seed_user.save();
         });
-        View.create(seed.Data.views, function (err, htmlview, cssview) {
+        seed.Data.views.forEach(function (view) {
+          view.creator_id     = creator_id;
+          view.lastupdater_id = creator_id;
+        });
+        View.create(seed.Data.views, function (err, seed_views) {
+          if (err) return Fluff.handleError(err);
           Fluff.log.info("Creating views...");
-          if (err) return handleError(err);
-          
+          // Assume last html and css seed view will be used for seed pages
+          html_view_id = css_view_id = seed_views[0]._id;
+          seed_views.forEach(function (view) {
+            html_view_id = (view.content_type == "text/html") ? view._id : html_view_id;
+            css_view_id = (view.content_type == "text/css") ? view._id : css_view_id;
+          });
           seed.Data.pages.forEach(function (page) {
-            page.view_id        = /\.css/i.test(page.path) ? cssview._id : htmlview._id;
-            page.creator_id     = firstuser._id;
-            page.lastupdater_id = firstuser._id;
+            page.view_id        = /\.css/i.test(page.path) ? css_view_id : html_view_id;
+            page.creator_id     = creator_id;
+            page.lastupdater_id = creator_id;
           });
           Page.create(seed.Data.pages, function (err) {
+            if (err) return Fluff.handleError(err);
             Fluff.log.info("Creating pages...");
-            if (err) return handleError(err);
-            
             seed.Data.vars.forEach(function (vari) {
-              vari.creator_id     = firstuser._id;
-              vari.lastupdater_id = firstuser._id;
+              vari.creator_id     = creator_id;
+              vari.lastupdater_id = creator_id;
             });
             Var.create(seed.Data.vars, function (err) {
               Fluff.log.info("Creating vars...");
-              if (err) return handleError(err);
+              if (err) return Fluff.handleError(err);
 
               seed.Data.models.forEach(function (model) {
-                model.creator_id     = firstuser._id;
-                model.lastupdater_id = firstuser._id;
+                model.creator_id     = creator_id;
+                model.lastupdater_id = creator_id;
               });
               Model.create(seed.Data.models, function (err) {
                 Fluff.log.info("Creating a model...");
-                if (err) return handleError(err);
+                if (err) return Fluff.handleError(err);
 
                 Fluff.log.info("Initialized DB with seed data.");
                 if (callback) {
                   callback();
                 }
                 else {
-                  loadConfig();
+                  loadDbConfig();
                 }
               });
             });
@@ -218,10 +250,10 @@ var initDb = function (callback) {
       });
     });
   });
-}
+};
 
+// Create schemas and use them to register the models
 var setupSchemas = function (callback) {
-  // Create schemas and use them to register the models
   if (Object.keys(mongooseCollections()).length == 0) {
     Fluff.log.info("Setting up the required schemas...");
     var userSchema = toSchema(users.schema);
@@ -251,7 +283,7 @@ var setupSchemas = function (callback) {
       }
       return (this.pwhash == hash) ?
         true : false;
-    }
+    };
     User   = mongoose.model('User', userSchema);
     Fluff.match_fields[User.modelName] = users.match_fields;
     exports.User = User;
@@ -281,7 +313,7 @@ var setupSchemas = function (callback) {
   if (callback) {
     callback();
   }
-}
+};
 
 // Setup DB connection
 var connectDb = function (callback) {
@@ -297,15 +329,15 @@ var connectDb = function (callback) {
       }
     }
   });
-}
+};
 
 // Useful for direct manipulation of DB collections
 var mongooseCollection = function (model) {
   return mongoose.connection.collections[dehumanize(model.model_id)];
-}
+};
 var mongooseCollections = function () {
   return mongoose.connection.collections;
-}
+};
 exports.mongooseCollection  = mongooseCollection;
 exports.mongooseCollections = mongooseCollections;
 
@@ -325,7 +357,7 @@ var toSchema = function (schema_data) {
   obj.lastupdate     = { type: Date, default: Date.now };
   var schema = new mongoose.Schema(obj);
   return schema;
-}
+};
 exports.toSchema = toSchema;
 
 // Create a model; model must have a model_id and schema_data
@@ -338,7 +370,7 @@ var toModel = function (model) {
   else {
     return null;
   }
-}
+};
 exports.toModel = toModel;
 
 
@@ -348,6 +380,7 @@ var initPlugins = function (callback) {
   fs.exists(path, function (exists) {
     if (exists) {
       fs.readdir(path, function (err, subDirectories) {
+        if (err) return Fluff.handleError(err);
         if (subDirectories.length > 0) {
           var plugins = [];
           subDirectories.forEach(function (name) {
@@ -372,7 +405,7 @@ var initPlugins = function (callback) {
       }
     }
   });
-}
+};
 
 // Returns the index of the object in an array that has the matching field, if no match then returns the length of the array.
 var getIndexByMatch = function (array, field, value) {
@@ -383,7 +416,7 @@ var getIndexByMatch = function (array, field, value) {
     }
   });
   return matchIndex;
-}
+};
 
 // Init one plugin; you need the directory list and index of the plugin in the list
 var initOnePlugin = function (dirs, index, callback) {
@@ -467,7 +500,7 @@ var initOnePlugin = function (dirs, index, callback) {
       finishInitPlugin(dirs, index, callback);
     }
   });
-}
+};
 
 // Run after each plugin is initialized
 var finishInitPlugin = function (dirs, index, callback) {
@@ -489,11 +522,11 @@ var finishInitPlugin = function (dirs, index, callback) {
       callback();
     }
   }
-}
+};
 
 // Load all plugins
 var loadPlugins = function (callback, callbackEach) {
-  for (plugin in Plugins) {
+  for (var plugin in Plugins) {
     if (callbackEach) {
       loadOnePlugin(plugin, callbackEach);
     }
@@ -504,7 +537,7 @@ var loadPlugins = function (callback, callbackEach) {
   if (callback) {
     callback();
   }
-}
+};
 
 // Load one plugin
 var loadOnePlugin = function (name, callback) {
@@ -522,63 +555,7 @@ var loadOnePlugin = function (name, callback) {
       callback();
     }
   }
-}
-
-// Load the default config
-var loadDefaults = function (custom_config) {
-  var active_config = config || {};
-  // If this function is passed a specific config, then prefer that one
-  if (custom_config) {
-    active_config = custom_config;
-  }
-  active_config.fluff_path = active_config.fluff_path || defaultFluffPath;
-  active_config.port = active_config.port || defaultPort;
-  externalPort = active_config.port;
-  Fluff.log.info("After loading defaults, ext port is: " + externalPort);
-  Fluff.log.info("After loading defaults, int port is: " + active_config.port);
-  Fluff.log.info("After loading defaults, DB URI is: " + active_config.db_uri);
-  app.set('config', mergePaasConfig(active_config));
-}
-
-// If on OpsWorks, Heroku or AppFog then fix config
-var mergePaasConfig = function (active_config) {
-  switch (active_config.app_service) {
-    case "OpsWorks":
-      if (process.env.MONGOLAB_URI) {
-        active_config.db_uri = process.env.MONGOLAB_URI;
-      }
-      active_config.port = process.env.PORT ? process.env.PORT : active_config.port;
-      break;
-    case "Heroku":
-      if (process.env.MONGOLAB_URI) {
-        active_config.db_uri = process.env.MONGOLAB_URI;
-      }
-      active_config.port = process.env.PORT ? process.env.PORT : active_config.port;
-      break;
-    case "AppFog":
-      if (process.env.VCAP_SERVICES) {
-        var env   = JSON.parse(process.env.VCAP_SERVICES);
-        var obj   = env['mongodb-1.8'][0]['credentials'];
-        var cred  = '';
-        if (obj.username && obj.password) {
-          cred = obj.username + ":" + obj.password + "@";
-        }
-        var dburi = "mongodb://" + cred + obj.hostname + ":" + obj.port + "/" + obj.db;
-        active_config.db_uri = dburi;
-      }
-      active_config.port = process.env.VMC_APP_PORT ? process.env.VMC_APP_PORT : defaultPort;
-      break;
-    default:
-      if (process.env.MONGOLAB_URI) {
-        active_config.db_uri = process.env.MONGOLAB_URI;
-      }
-      active_config.port = process.env.PORT ? process.env.PORT : active_config.port;
-  }
-  Fluff.log.info("After merge PaaS config, ext port is: " + externalPort);
-  Fluff.log.info("After merge PaaS config, int port is: " + active_config.port);
-  Fluff.log.info("After merge PaaS config, DB URI is: " + active_config.db_uri);
-  return active_config;
-}
+};
 
 // Force SSL if required
 var forceSsl = function (req, res, next) {
@@ -594,10 +571,11 @@ var forceSsl = function (req, res, next) {
   else {
     next();
   }
-}
+};
 
 // CORS setup
 var allowCrossDomain = function (req, res, next) {
+  var origin = req.headers.origin ? req.headers.origin : "http://" + req.headers.host;
   if (app.get('config').cors.restricted) { 
     // Allow access only to whitelist and self
     if ((app.get('config').cors.whitelist.indexOf(req.headers.origin) == -1) && (app.get('config').cors.whitelist.indexOf("http://" + req.headers.host) == -1) && (app.get('config').cors.whitelist.indexOf("https://" + req.headers.host == -1))) {
@@ -606,10 +584,9 @@ var allowCrossDomain = function (req, res, next) {
     }
     else {
       // Build the cors header
-      var origin = req.headers.origin ? req.headers.origin : "http://" + req.headers.host;
       res.header('Access-Control-Allow-Credentials', true);
       res.header('Access-Control-Allow-Origin', origin);
-      res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS'); 
+      res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
       res.header('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-API-Key, Cookie'); 
       if (req.method == 'OPTIONS') {
         res.send(200);
@@ -622,7 +599,6 @@ var allowCrossDomain = function (req, res, next) {
   // Allow anything
   else {
     // Build the cors header
-    var origin = req.headers.origin ? req.headers.origin : "http://" + req.headers.host;
     res.header('Access-Control-Allow-Credentials', true);
     res.header('Access-Control-Allow-Origin', origin);
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS'); 
@@ -634,7 +610,7 @@ var allowCrossDomain = function (req, res, next) {
       next();
     }
   }
-}
+};
 
 // Checks the captcha using reCaptcha service
 Fluff.checkCaptcha = function (req, res, callback) {
@@ -697,6 +673,7 @@ var doIfHasAccess = function (req, res, level, resourceScope, callback) {
           else {
             if (req.params.id) {
               resourceScope.findOne({_id: req.params.id}).exec(function (err, data) {
+                if (err) return Fluff.handleError(err);
                 if (data && (req.session.user.id == data.user_id)) {
                   Fluff.log.info(req.session.user.id + " has access to the requested item.");
                   callback(req, res, resourceScope);
@@ -716,7 +693,7 @@ var doIfHasAccess = function (req, res, level, resourceScope, callback) {
         else {
           // Special case for update site and model which require reload config
           if ((['PUT','PATCH','POST','DELETE'].indexOf(req.method) != -1) && ([Site, Model].indexOf(resourceScope) != -1)) { 
-            callback(req, res, resourceScope, null, reloadConfig);
+            callback(req, res, resourceScope, null, reloadDbConfig);
           }
           else {
             // Allowed
@@ -726,7 +703,7 @@ var doIfHasAccess = function (req, res, level, resourceScope, callback) {
       }
     }
   }
-}
+};
 exports.doIfHasAccess = doIfHasAccess;
 
 var HasAccess = function(req, res, level, resourceScope){
@@ -796,14 +773,14 @@ var renderPageInfo = function (res, page, template) {
   var page_tag = "page"; // this prefix could be added to site config
   var output = template;
   var pageInfo = [
-    { tag: 'name',       value: page.name }
+    { tag: 'name', value: page.name }
   ];
   pageInfo.forEach(function (infoItem) {
     var pattern = new RegExp("{{\\s*" + page_tag + "\\." + infoItem.tag + "\\s*}}", "gi");
     output = output.replace(pattern, infoItem.value);
   });
   res.send(output);
-}
+};
 
 // Render site info in a page's content
 var renderSiteInfo = function (res, page, template) {
@@ -821,7 +798,7 @@ var renderSiteInfo = function (res, page, template) {
     output = output.replace(pattern, infoItem.value);
   });
   renderPageInfo(res, page, output);
-}
+};
 
 // Render vars in a page's content
 var renderVars = function (res, page, template) {
@@ -836,7 +813,7 @@ var renderVars = function (res, page, template) {
     }
     renderSiteInfo(res, page, output);
   });
-}
+};
 
 // Render the view with the page
 var renderView = function (res, page) {
@@ -851,7 +828,7 @@ var renderView = function (res, page) {
     }
     renderVars(res, page, output);
   });
-}
+};
 
 // Setup cms route based upon page in db with matching path
 var cmsPages = function (req, res, next) {
@@ -892,40 +869,38 @@ var cmsPages = function (req, res, next) {
     Fluff.log.info("Favicon requested.");
     next();
   }
-}
+};
 
-// site_config is the config stored in the DB
-var mergeConfig = function (app_config, site_config) {
-  for (item in site_config) {
-    // Traverse the object tree
-    if ((Object.prototype.toString.call(site_config[item]) === '[object Object]') && (Object.keys(site_config[item]).length > 0)) {
-      if (!app_config.hasOwnProperty(item)){
-        app_config[item] = {};
-      }
-      for (sub_item in site_config[item]) {
-        app_config[item][sub_item] = site_config[item][sub_item];
-      }
-    }
-    else {
-      app_config[item] = site_config[item];
-    }
+// Config order of preference
+// general: DB then test_config (if used) then config
+// db_uri: launchConfig then PaaS then config
+// port (and externalPort): PaaS (none) then DB then test_config.port then config.port
+// internalPort: PaaS then test_config.port then config.port
+
+// Load the default config
+var loadDefaultConfig = function (custom_config) {
+  var active_config = cloneObject(config) || {};
+  // If this function is passed a specific config, then prefer that one
+  if (custom_config) {
+    active_config = cloneObject(custom_config);
   }
-  // The external port is forced by the DB config
-  externalPort = app_config.port || externalPort;
-  Fluff.log.info("After merge DB config, ext port is: " + externalPort);
-  Fluff.log.info("After merge DB config, int port is: " + app_config.port);
-  Fluff.log.info("After merge DB config, DB URI is: " + app_config.db_uri);
-  return mergePaasConfig(app_config);
-}
+  active_config.fluff_path = active_config.fluff_path || Fluff.defaultFluffPath;
+  active_config.port = active_config.port || Fluff.defaultPort;
+  Fluff.externalPort = active_config.port;
+  Fluff.log.info("After loading defaults, ext port is: " + Fluff.externalPort);
+  Fluff.log.info("After loading defaults, int port is: " + active_config.port);
+  Fluff.log.info("After loading defaults, DB URI is: " + active_config.db_uri);
+  app.set('config', mergePaasConfig(active_config));
+};
 
 // Load the site config from the db
-var loadConfig = function (callback) {
+var loadDbConfig = function (callback) {
   Fluff.log.info("Loading config from DB...");
   Site.findOne().exec(function (err, data) {
     if (!err && data) {
       var active_config = app.get('config');
       var stored_config = data.toJSON();
-      app.set('config', mergeConfig(active_config, stored_config));
+      app.set('config', mergeDbConfig(active_config, stored_config));
       Fluff.log.info("Loaded complete config.");
       if (callback) {
         callback();
@@ -946,7 +921,62 @@ var loadConfig = function (callback) {
       Fluff.log.info("Point to another DB and restart Fluff, or set 'initialize' to true in config.js.");
     }
   });
-}
+};
+
+// site_config is the config stored in the DB
+var mergeDbConfig = function (app_config, site_config) {
+  var active_config = cloneObject(app_config);
+  for (var item in site_config) {
+    // Traverse the object tree
+    if ((Object.prototype.toString.call(site_config[item]) === '[object Object]') && (Object.keys(site_config[item]).length > 0)) {
+      if (!active_config.hasOwnProperty(item)){
+        active_config[item] = {};
+      }
+      for (var sub_item in site_config[item]) {
+        active_config[item][sub_item] = site_config[item][sub_item];
+      }
+    }
+    else {
+      active_config[item] = site_config[item];
+    }
+  }
+  // The external port is forced by the DB config
+  Fluff.externalPort = active_config.port || Fluff.externalPort;
+  Fluff.log.info("After merge DB config, ext port is: " + Fluff.externalPort);
+  Fluff.log.info("After merge DB config, int port is: " + active_config.port);
+  Fluff.log.info("After merge DB config, DB URI is: " + active_config.db_uri);
+  return mergePaasConfig(active_config);
+};
+
+// Check if running in a PaaS, then update config if needed
+var mergePaasConfig = function (app_config) {
+  var active_config = cloneObject(app_config);
+  
+  // AppFog environment vars
+  if (process.env.VCAP_SERVICES) {
+    var env   = JSON.parse(process.env.VCAP_SERVICES);
+    var obj   = env['mongodb-1.8'][0]['credentials'];
+    var cred  = '';
+    if (obj.username && obj.password) {
+      cred = obj.username + ":" + obj.password + "@";
+    }
+    var dburi = "mongodb://" + cred + obj.hostname + ":" + obj.port + "/" + obj.db;
+    active_config.db_uri = dburi;
+  }
+  active_config.port = process.env.VMC_APP_PORT || active_config.port;
+  
+  // Typical environment vars: OpsWorks, Heroku, others
+  active_config.db_uri = process.env.MONGOLAB_URI || active_config.db_uri;
+  active_config.port = process.env.PORT || active_config.port;
+  
+  // If running on a PaaS then assume no external port should be specified
+  Fluff.externalPort = Fluff.paasDetected ? null : Fluff.externalPort;
+
+  Fluff.log.info("After merge PaaS config, ext port is: " + Fluff.externalPort);
+  Fluff.log.info("After merge PaaS config, int port is: " + active_config.port);
+  Fluff.log.info("After merge PaaS config, DB URI is: " + active_config.db_uri);
+  return active_config;
+};
 
 // Create the mailer
 var setupMailer = function () {
@@ -965,7 +995,7 @@ var setupMailer = function () {
     mailerData.service = Fluff.app.get('config').smtp.service;
   }
   Fluff.mailer = nodemailer.createTransport(mailerData);
-}
+};
 
 Fluff.emailToUser = function(mailinfo) {
   if (mailinfo) {
@@ -988,7 +1018,7 @@ Fluff.emailToUser = function(mailinfo) {
       Fluff.mailer.close();
     });
   }
-}
+};
 
 var requireApiKey = function(req, res, next) {
   if (/\/api\//i.test(req.path) && app.get('config').apikey.required) {
@@ -1026,7 +1056,7 @@ var requireApiKey = function(req, res, next) {
     Fluff.log.info("API key not required.");
     next();
   }
-}
+};
 
 // Don't like html strings in js, but it works
 var defaultAlertPage = function(message) {
@@ -1119,10 +1149,11 @@ var defaultAlertPage = function(message) {
   </body> \n\
   </html> \n';
   return html;
-}
+};
 
 // This mode runs when DB cannot be used
 var runAlertMode = function(level, callback) {
+  var text;
   switch (level) {
     case 'not_fluff_db':
       text = '\
@@ -1165,7 +1196,7 @@ var runAlertMode = function(level, callback) {
           removeRoutes("*");
           // Close the DB connection as it will be reopened in the startup sequence
           mongoose.connection.close(function () {
-            startUp();
+            startUp(true);
           });
         });
       }
@@ -1189,6 +1220,7 @@ var runAlertMode = function(level, callback) {
                 res.json({msg: "Saved DB URI to config.", delay: 10});
                 // Remove the alert mode routes
                 removeRoutes("*");
+                Fluff.launchConfig.dburi = db_uri;
                 startUp();
               });
             });
@@ -1198,6 +1230,7 @@ var runAlertMode = function(level, callback) {
               res.json({msg: "Saved DB URI to config.", delay: 10});
               // Remove the alert mode routes
               removeRoutes("*");
+              Fluff.launchConfig.dburi = db_uri;
               startUp();
             });
           }
@@ -1223,37 +1256,38 @@ var runAlertMode = function(level, callback) {
   });
   setupServer();
   startListening(false, callback);
-}
+};
 
 var handleModelRequest = function (req, res, next, callback) {
   if (app.get('models')) {
     var match = false;
     app.get('models').forEach(function (model) {
       if (callback && (dehumanize(model.name) == dehumanize(req.params.model))) {
+        var access;
         switch (callback) {
           case resource.find:
-            var access = model.access.view;
+            access = model.access.view;
             break;
           case models.getModelInfo:
-            var access = model.access.view;
+            access = model.access.view;
             break;
           case resource.count:
-            var access = model.access.view;
+            access = model.access.view;
             break;
           case resource.findone:
-            var access = model.access.view;
+            access = model.access.view;
             break;
           case resource.create:
-            var access = model.access.create;
+            access = model.access.create;
             break;
           case resource.update:
-            var access = model.access.update;
+            access = model.access.update;
             break;
           case resource.remove:
-            var access = model.access.remove;
+            access = model.access.remove;
             break;
           default:
-            var access = "Admins";
+            access = "Admins";
         }
         match = true;
         Fluff.log.info("Processing request for " + model.name);
@@ -1271,7 +1305,7 @@ var handleModelRequest = function (req, res, next, callback) {
       next();
     }
   }
-}
+};
 
 var modelRoutes = function () {
   Fluff.log.info("Adding routes for models...");
@@ -1303,7 +1337,7 @@ var modelRoutes = function () {
   app.delete   (base + '/:model/:id',     function(req, res, next) {
     handleModelRequest(req, res, next, resource.remove);
   });
-}
+};
 
 // model must have a name, model_id and schema_data
 var loadOneModel = function (model) {
@@ -1334,7 +1368,7 @@ var loadOneModel = function (model) {
   else {
     Fluff.log.info("The model " + model.name + " could not be loaded.");
   }
-}
+};
 exports.loadOneModel = loadOneModel;
 
 var loadModels = function (callback) {
@@ -1348,16 +1382,16 @@ var loadModels = function (callback) {
       callback();
     }
   });
-}
+};
 
 // Converts a schema object into a schema_data string
 var schemaToData = function (schema) {
   var schema_data = "{\n";
-  for (item in schema) {
+  for (var item in schema) {
     if (schema[item].type) {
       schema_data += item + ": { ";
       var itemObj = schema[item];
-      for (subitem in itemObj) {
+      for (var subitem in itemObj) {
         schema_data += subitem + ": ";
         if (['String','Number','Boolean','ObjectId','Date'].indexOf(itemObj[subitem].name) != -1) {
           schema_data += itemObj[subitem].name;
@@ -1370,7 +1404,7 @@ var schemaToData = function (schema) {
             schema_data += JSON.stringify(itemObj[subitem]);
           }
         }
-        schema_data += ", "
+        schema_data += ", ";
       }
       // Remove the last comma and close the brace
       schema_data = schema_data.substr(0, schema_data.length - 2);
@@ -1383,10 +1417,12 @@ var schemaToData = function (schema) {
   schema_data += "}";
   Fluff.log.info("SCHEMA TO DATA: " + schema_data);
   return schema_data;
-}
+};
 exports.schemaToData = schemaToData;
 
 var adminRoutes = function () {
+  Fluff.log.info("Adding routes for admin...");
+  
   // Setup routes using the default resource handler
   var base = app.get('config').fluff_path + '/admin/api';
 
@@ -1449,7 +1485,7 @@ var adminRoutes = function () {
   app.get   (base + '/site', function(req, res) {doIfHasAccess(req, res, 'Admins', Site, site.findone);} );
   app.put   (base + '/site', function(req, res) {doIfHasAccess(req, res, 'Admins', Site, site.update);} );
   app.patch (base + '/site', function(req, res) {doIfHasAccess(req, res, 'Admins', Site, site.update);} );
-}
+};
 
 var staticType = function (req, res, next) {
   mime.default_type = "text/html";
@@ -1458,9 +1494,10 @@ var staticType = function (req, res, next) {
   Fluff.log.info("MIME type is " + type);
   res.setHeader('Content-Type', type + (charset ? '; charset=' + charset : ''));
   next();
-}
+};
 
 var staticFiles = function () {
+  Fluff.log.info("Adding routes for static files...");
   app.use(app.get('config').fluff_path, staticType);
   app.use(app.get('config').fluff_path + '/images',  
     express.static(__dirname + '/public/images'));
@@ -1476,7 +1513,7 @@ var staticFiles = function () {
     express.static(__dirname + '/admin'));
   app.use(app.get('config').fluff_path + '/user', 
     express.static(__dirname + '/user'));
-}
+};
 
 // Put some useful data in the logs
 var logRequest = function (req, res, next) {
@@ -1494,32 +1531,30 @@ var logRequest = function (req, res, next) {
   Fluff.log.info("REQ HEADERS: " + JSON.stringify(req.headers));
   Fluff.log.info("REQ QUERY: " + JSON.stringify(req.query));
   next();
-}
+};
 
+// Set the external protocol and build the external url
 var setProtocol = function (req, res, next) {
-  // externalBaseUrl is useful for email notifications which link back to the site
-  if (app.get('config').ssl && (app.get('config').app_service != 'Heroku')) {
-    var protocol = "https://";
-  } 
-  else {
-    var protocol = "http://";
+  var protocol = (app.get('config').ssl) ? "https://" : "http://";
+  Fluff.externalBaseUrl = protocol + app.get('config').domain_name;
+  if (Fluff.externalPort) {
+    Fluff.externalBaseUrl += ":" + Fluff.externalPort;
   }
-  Fluff.externalBaseUrl = protocol + app.get('config').domain_name + ":" + externalPort;
-  Fluff.externalUrl     = Fluff.externalBaseUrl + req.url;
+  Fluff.externalUrl = Fluff.externalBaseUrl + req.url;
   Fluff.log.info("EXTERNAL URL IS "+ Fluff.externalUrl);
   next();
-}
+};
 
 var setupServer = function () {
   if (!Server) {
-    if (app.get('config').ssl && (app.get('config').app_service != 'Heroku')) {
+    if (app.get('config').ssl && !Fluff.paasDetected) {
       Server = https.createServer(app);
     } 
     else {
       Server = http.createServer(app);
     }
   }
-}
+};
 
 // Every time the site config changes this is run. Could be more efficient.
 var applyConfig = function (callback) {
@@ -1539,9 +1574,8 @@ var applyConfig = function (callback) {
     notFoundRoute();         // Uses app.config fluff_path
     app.use(cmsPages);       // Doesn't use app.config, but runs on every request
     staticFiles();           // Static files are processed last
-    // Restart the server if the port is changed
     if (Server.address()) {
-      Fluff.log.info("Running on port " + Server.address().port);
+      // Restart the server if the port is changed
       if (Server.address().port != app.get('config').port) {
         var time = new Date();
         Fluff.log.info("Closing server at " + time + " and waiting for connections to time out...");
@@ -1551,21 +1585,20 @@ var applyConfig = function (callback) {
         });
       }
       else {
-        // Not really starting as already started
-        startListening(true, callback, true);
+        launchComplete(true, callback);
       }
     }
     else {
       startListening(true, callback);
     }
   });
-}
+};
 
 var randomString = function (size) {
   var crypto = require('crypto');
   size = size ? size : 10;
   return crypto.randomBytes(Math.ceil(size * 3 / 4)).toString('base64').slice(0, size);
-}
+};
 exports.randomString = randomString;
 
 // Returns a random integer between min and max
@@ -1577,7 +1610,6 @@ exports.randomInt = randomInt;
 
 // Checks the CSRF token when it's required
 var checkToken = function(req, res, next){
-  var apikey = req.session.apikey;
   var token = req.session._csrf || (req.session._csrf = randomString(24));
   var val = (req.body && req.body._csrf)
     || (req.query && req.query._csrf)
@@ -1622,7 +1654,7 @@ var checkToken = function(req, res, next){
   else {
     next();
   }
-}
+};
 
 // Removes routes that match regex, this only works with Express 4+
 var removeRoutes = function (regex) {
@@ -1640,7 +1672,7 @@ var removeRoutes = function (regex) {
       }
     }
   });
-}
+};
 exports.removeRoutes = removeRoutes;
 
 // Sets up a 404 response for any requests that don't match a route
@@ -1674,16 +1706,16 @@ var removeIfNotLast = function (req, res, resourceScope) {
       Fluff.msgResponse(req, res, 403, msg);
     }
   });
-}
+};
 
 var toSchemaData = function (array) {
   return "{\n\t" + array.join(": String,\n\t") + ": String\n}";
-}
+};
 exports.toSchemaData = toSchemaData;
 
 // Save a new DB URI to config.js
 var saveDbUri = function (uri, callback) {
-  active_config = app.get('config');
+  var active_config = app.get('config');
   active_config.db_uri = uri;
   var content = "exports.config = " + JSON.stringify(active_config);
   fs.writeFile(__dirname + '/config.js', content, function (err) {
@@ -1694,7 +1726,7 @@ var saveDbUri = function (uri, callback) {
       callback();
     }
   });
-}
+};
 
 // Check that the DB has site config
 var checkDb = function (callback) {
@@ -1712,6 +1744,7 @@ var checkDb = function (callback) {
           else {
             if (count == 0) {
               // The DB has non-Fluff data
+              Fluff.log.info("DB is missing the site collection.");
               runAlertMode('not_fluff_db');
             }
             else {
@@ -1731,19 +1764,23 @@ var checkDb = function (callback) {
       });
     }
   });
-}
+};
 
 // Startup sequence
-var startUp = function (launchConfig) {
+var startUp = function (noLoad) {
   // Load data from config.js and check for env variables
-  loadDefaults(launchConfig || config);
+  Fluff.log.info("launchConfig is:");
+  Fluff.log.info(Fluff.launchConfig);
+  if (!noLoad) {
+    loadDefaultConfig(Fluff.launchConfig || config);
+  }
   // Make sure the bd_uri at least looks like a MongoDB URI
   if (app.get('config').db_uri && (app.get('config').db_uri.length > 10)) {
     if (app.get('config').db_uri.split("//")[0] == "mongodb:") {
       Fluff.log.info("DB URI looks ok.");
       connectDb(function () {
         checkDb(function () {
-          loadConfig(function () {
+          loadDbConfig(function () {
             initPlugins(function () {
               loadModels(function () {
                 applyConfig(Callback);
@@ -1762,12 +1799,12 @@ var startUp = function (launchConfig) {
     Fluff.log.info("DB URI looks not set.");
     runAlertMode('no_db_uri');
   }
-}
+};
 
 // FIXME need to check if plugin configs changed, if so, then reload plugins, then applyconfig
-var reloadConfig = function (req, res) {
-  loadConfig(applyConfig);
-}
+var reloadDbConfig = function (req, res) {
+  loadDbConfig(applyConfig);
+};
 
 // This is a simple JSON response
 // Note the following common HTTP codes
@@ -1776,7 +1813,7 @@ Fluff.msgResponse = function (req, res, status, msg) {
   Fluff.log.info(msg);
   res.status(status || 200);
   res.json({msg: msg});
-}
+};
 exports.msgResponse = Fluff.msgResponse;
 
 // JSON body, other body types, sessions and other setup
@@ -1800,37 +1837,42 @@ var preLaunch = function () {
     resave : true
   }));
   app.use(methodOverride());
-}
+};
 
 // Start listening
-var startListening = function (ok, callback, noop) {
-  if (!noop) {
-    var time = new Date();
-    Server.listen(app.get('config').port, function() {
-      // Exporting the server object is useful for testing
-      exports.Server = Server;
-      Fluff.log.info("Now listening on port " + app.get('config').port + " at " + time + ".");
-      if (ok && app.get('config').fluff_path) {
-        Fluff.log.info("Admin is located at " + app.get('config').fluff_path + "/admin.");
-        Fluff.log.info("Public files are located at " + app.get('config').fluff_path + "/js,css,images,fonts,files.");
-        Fluff.log.info("Fluff is up.");
-      }
-      else {
-        Fluff.log.info("Fluff is in alert mode.");
-      }
-      if (callback) {
-        Fluff.log.info("Post launch callback starting...");
-        callback();
-      }
-      else {
-        Fluff.log.info("No post launch callback.");
-      }
-    });
+var startListening = function (ok, callback) {
+  Server.listen(app.get('config').port, function() {
+    // Exporting the server object is useful for testing
+    exports.Server = Server;
+    launchComplete(ok, callback);
+  });
+};
+
+var launchComplete = function (ok, callback) {
+  var time = new Date();
+  Fluff.log.info("Now listening on port " + app.get('config').port + " at " + time + ".");
+  if (ok && app.get('config').fluff_path) {
+    Fluff.log.info("Admin is located at " + app.get('config').fluff_path + "/admin.");
+    Fluff.log.info("Public files are located at " + app.get('config').fluff_path + "/js,css,images,fonts,files.");
+    Fluff.log.info("Fluff is up.");
   }
-}
+  else {
+    Fluff.log.info("Fluff is in alert mode.");
+  }
+  if (callback) {
+    Fluff.log.info("Post launch callback starting...");
+    callback();
+  }
+  else {
+    Fluff.log.info("No post launch callback.");
+  }
+};
 
 // This is the red button
 var launch = function (launchConfig, loglevel, callback) {
+  Fluff.launchConfig = launchConfig;
+  Fluff.detectPaas();
+  setupLogging(Fluff.launchConfig || config);
   Fluff.log.info("Starting Fluff...");
   if (loglevel) {
     Fluff.log.transports.console.level = loglevel;
@@ -1838,6 +1880,6 @@ var launch = function (launchConfig, loglevel, callback) {
   // This callback is a global, and it is run at the end of startUp.
   Callback = callback;
   preLaunch();
-  startUp(launchConfig);
-}
+  startUp();
+};
 exports.launch = launch;

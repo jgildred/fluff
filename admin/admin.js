@@ -759,7 +759,7 @@ var PageListView = Backbone.View.extend({
     return false;
   },
   render: function (keyword) {
-    navselect("pages");
+    //navselect("pages");
     // first get the list of views for the page list view
     this.views = new Views();
     var that = this;
@@ -839,7 +839,7 @@ var VarListView = Backbone.View.extend({
         console.log('var destroyed');
         that.render();
       }
-    })
+    });
   },
   render: function () {
     this.vars = new Vars();
@@ -848,9 +848,11 @@ var VarListView = Backbone.View.extend({
       success: function (vars) {
         var template = _.template($('#var-list-template').html(), {vars: vars.models});
         that.$el.html(template);
-        $('.edit-var-quickform .edit-var-value')[0].focus();
+        if ($('.edit-var-quickform .edit-var-value').length > 0) {
+          $('.edit-var-quickform .edit-var-value')[0].focus();
+        }
       }
-    })
+    });
   }
 });
 
