@@ -1113,4 +1113,4 @@ Fluff.init = function (options) {
   if (Fluff.onload) {
   	Fluff.onload();
   }
-}
+};

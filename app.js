@@ -1058,97 +1058,24 @@ var requireApiKey = function(req, res, next) {
   }
 };
 
-// Don't like html strings in js, but it works
-var defaultAlertPage = function(message) {
-  var html = '\n\
-  <html> \n\
-  <head> \n\
-    <title>Fluff Alert</title> \n\
-    <script src="/fluff/js/jquery.js"></script> \n\
-    <script> \n\
-    var updateDbUri = function () { \n\
-      $.ajax({ \n\
-        type: "POST", \n\
-        url: "/fluff/admin/api/db", \n\
-        data: { \n\
-          alert_token: $("input[name=alert_token]").val(), \n\
-          db_uri: $("input[name=db_uri]").val() \n\
-        }, \n\
-        success: function (data, status, xhr) { \n\
-          var delay = 3000; \n\
-          if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).delay) { \n\
-            delay = parseInt($.parseJSON(xhr.responseText).delay) * 1000; \n\
-          } \n\
-          setTimeout(function () { \n\
-            window.location.href = "/"; \n\
-          }, delay); \n\
-        }, \n\
-        error: function (xhr) { \n\
-          console.log("Save DB URI didn\'t work."); \n\
-        } \n\
-      }); \n\
-    } \n\
-    var initDb = function () { \n\
-      $.ajax({ \n\
-        type: "POST", \n\
-        url: "/fluff/admin/api/db/init", \n\
-        data: { \n\
-          alert_token: $("input[name=alert_token]").val() \n\
-        }, \n\
-        success: function (data, status, xhr) { \n\
-          var delay = 3000; \n\
-          if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).delay) { \n\
-            delay = parseInt($.parseJSON(xhr.responseText).delay) * 1000; \n\
-          } \n\
-          setTimeout(function () { \n\
-            window.location.href = "/"; \n\
-          }, delay); \n\
-        }, \n\
-        error: function (xhr) { \n\
-          console.log("Initialization didn\'t work."); \n\
-        } \n\
-      }); \n\
-    } \n\
-    </script> \n\
-    <style> \n\
-      p { \n\
-        font-size:18pt; \n\
-        font-family:helvetica,arial; \n\
-        color:#606060; \n\
-        text-align:center; \n\
-        margin-top:50px; \n\
-      } \n\
-      form { \n\
-        width:400px; \n\
-        margin-left:auto; \n\
-        margin-right:auto; \n\
-      } \n\
-      input { \n\
-        font-family:helvetica,arial; \n\
-        color:#606060; \n\
-        text-align:center; \n\
-      } \n\
-      input[type=text] { \n\
-        font-size:18pt; \n\
-        width:100%; \n\
-        margin-top:10px; \n\
-      } \n\
-      input[type=submit] { \n\
-        font-size:108pt; \n\
-        width:100px; \n\
-        height:100px; \n\
-        margin-top:30px; \n\
-        margin-left:auto; \n\
-        margin-right:auto; \n\
-      } \n\
-    </style> \n\
-  </head> \n\
-  <body> \n\
-    <p><img src="/fluff/images/sad-fluffy.png" /></p> \n\
-    ' + message + ' \n\
-  </body> \n\
-  </html> \n';
-  return html;
+// Don't like html strings in js, but it works : TBD change to read file
+var defaultAlertPage = function(message, callback) {
+  var html = "";
+  var file = __dirname + '/alert.html';
+  fs.exists(file, function (exists) {
+    if (exists) {
+      fs.readFile(file, 'utf8', function (err, data) {
+        if (err) {
+          throw err;
+        }
+        html = data;
+        var message_tag = "message"; // this may move to a site config
+        var pattern = new RegExp("{{\\s*" + message_tag + "\\s*}}", "i");
+        html = html.replace(pattern, message);
+        callback(html);
+      });
+    }
+  });
 };
 
 // This mode runs when DB cannot be used
@@ -1157,22 +1084,30 @@ var runAlertMode = function(level, callback) {
   switch (level) {
     case 'not_fluff_db':
       text = '\
-        <p>Not feeling fluffy.<br/> There\'s a database, but it\'s not a Fluff DB.</p> \n\
-        <form action="/fluff/admin/api/db" method="post"> \n\
-          <input type="text" name="db_uri" placeholder="Enter a database URI" /><br/> \n\
-          <input type="text" name="alert_token" placeholder="Enter your alert token" /><br/> \n\
-          <button type="button" onclick="updateDbUri()"/>SAVE</button> \n\
-          <button type="button" onclick="initDb()"/>INITIALIZE</button> \n\
+        <h3>Not feeling fluffy.<br/> \n\
+        <small>There\'s a database, but it\'s not a Fluff DB.</small></h3><br/> \n\
+        <form action="/fluff/admin/api/db" class="form-horizontal" method="post"> \n\
+          <div class="form-group"> \n\
+            <h4 id="alertMessage" class="bg-warning"></h4> \n\
+            <input type="text" name="db_uri" id="UriInput" class="form-control" placeholder="Enter another database URI" /><br/> \n\
+            <input type="text" name="alert_token" class="form-control" placeholder="Enter your alert token" /><br/> \n\
+            <button type="button" class="btn" id="updateUriBtn" disabled="disabled" onclick="updateDbUri()">Try new URI</button> \n\
+             or <button type="button" class="btn btn-primary" id="initializeBtn" onclick="initDb()">Initialize this database</button> \n\
+          </div> \n\
         </form> \n\
       ';
       break;
     case 'bad_db_uri':
       text = '\
-        <p>Not feeling fluffy.<br/> The database URI is not working.</p> \n\
-        <form action="/fluff/admin/api/db" method="post"> \n\
-          <input type="text" name="db_uri" placeholder="Enter a database URI" /><br/> \n\
-          <input type="text" name="alert_token" placeholder="Enter your alert token" /><br/> \n\
-          <button type="button" onclick="updateDbUri()"/>SAVE</button> \n\
+        <h3>Not feeling fluffy.<br/> \n\
+        <small>Can\'t connect to the database.</small></h3><br/> \n\
+        <form action="/fluff/admin/api/db" class="form-horizontal" method="post"> \n\
+          <div class="form-group"> \n\
+            <h4 id="alertMessage" class="bg-warning"></h4> \n\
+            <input type="text" name="db_uri" id="UriInput" class="form-control" placeholder="Enter another database URI" /><br/> \n\
+            <input type="text" name="alert_token" class="form-control" placeholder="Enter your alert token" /><br/> \n\
+            <button type="button" class="btn" id="updateUriBtn" disabled="disabled" onclick="updateDbUri()">Try new URI</button> \n\
+          </div> \n\
         </form> \n\
       ';
       break;
@@ -1182,7 +1117,7 @@ var runAlertMode = function(level, callback) {
         <form action="/fluff/admin/api/db" method="post"> \n\
           <input type="text" name="db_uri" placeholder="Enter a database URI" /><br/> \n\
           <input type="text" name="alert_token" placeholder="Enter your alert token" /><br/> \n\
-          <button type="button" onclick="updateDbUri()"/>SAVE</button> \n\
+          <button type="button" id="updateUriBtn" disabled="disabled" onclick="updateDbUri()"/>Try new URI</button> \n\
         </form> \n\
       ';
   }
@@ -1249,13 +1184,15 @@ var runAlertMode = function(level, callback) {
   });
   // Any other API requests will return 500
   notFoundRoute(500, 'Fluff is running in alert mode. Please check the home page.');
-  // All other requests return the alert page
-  app.all ('*', function(req, res) {
-    res.status = 500;
-    res.send(defaultAlertPage(text));
+  defaultAlertPage(text, function (html) {
+    // All other requests return the alert page
+    app.all ('*', function(req, res) {
+      res.status = 500;
+      res.send(html);
+    });
+    setupServer();
+    startListening(false, callback);
   });
-  setupServer();
-  startListening(false, callback);
 };
 
 var handleModelRequest = function (req, res, next, callback) {

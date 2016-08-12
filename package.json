@@ -39,9 +39,6 @@
     "nodemailer": "*",
     "merge": "*",
     "inflection": "*",
-    "recaptcha-async": "*",
-    "xml2js": "*",
-    "wordpos": "*",
-    "mandrill-api": "*"
+    "recaptcha-async": "*"
   }
 }

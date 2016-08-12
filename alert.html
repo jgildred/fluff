@@ -1,0 +1,79 @@
+<html>
+  <head>
+    <title>Fluff Alert</title>
+    <link href="/fluff/css/bootstrap.css" rel="stylesheet" media="screen"/>
+  </head>
+  <body>
+    <br/><br/>
+    <div class="col-md-3 col-xs-1"></div>
+    <div class="col-md-6 col-xs-10">
+      <div class="text-center">
+        <img src="/fluff/images/sad-fluffy.png" class="img-responsive center-block" />
+        {{message}}
+      </div>
+    </div>
+    <div class="col-md-3 col-xs-1"></div>
+    <script src="/fluff/js/jquery.js"></script>
+    <script src="/fluff/js/bootstrap.js"></script>
+    <script>
+      var updateDbUri = function() {
+        $("#updateUriBtn").text("Updating...");
+        $.ajax({
+          type: "POST",
+          url: "/fluff/admin/api/db",
+          data: {
+            alert_token: $("input[name=alert_token]").val(),
+            db_uri: $("input[name=db_uri]").val()
+          },
+          success: function (data, status, xhr) {
+            var delay = 3000;
+            if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).delay) {
+              delay = parseInt($.parseJSON(xhr.responseText).delay) * 1000;
+            }
+            setTimeout(function () {
+              window.location.href = "/";
+            }, delay);
+          },
+          error: function (xhr) {
+            $("#alertMessage").text("URI update failed. Could be your alert token.").show().delay(5000).fadeOut();
+            $("#updateUriBtn").text("Try new URI");
+          }
+        });
+      };
+      var initDb = function() {
+        $("#initializeBtn").text("Initializing...");
+        $.ajax({
+          type: "POST",
+          url: "/fluff/admin/api/db/init",
+          data: {
+            alert_token: $("input[name=alert_token]").val()
+          },
+          success: function (data, status, xhr) {
+            var delay = 3000;
+            if (xhr && xhr.responseText && $.parseJSON(xhr.responseText).delay) {
+              delay = parseInt($.parseJSON(xhr.responseText).delay) * 1000;
+            }
+            setTimeout(function () {
+              window.location.href = "/";
+            }, delay);
+          },
+          error: function (xhr) {
+            $("#alertMessage").text("Initialization failed. Could be your alert token.").show().delay(5000).fadeOut();
+            $("#initializeBtn").text("Initialize this database");
+            
+          }
+        });
+      };
+      $("#alertMessage").hide();
+      var patt = /^mongodb\:\/\//i;
+      $("#UriInput").keydown(function() {
+      	if (patt.test($(this).val())) {
+      		$("#updateUriBtn").prop("disabled", false);
+      	}
+      	else {
+      	  $("#updateUriBtn").prop("disabled", true);
+      	}
+      });
+    </script>
+  </body>
+  </html>

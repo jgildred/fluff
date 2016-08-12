@@ -15,7 +15,7 @@ INSTALL on local machine:
 3. cd to the root dir of the app
 4. type "npm install"
 5. type "node fluff"
-6. open http://localhost:3000/fluff/admin in your browser
+6. open http://localhost/fluff/admin in your browser
 7. login with "admin@domain.com", password "fluff"
 
 INSTALL on Heroku:
@@ -46,7 +46,7 @@ INSTALL on Google Cloud
 
 ADMIN GUIDE:
 
-Fluff Admin is located at http://../fluff/admin by default. Within the admin app you can manage most of what Fluff does.
+Fluff Admin is located at http://localhost/fluff/admin by default. Within the admin app you can manage most of what Fluff does.
 - PAGES tab manages pages. Each page must use a view template. When editing a page (or view), you can hit Esc to toggle full screen edit view.
 - VIEWS tab manages templates for page layout. Just drop {{content}} into a view's template, right where you want your page content to render, then assign that view to your page. That is the extent of the page design tools. Let the multitude of Javascript UI toolkits do the rest; that's what they're there for.
 - VARS tab manages custom variables. Vars are an easy way to manage strings you use often. Drop {{var.[name]}} into any page or view, where [name] is the name of the var.

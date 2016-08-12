@@ -23,7 +23,7 @@ Fluff.admin.init = function () {
     });
   }
   checkSession(startRoutes);
-}
+};
 
 // Returns a clone of the object or the same thing if not
 var cloneObject = function (obj) {
@@ -33,7 +33,7 @@ var cloneObject = function (obj) {
       if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
   }
   return copy;
-}
+};
 
 var startRoutes = function (path) {
   console.log("Backbone history started");
@@ -610,7 +610,7 @@ var LoginView = Backbone.View.extend({
       }
       else {
         $('.alert-msg').html('Login failed. Please try again.');
-        $('.login-fail').show();
+        $('.login-fail').show().delay(5000).fadeOut();
       }
     });
     return false;
@@ -624,6 +624,7 @@ var LoginView = Backbone.View.extend({
     $('.modal').modal('hide');
     var template = $('#login-template').html();
     this.$el.html(template);
+    $(".alert").hide();
     this.$el.find('.modal').modal('show');
     this.$el.find('input[name=email]')[0].focus();
     return this;
