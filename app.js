@@ -600,7 +600,7 @@ var allowCrossDomain = function (req, res, next) {
   else {
     // Build the cors header
     res.header('Access-Control-Allow-Credentials', true);
-    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS'); 
     res.header('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-API-Key, Cookie'); 
     if (req.method == 'OPTIONS') {
