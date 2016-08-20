@@ -1,4 +1,3 @@
-
 // In case fluff.js is not running
 if (!Fluff) {
   var Fluff = {admin : {}};
