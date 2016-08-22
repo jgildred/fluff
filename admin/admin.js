@@ -44,7 +44,8 @@ var startRoutes = function (path) {
       root: path
     });
   }
-}
+  navselect("pages");
+};
 
 var checkSession = function (callback) {
   if (!session.get('user')) {
