@@ -154,7 +154,7 @@ var hacked_splice = function (index, howMany /* model1, ... modelN */) {
     removed = this.models.slice(index, index + howMany);
   this.remove(removed).add.apply(this, args);
   return removed;
-}
+};
 
 // show a log of events getting fired
 var log_events = function (event, model) {
@@ -1564,6 +1564,8 @@ var ModelBrowseView = Backbone.View.extend({
                 columns:            columns,
                 colHeaders:         colHeaders,
                 colWidths:          colWidths,
+                autoRowSize:        false,
+                autoColSize:        false,
                 outsideClickDeselects: false,
                 afterColumnMove:    function (oldIndex, newIndex) {
                   that.updateColumnOrder(oldIndex, newIndex);

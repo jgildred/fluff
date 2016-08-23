@@ -140,6 +140,14 @@ table.backgrid td {
 select.column-picker {
   height: 200px;
 }
+footer {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+}
+.data-grid {
+  min-height: 300px;
+}
 .modal-skinny {
   width: 350px;
 }
